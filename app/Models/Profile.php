@@ -17,4 +17,10 @@ class Profile extends Model
         'image',
         'saldo',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
