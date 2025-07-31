@@ -23,4 +23,9 @@ class Product extends Model
         return 'slug'; // Gunakan slug daripada id
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
 }

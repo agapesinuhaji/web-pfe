@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('date_of_place')->nullable();
             $table->enum('gender', ['L', 'P'])->nullable();
             $table->string('no_whatsapp')->nullable();
-            $table->string('image')->default('noimage.jpg');
+            $table->string('image')->default('profile/noimage.jpg');
             $table->decimal('saldo', 15, 2)->default(0);
             $table->timestamps();
         });
