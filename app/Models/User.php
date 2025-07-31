@@ -58,5 +58,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Product::class);
     }
 
+    public function conselingMethods()
+    {
+        return $this->belongsToMany(ConselingMethod::class);
+    }
+
 
 }
