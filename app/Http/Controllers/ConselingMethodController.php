@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use id;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\ConselingMethod;
 
-class ConselingMethod extends Controller
+class ConselingMethodController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +30,16 @@ class ConselingMethod extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+
+        ConselingMethod::create([
+            'user_id' => $request->user_id,
+            'name' => $request->method,
+            'status' => true,
+        ]);
+
+        return redirect()->route('user.show', $request->user_id)->with('success', 'Method added successfully!');
+
     }
 
     /**
@@ -59,6 +71,15 @@ class ConselingMethod extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
+        $idData = ConselingMethod::find($id);
+        
+        $idData->update([
+            'status' => !$idData->status,
+        ]);
+
+        $message = $idData->status ? 'Method has been enabled!' : 'Method has been disabled!';
+
+        return redirect()->route('user.show', $idData->user_id)->with(['success' => $message]);
     }
 }

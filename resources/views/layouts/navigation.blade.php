@@ -25,28 +25,6 @@
                     </x-nav-link>
 
 
-                    <!-- Conselling dropdown menu -->
-                    <div class="relative group">
-                        <a
-                            class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                            {{ __('Conselling') }}
-                            <svg class="ms-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.65a.75.75 0 01-1.1 0L5.25 8.27a.75.75 0 01-.02-1.06z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                        <div class="absolute z-50 hidden group-hover:block mt-2 w-40 bg-white rounded-md shadow-lg">
-                            <a href="{{ route('method.index') }}"
-                            class="block px-4 py-2 text-sm {{ request()->routeIs('method.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
-                                {{ __('Method') }}
-                            </a>
-                            <a href="{{ route('schedule.index') }}"
-                            class="block px-4 py-2 text-sm {{ request()->routeIs('schedule.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
-                                {{ __('Schedule') }}
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
 

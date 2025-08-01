@@ -58,9 +58,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Product::class);
     }
 
-    public function conselingMethods()
+    public function methods()
     {
-        return $this->belongsToMany(ConselingMethod::class);
+        return $this->hasMany(ConselingMethod::class);
     }
 
 
