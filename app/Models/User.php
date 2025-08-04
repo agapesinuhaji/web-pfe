@@ -63,5 +63,10 @@ class User extends Authenticatable
         return $this->hasMany(ConselingMethod::class);
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(ConselingMethod::class);
+    }
+
 
 }
