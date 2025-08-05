@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit {{ __('User') }} || {{ $user->profile->name }}
+            Jadwal Counseling || {{ $user->profile->name }}
         </h2>
     </x-slot>
 
@@ -18,14 +18,12 @@
                         </button>
 
                         @if ($user->role == 'psikolog')
-                            <a href="{{ url('user/' . $user->id . '/schedule') }}"
-                                class="inline-flex items-center ml-2 justify-center rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800">
-                                <svg class="-ms-0.5 me-1.5 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8 7V3m8 4V3m-9 8h10m-13 9h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2z" />
+                            <a href="{{ route('user.show', $user->id) }}"
+                                class="inline-flex items-center ml-2 justify-center rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="me-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                                 </svg>
-                                Schedule
+                                Back
                             </a>
                         @endif
                             
@@ -98,97 +96,89 @@
 
                         @if ($user->role == 'psikolog')
                             
-                        <div class="relative rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
-                            <button class="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800" data-modal-target="addMethodModal" data-modal-toggle="addMethodModal">
-                                Add Method
-                            </button>
-                            <h3 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Conseling Method</h3>
-                            @forelse ($methods as $method)
-                                <div class="flex flex-wrap items-center gap-y-4 border-b border-gray-200 pb-4 dark:border-gray-700 md:pb-5">
-                                    <dl class="sm:w-128 md:w-86">
-                                        <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Method</dt>
-                                        <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
-                                            {{ $method->name }}
-                                        </dd>
-                                    </dl>
-                                    <dl class="w-1/2 sm:w-1/4 sm:flex-1 lg:w-auto">
-                                        <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
-                                        <dd class="me-2 mt-1.5 inline-flex shrink-0 items-center rounded  {{ $method->status == 1 ? 'bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-                                            {{ $method->status == 1 ? 'Active' : 'Nonactive' }}
-                                        </dd>
-                                    </dl>
-                                    <div class="w-full sm:flex sm:w-32 sm:items-center sm:justify-end sm:gap-4">
-                                        <button id="actionsMenuDropdownModal10" data-dropdown-toggle="dropdownOrderModal{{ $method->id }}" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 md:w-auto">
-                                            Actions
-                                            <svg class="-me-0.5 ms-1.5 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"></path>
-                                            </svg>
-                                        </button>
-                                        <div id="dropdownOrderModal{{ $method->id }}" class="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700" data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="bottom">
-                                            <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="actionsMenuDropdown10">
-                                                <li>
-                                                    @if ($method->status)
-                                                        {{-- Tombol DISABLE jika status == true --}}
-                                                        <button type="button"
-                                                            data-modal-target="disabledModal-{{ $method->id }}"
-                                                            data-modal-toggle="disabledModal-{{ $method->id }}"
-                                                            class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400">
-                                                            <svg class="w-4 h-4 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            Disable
-                                                        </button>
-                                                    @else
-                                                        {{-- Tombol ENABLE jika status == false --}}
-                                                        <button type="button"
-                                                            data-modal-target="disabledModal-{{ $method->id }}"
-                                                            data-modal-toggle="disabledModal-{{ $method->id }}"
-                                                            class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-green-600 dark:hover:text-green-400">
-                                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            Enable
-                                                        </button>
-                                                    @endif
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- Modal Change Status --}}
-                                <div id="disabledModal-{{ $method->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                                    <div class="relative p-4 w-full max-w-md max-h-full">
-                                        <!-- Modal content -->
-                                        <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                                            <button type="button" class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="disabledModal-{{ $method->id }}">
-                                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                </svg>
-                                                <span class="sr-only">Close modal</span>
-                                            </button>
-                                            <svg class="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                            </svg>
-                                            <p class="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to change status <span class="underline">{{ $method->name }}</span> ?</p>
-                                            <div class="flex justify-center items-center space-x-4">
-                                                <button data-modal-toggle="disabledModal-{{ $method->id }}" type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
-                                                <form action="/method/{{ $method->id }}" method="POST">
-                                                    @method('DELETE')
+                        <div x-data="{ open: false, selectedDate: '', schedulesForDate: [], rawDate: '' }" class="bg-white shadow rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4 border-b pb-2">
+                                <h3 class="text-xl font-bold text-gray-800">📅 Jadwal Terdaftar</h3>
+                                <a  data-modal-target="scheduleModal" data-modal-toggle="scheduleModal"
+                                class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700 shadow">
+                                    ➕ Tambah Jadwal Baru
+                                </a>
+                            </div>
+
+                            @php
+                                $grouped = $schedules->groupBy('date');
+                            @endphp
+
+                            @if($grouped->count())
+                                <table class="w-full text-sm text-left text-gray-700">
+                                    <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                                        <tr>
+                                            <th class="px-4 py-3">Tanggal</th>
+                                            <th class="px-4 py-3">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach($grouped as $date => $items)
+                                            <tr>
+                                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($date)->format('d M Y') }}</td>
+                                                <td class="px-4 py-2">
+                                                    <button
+                                                        @click="
+                                                            open = true;
+                                                            selectedDate = '{{ \Carbon\Carbon::parse($date)->format('d M Y') }}';
+                                                            rawDate = '{{ $date }}';
+                                                            schedulesForDate = {{ $items->map(fn($item) => [
+                                                                'id' => $item->id,
+                                                                'time' => $item->time,
+                                                                'name' => $item->user->profile->name
+                                                            ])->toJson() }};
+                                                        "
+                                                        class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1.5 rounded shadow"
+                                                    >
+                                                        Lihat Jam
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <p class="text-gray-500 italic">Belum ada jadwal.</p>
+                            @endif
+
+                            <!-- Modal -->
+                            <div x-show="open" x-cloak class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+                                <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative" @click.away="open = false">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🕒 Jadwal: <span x-text="selectedDate"></span></h3>
+
+                                    <ul class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                                        <template x-for="(item, index) in schedulesForDate" :key="item.id">
+                                            <li class="flex justify-between items-center border-b pb-2 text-sm">
+                                                <span class="text-gray-700">
+                                                    <span x-text="item.time" class="font-medium"></span> - 
+                                                    <span x-text="item.name" class="text-gray-500"></span>
+                                                </span>
+                                                <form method="POST" :action="'/schedule/' + item.id" @submit.prevent="$event.target.submit()">
                                                     @csrf
-                                                    <button type="submit" class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">Yes, I'm sure</button>
+                                                    @method('DELETE')
+                                                    <button class="text-red-600 hover:underline text-xs">Hapus</button>
                                                 </form>
-                                            </div>
-                                        </div>
+                                            </li>
+                                        </template>
+                                    </ul>
+
+                                    <div class="mt-6 flex justify-between items-center">
+                                        <form :action="'/schedules/day/' + rawDate" method="POST" class="inline-block">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="text-red-700 hover:text-red-900 text-sm font-semibold">
+                                                ❌ Hapus Semua
+                                            </button>
+                                        </form>
+                                        <button @click="open = false" class="text-gray-500 hover:text-gray-700 text-sm">Tutup</button>
                                     </div>
                                 </div>
-                            @empty
-                                NULL
-                            @endforelse
-                            
+                            </div>
                         </div>
                         @endif
                     </div>
@@ -240,15 +230,15 @@
 
 
 
-                    {{-- Add Method Modal --}}
-                    <div id="addMethodModal" tabindex="-1" aria-hidden="true" class="max-h-auto fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden antialiased md:inset-0">
+                    <!-- Schedule Modal -->
+                    <div id="scheduleModal" tabindex="-1" aria-hidden="true" class="max-h-auto fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden antialiased md:inset-0">
                         <div class="max-h-auto relative max-h-full w-full max-w-lg p-4">
                         <!-- Modal content -->
                             <div class="relative rounded-lg bg-white shadow dark:bg-gray-800">
                                 <!-- Modal header -->
                                 <div class="flex items-center justify-between rounded-t border-b border-gray-200 p-4 dark:border-gray-700 md:p-5">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add new method</h3>
-                                    <button type="button" class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="addMethodModal">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add New Schedule</h3>
+                                    <button type="button" class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="scheduleModal">
                                         <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                         </svg>
@@ -256,23 +246,47 @@
                                     </button>
                                 </div>
                                 <!-- Modal body -->
-                                <form class="p-4 md:p-5" method="POST" action="{{ route('method.store') }}">
+                                <form class="p-4 md:p-5" method="POST" action="{{ route('schedule.store') }}">
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                    <div class="col-span-2 mb-4 sm:col-span-1">
-                                        <div class="mb-2 flex items-center gap-2">
-                                            <label for="method" class="block text-sm font-medium text-gray-900 dark:text-white">Name Methode</label>
-                                        </div>
-                                        <input type="text" name="method" id="method" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                                    <div class="mb-6">
+                                        <label for="date" class="block text-sm font-medium text-gray-700 mb-1">
+                                            Tanggal Konseling
+                                        </label>
+                                        <input type="date" name="date" id="date" required class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700">
                                     </div>
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Jam Konseling</label>
+                                        <div class="grid grid-cols-3 gap-3">
+                                            @foreach (['07:00', '09:00', '11:00', '13:00', '15:00', '17:00'] as $time)
+                                                <label class="flex items-center">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="times[]" 
+                                                        value="{{ $time }}" 
+                                                        class="peer hidden"
+                                                    >
+                                                    <div class="w-full text-center cursor-pointer rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 
+                                                                peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
+                                                                hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600">
+                                                        {{ $time }}
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
                                     <div class="border-t border-gray-200 pt-4 dark:border-gray-700 md:pt-5">
-                                        <button type="submit" class="me-2 inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Add New</button>
-                                        <button type="button" data-modal-toggle="accountInformationModal2" class="me-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Cancel</button>
+                                        <button type="submit" class="me-2 inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Save Change Data</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
+
+
+
+                
 
 
                     

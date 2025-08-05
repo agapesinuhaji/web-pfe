@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('product', ProductController::class)->names('product');
     Route::resource('user', UserController::class)->names('user');
+    Route::get('user/{user}/schedule', [UserController::class, 'schedule'])->name('user.schedule');
+
 
     Route::resource('method', ConselingMethodController::class)->names('method');
     Route::resource('schedule', ScheduleController::class)->names('schedule');

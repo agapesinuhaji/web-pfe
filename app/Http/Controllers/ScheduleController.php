@@ -46,7 +46,8 @@ class ScheduleController extends Controller
             ]);
         }
 
-        return redirect()->route('schedule.index')->with('success', 'Jadwal berhasil dibuat.');
+        return redirect()->route('user.schedule', $request->user_id)->with('success', 'Jadwal berhasil dibuat.');
+
     }
 
     /**

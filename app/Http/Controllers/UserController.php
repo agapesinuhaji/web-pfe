@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -83,5 +84,15 @@ class UserController extends Controller
 
         return redirect('/user')->with(['success' => $message]);
     }
+
+    public function schedule(User $user)
+    {
+        // Ambil jadwal berdasarkan user_id dan status 'ready'
+        $schedules = Schedule::where('conselor_id', $user->id)->where('status', 'ready')->get();
+        
+
+        return view('users.schedule', compact('user', 'schedules'));
+    }
+
 
 }
