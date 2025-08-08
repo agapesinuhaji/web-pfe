@@ -151,4 +151,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById('date');
+
+            // Hari ini
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = today.getMonth(); // 0-indexed
+
+            // Akhir bulan depan
+            const endOfNextMonth = new Date(yyyy, mm + 2, 0); // 0 = hari terakhir bulan sebelumnya
+
+            // Format ke YYYY-MM-DD
+            const formatDate = (date) => {
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${date.getFullYear()}-${month}-${day}`;
+            };
+
+            input.min = formatDate(today);
+            input.max = formatDate(endOfNextMonth);
+        });
+    </script>
 </x-app-layout>

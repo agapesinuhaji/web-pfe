@@ -13,7 +13,10 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        //
+        $psychologists = User::where('role', 'psikolog')->get(); // sesuaikan dengan strukturmu
+        $schedules = Schedule::with('user')->latest()->get();
+
+        return view('schedules.index', compact('psychologists', 'schedules'));
     }
 
     /**
@@ -21,10 +24,7 @@ class ScheduleController extends Controller
      */
     public function create()
     {
-        $psychologists = User::where('role', 'psikolog')->get(); // sesuaikan dengan strukturmu
-        $schedules = Schedule::with('user')->latest()->get();
-
-        return view('schedules.create', compact('psychologists', 'schedules'));
+        
     }
 
     /**

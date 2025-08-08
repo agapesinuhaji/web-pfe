@@ -2,10 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ConselingMethodController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ConselingMethodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,7 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('product', ProductController::class)->names('product');
     Route::resource('user', UserController::class)->names('user');
     Route::get('user/{user}/schedule', [UserController::class, 'schedule'])->name('user.schedule');
-
+    Route::resource('order', OrderController::class)->names('order');
+    
 
     Route::resource('method', ConselingMethodController::class)->names('method');
     Route::resource('schedule', ScheduleController::class)->names('schedule');

@@ -24,6 +24,14 @@
                         {{ __('User') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('schedule.index')" :active="request()->routeIs('schedule.*')">
+                        {{ __('Schedule') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
+                        {{ __('Order') }}
+                    </x-nav-link>
+
 
                 </div>
             </div>
