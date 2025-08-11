@@ -420,7 +420,7 @@
           Psychologist For Everyone  
       </a>
     </div>
-    <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">© 2025 <a href="#" class="hover:underline">PFE™</a>. All Rights Reserved.</span>
+    <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">© 2025 &nbsp; <a href="#" class="hover:underline">PFE™</a>. All Rights Reserved.</span>
 </footer>
 
 
