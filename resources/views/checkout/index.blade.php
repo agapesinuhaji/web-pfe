@@ -7,6 +7,7 @@
     <title>Checkout</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
 <body>
@@ -184,151 +185,166 @@
           </div>
         </div>
 
+        <div class="pt-4">
+                <label for="conseling_method" class="block mb-2 font-semibold">Konseling Via</label>
+                <Select class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                    @foreach ($methods as $method)
+                        <option value="{{ $method->id }}">{{ $method->name }}</option>
+                    @endforeach
+                </Select>
+            </div>
 
 
-
-        <div class="space-y-4">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Pilih Konselor</h3>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            
-            @foreach ($conselors as $conselor)
-              
-            <label class="relative cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
-              <input type="radio" name="konselor" value="psikolog1" class="absolute opacity-0 peer" checked>
-              <div class="flex flex-col items-center text-centerp-2 rounded-lg">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Psikolog A" class="w-16 h-16 rounded-full mb-2">
-                <h4 class="font-medium text-gray-900 dark:text-white">{{ $conselor->profile->name }}</h4>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Psikolog Klinis</p>
-              </div>
-              <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-500"></div>
-            </label>
-            
-            @endforeach
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Pilih Tanggal & Jam Konseling</h3>
-
-          <form class="space-y-6">
-            <!-- Pilih Tanggal -->
+        
+        <div x-data="checkoutApp()" x-init="init()" class="mx-auto bg-white rounded space-y-4">
+            <!-- Pilih Konselor -->
             <div>
-              <label for="tanggal" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Konseling</label>
-              <input type="date" id="tanggal" name="tanggal" class="w-full rounded-lg border border-gray-300 p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Pilih Konselor</h3>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    @foreach ($conselors as $c)
+                    <label 
+                        class="relative cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                    >
+                        <input 
+                            type="radio" 
+                            name="konselor" 
+                            :value="{{ $c->id }}" 
+                            @change="selectConselor({{ $c->id }})"
+                            class="absolute opacity-0 peer"
+                        >
+                        <div class="flex flex-col items-center text-center p-2 rounded-lg">
+                            <img 
+                                src="https://randomuser.me/api/portraits/women/44.jpg" 
+                                alt="{{ $c->profile->name }}" 
+                                class="w-16 h-16 rounded-full mb-2"
+                            >
+                            <h4 class="font-medium text-gray-900 dark:text-white">
+                                {{ $c->profile->name }}
+                            </h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Psikolog Klinis
+                            </p>
+                        </div>
+                        <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-blue-500"></div>
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Pilih Tanggal -->
+            <div x-show="selectedConselor" x-transition>
+                <label class="block mb-2 font-semibold">Pilih Tanggal</label>
+                <input 
+                    type="text" 
+                    id="datePicker" 
+                    placeholder="Pilih tanggal" 
+                    class="w-full border rounded p-2"
+                >
             </div>
 
             <!-- Pilih Jam -->
-            <div>
-              <label for="jam" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jam Konseling</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <label class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 text-center shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 transition">
-                  <input type="radio" name="jam" value="09:00" class="hidden peer">
-                  <span class="peer-checked:text-white peer-checked:bg-blue-500 block rounded-md p-1">09:00</span>
-                </label>
-                <label class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 text-center shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 transition">
-                  <input type="radio" name="jam" value="10:30" class="hidden peer">
-                  <span class="peer-checked:text-white peer-checked:bg-blue-500 block rounded-md p-1">10:30</span>
-                </label>
-                <label class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 text-center shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 transition">
-                  <input type="radio" name="jam" value="13:00" class="hidden peer">
-                  <span class="peer-checked:text-white peer-checked:bg-blue-500 block rounded-md p-1">13:00</span>
-                </label>
-                <label class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 text-center shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 transition">
-                  <input type="radio" name="jam" value="15:30" class="hidden peer">
-                  <span class="peer-checked:text-white peer-checked:bg-blue-500 block rounded-md p-1">15:30</span>
-                </label>
-              </div>
+            <div x-show="times.length > 0" x-transition>
+                <label class="block mb-2 font-semibold">Pilih Jam</label>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="(time, index) in times" :key="index">
+                        <label class="cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                class="hidden peer" 
+                                :value="time" 
+                                @change="toggleTime(time)"
+                            >
+                            <span class="px-4 py-2 rounded border border-gray-300 
+                                peer-checked:bg-blue-600 peer-checked:text-white 
+                                peer-checked:border-blue-600
+                                hover:bg-blue-700 hover:text-gray-50 transition">
+                                <span x-text="time"></span>
+                            </span>
+                        </label>
+                    </template>
+                </div>
             </div>
 
-
-            {{-- Method --}}
-            <div>
-              <label for="conseling_method" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Konseling Via</label>
-              <Select class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                <option value=""></option>
-              </Select>
-            </div>
-
-            <!-- Tombol Submit -->
-            <div>
+            <div class="pt-8">
               <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
                 Lanjut Ke Pembayaran  
               </button>
             </div>
-          </form>
+
+            
+            
         </div>
 
         @endauth
-
-
-
-
-  
-
-
-        {{-- <div>
-          <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Enter a gift card, voucher or promotional code </label>
-          <div class="flex max-w-md items-center gap-4">
-            <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="" required />
-            <button type="button" class="flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Apply</button>
-          </div>
-        </div> --}}
       </div>
-
-
-
-
-      
-
-
-
-
-
-
-
-      {{-- <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
-        <div class="flow-root">
-          <div class="-my-3 divide-y divide-gray-200 dark:divide-gray-800">
-            <dl class="flex items-center justify-between gap-4 py-3">
-              <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Subtotal</dt>
-              <dd class="text-base font-medium text-gray-900 dark:text-white">$8,094.00</dd>
-            </dl>
-
-            <dl class="flex items-center justify-between gap-4 py-3">
-              <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
-              <dd class="text-base font-medium text-green-500">0</dd>
-            </dl>
-
-            <dl class="flex items-center justify-between gap-4 py-3">
-              <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Store Pickup</dt>
-              <dd class="text-base font-medium text-gray-900 dark:text-white">$99</dd>
-            </dl>
-
-            <dl class="flex items-center justify-between gap-4 py-3">
-              <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Tax</dt>
-              <dd class="text-base font-medium text-gray-900 dark:text-white">$199</dd>
-            </dl>
-
-            <dl class="flex items-center justify-between gap-4 py-3">
-              <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
-              <dd class="text-base font-bold text-gray-900 dark:text-white">$8,392.00</dd>
-            </dl>
-          </div>
-        </div>
-
-        <div class="space-y-3">
-          <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Proceed to Payment</button>
-
-          <p class="text-sm font-normal text-gray-500 dark:text-gray-400">One or more items in your cart require an account. <a href="#" title="" class="font-medium text-primary-700 underline hover:no-underline dark:text-primary-500">Sign in or create an account now.</a>.</p>
-        </div>
-      </div> --}}
     </div>
   </form>
 </section>
-    
+
+
+
+
+<script>
+function checkoutApp() {
+    return {
+        selectedConselor: '',
+        selectedDate: '',
+        selectedTime: '',
+        times: [],
+        flatpickrInstance: null,
+
+        init() {
+            this.flatpickrInstance = flatpickr("#datePicker", {
+                dateFormat: "Y-m-d",
+                disable: [], // nanti diisi dari DB
+                onChange: (selectedDates, dateStr) => {
+                    this.selectedDate = dateStr;
+                    this.fetchSchedules();
+                }
+            });
+        },
+
+        async selectConselor(id) {
+            this.selectedConselor = id;
+            this.resetSelection();
+
+            // Ambil tanggal ready untuk konselor ini
+            try {
+                let res = await fetch(`/available-dates/${id}`);
+                let availableDates = await res.json();
+
+                // Enable hanya tanggal yang tersedia
+                this.flatpickrInstance.set("enable", availableDates);
+            } catch (error) {
+                console.error('Gagal ambil tanggal ready', error);
+            }
+        },
+
+        resetSelection() {
+            this.selectedDate = '';
+            this.selectedTime = '';
+            this.times = [];
+            this.flatpickrInstance.clear();
+        },
+
+        async fetchSchedules() {
+            if (!this.selectedConselor || !this.selectedDate) return;
+
+            try {
+                let url = `/schedules/${this.selectedConselor}/${this.selectedDate}`;
+                let res = await fetch(url);
+                this.times = await res.json();
+                this.selectedTime = '';
+            } catch (error) {
+                console.error('Gagal mengambil jam', error);
+            }
+        }
+    }
+}
+</script>
 
 <script src="//unpkg.com/alpinejs" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 </body>
 </html>

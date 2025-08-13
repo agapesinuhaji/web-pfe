@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ConselingMethodController;
+use App\Http\Controllers\ScheduleApiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,9 +18,19 @@ Route::get('/test', function () {
     return view('test');
 });
 
-Route::get('/checkout', function () {
-    return view('orders.checkout');
-});
+
+
+Route::get('/available-dates/{id}', [ScheduleApiController::class, 'availableDates']);
+Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTimes']);
+
+
+
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
+// Endpoint AJAX untuk ambil jadwal
+Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSchedules']);
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

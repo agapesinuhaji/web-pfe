@@ -11,6 +11,18 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function getSchedules($conselorId, $date)
+    {
+        $schedules = Schedule::where('conselor_id', $conselorId)
+            ->where('date', $date)
+            ->where('status', 'ready')
+            ->orderBy('time')
+            ->pluck('time');
+
+        return response()->json($schedules);
+    }
+
     public function index()
     {
         $psychologists = User::where('role', 'psikolog')->get(); // sesuaikan dengan strukturmu

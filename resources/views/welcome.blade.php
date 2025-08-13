@@ -288,7 +288,7 @@
         <li>✔️ Rahasia aman dan tidak akan bocor</li>
         <li>✔️ Psikolog tersertifikasi</li>
       </ul>
-      <a href="#"
+      <a href="/checkout"
         class="block w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-medium py-2 rounded-lg transition duration-300">
         Pesan Sekarang
       </a>
@@ -304,7 +304,7 @@
         <li>✔️ Rahasia aman dan tidak akan bocor</li>
         <li>✔️ Psikolog tersertifikasi</li>
       </ul>
-      <a href="#"
+      <a href="/checkout"
         class="block w-full bg-blue-600 text-center hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-300">
         Pesan Sekarang
       </a>

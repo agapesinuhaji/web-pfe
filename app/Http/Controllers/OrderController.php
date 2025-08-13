@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\ConselingMethod;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -64,4 +67,11 @@ class OrderController extends Controller
     {
         //
     }
+
+    // public function checkout(){
+    //     $products = Product::where('status', 1)->get();
+    //     $conselors = User::where('role', 'psikolog')->where('is_active', 1)->get();
+
+    //     return view('orders.checkout', compact('products', 'conselors'));
+    // }
 }
