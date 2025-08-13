@@ -25,8 +25,7 @@ Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTi
 
 
 
-
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::resource('checkout', CheckoutController::class);
 
 // Endpoint AJAX untuk ambil jadwal
 Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSchedules']);

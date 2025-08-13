@@ -78,8 +78,8 @@
 </div>
 
 <section class="bg-white py-16 antialiased dark:bg-gray-900 md:py-40">
-  <form action="#" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-
+  <form action="{{ route('checkout.store') }}" method="POST" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    @csrf
     <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
       <div class="min-w-0 flex-1 space-y-8">
         @guest
@@ -130,7 +130,7 @@
               <div class="mb-2 flex items-center gap-2">
                 <label for="select-country-input-3" class="block text-sm font-medium text-gray-900 dark:text-white"> Jenis Kelamin </label>
               </div>
-              <select id="select-country-input-3" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+              <select id="select-country-input-3" name="gender" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
                 <option selected>--- Jenis Kelamin ---</option>
                 <option value="L" {{ auth()->user()->profile?->gender === 'L' ? 'selected' : '' }}>Laki - Laki</option>
                 <option value="P" {{ auth()->user()->profile?->gender === 'P' ? 'selected' : '' }}>Perempuan</option>
@@ -156,7 +156,7 @@
 
                 <!-- Input Nomor -->
                 <div class="relative w-full">
-                  <input type="text" id="no_wthatsapp" name="no_wthatsapp" class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:border-s-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500" value="{{ old('no_wthatsapp', auth()->user()->profile?->no_wthatsapp) ?? '' }}" required />
+                  <input type="text" id="no_whatsapp" name="no_whatsapp" class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:border-s-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500" value="{{ old('no_whatsapp', auth()->user()->profile?->no_whatsapp) ?? '' }}" required />
                 </div>
               </div>
             </div>
@@ -169,25 +169,33 @@
           </h3>
 
           <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-            @foreach ($products as $product)
-              
-              <label class="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm cursor-pointer hover:shadow-lg transition dark:border-gray-700 dark:bg-gray-800 group">
-                <input type="radio" name="paket" class="absolute opacity-0 peer" checked />
-                <div class="flex flex-col items-start">
-                  <span class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</span>
-                  <span class="mt-3 text-2xl font-bold text-primary-600">{{ 'Rp ' . number_format($product->price, 0, ',', '.') }}</span>
-                </div>
-                <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-500"></div>
-              </label>
+    @foreach ($products as $index => $product)
+        <label class="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm cursor-pointer hover:shadow-lg transition dark:border-gray-700 dark:bg-gray-800 group">
             
-            @endforeach
-  
-          </div>
+            <input type="radio" 
+                   name="paket" 
+                   value="{{ $product->id }}" 
+                   class="absolute opacity-0 peer"
+                   {{ $index === 0 ? 'checked' : '' }} />
+            
+            <div class="flex flex-col items-start">
+                <span class="text-lg font-semibold text-gray-900 dark:text-white">
+                    {{ $product->name }}
+                </span>
+                <span class="mt-3 text-2xl font-bold text-primary-600">
+                    {{ 'Rp ' . number_format($product->price, 0, ',', '.') }}
+                </span>
+            </div>
+            
+            <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-500"></div>
+        </label>
+    @endforeach
+</div>
         </div>
 
         <div class="pt-4">
                 <label for="conseling_method" class="block mb-2 font-semibold">Konseling Via</label>
-                <Select class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                <Select id="method" name="method" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
                     @foreach ($methods as $method)
                         <option value="{{ $method->id }}">{{ $method->name }}</option>
                     @endforeach
@@ -237,6 +245,7 @@
                 <input 
                     type="text" 
                     id="datePicker" 
+                    name="date"
                     placeholder="Pilih tanggal" 
                     class="w-full border rounded p-2"
                 >
@@ -244,26 +253,28 @@
 
             <!-- Pilih Jam -->
             <div x-show="times.length > 0" x-transition>
-                <label class="block mb-2 font-semibold">Pilih Jam</label>
-                <div class="flex flex-wrap gap-2">
-                    <template x-for="(time, index) in times" :key="index">
-                        <label class="cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                class="hidden peer" 
-                                :value="time" 
-                                @change="toggleTime(time)"
-                            >
-                            <span class="px-4 py-2 rounded border border-gray-300 
-                                peer-checked:bg-blue-600 peer-checked:text-white 
-                                peer-checked:border-blue-600
-                                hover:bg-blue-700 hover:text-gray-50 transition">
-                                <span x-text="time"></span>
-                            </span>
-                        </label>
-                    </template>
-                </div>
-            </div>
+              <label class="block mb-2 font-semibold">Pilih Jam</label>
+              <div class="flex flex-wrap gap-2">
+                  <template x-for="(time, index) in times" :key="index">
+                      <label class="cursor-pointer pt-2">
+                          <input 
+                              type="radio" 
+                              name="selectedTime"
+                              class="hidden peer" 
+                              :value="time" 
+                              @change="selectedTime = time"
+                          >
+                          <span class="px-4 py-2 rounded border border-gray-300 
+                              peer-checked:bg-blue-600 peer-checked:text-white 
+                              peer-checked:border-blue-600
+                              hover:bg-blue-700 hover:text-gray-50 transition">
+                              <span x-text="time"></span>
+                          </span>
+                      </label>
+                  </template>
+              </div>
+          </div>
+
 
             <div class="pt-8">
               <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
