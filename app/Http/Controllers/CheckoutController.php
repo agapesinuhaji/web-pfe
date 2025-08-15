@@ -92,9 +92,18 @@ class CheckoutController extends Controller
 
 
 
-
-
         // return redirect()->back()->with('success', 'Jadwal berhasil dipesan!');
         return redirect()->route('checkout.payment', $order->order_uuid);
+    }
+
+
+    public function payment($order_uuid)
+    {
+        $order = Order::with(['product', 'method', 'conselor', 'schedule'])
+                            ->where('order_uuid', $order_uuid)
+                            ->firstOrFail();
+
+
+        return view('checkout.payment', compact('order'));
     }
 }

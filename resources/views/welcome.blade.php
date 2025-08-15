@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
@@ -15,9 +17,9 @@
   <header class="absolute inset-x-0 top-0 z-50 ">
     <nav aria-label="Global" class="flex items-center justify-between p-6 lg:px-8 ">
       <div class="flex lg:flex-1 ">
-        <a href="#" class="-m-1.5 p-1.5 ">
+        <a href="{{ url('/') }}" class="-m-1.5 p-1.5 ">
           <span class="sr-only text-white">Your Company</span>
-          <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" class="h-8 w-auto" />
+          <img src="{{ asset('favicon.svg') }}" alt="" class="h-8 w-auto" />
         </a>
       </div>
       <div class="flex lg:hidden">
@@ -29,15 +31,49 @@
         </button>
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Product</a>
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Features</a>
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Marketplace</a>
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Company</a>
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Marketplace</a>
-        <a href="#" class="text-sm/6 font-semibold text-gray-700">Company</a>
+        <a href="{{ url('/') }}" class="text-sm/6 font-semibold text-gray-700">Home</a>
+        <a href="#our-team" class="text-sm/6 font-semibold text-gray-700">Our Team</a>
+        <a href="#services" class="text-sm/6 font-semibold text-gray-700">Services</a>
+        <a href="#contact" class="text-sm/6 font-semibold text-gray-700">Contact</a>
+        <a href="#" class="text-sm/6 font-semibold text-gray-700">My Orders</a>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+        @guest
         <a href="/login" class="text-sm/6 font-semibold text-gray-700">Log in <span aria-hidden="true">&rarr;</span></a>
+        @endguest
+
+        @auth
+        <!-- Kalau user sudah login -->
+        <div x-data="{ open: false }" class="relative">
+            <!-- Tombol dropdown -->
+            <button @click="open = !open" class="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <img src="{{ Auth::user()->profile->image ?? asset('default-avatar.png') }}" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover">
+                <span>{{ Auth::user()->profile->name }}</span>
+                <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div x-show="open" 
+                 @click.away="open = false" 
+                 x-transition 
+                 class="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <div class="py-1">
+                    <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                    <form method="POST" action="/logout">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+        @endauth
       </div>
     </nav>
     <el-dialog>
@@ -45,9 +81,9 @@
         <div tabindex="0" class="fixed inset-0 focus:outline-none">
           <el-dialog-panel class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div class="flex items-center justify-between">
-              <a href="#" class="-m-1.5 p-1.5">
+              <a href="{{ url('/') }}" class="-m-1.5 p-1.5">
                 <span class="sr-only">Your Company</span>
-                <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" class="h-8 w-auto" />
+                <img src="{{ asset('favicon.svg') }}" alt="" class="h-8 w-auto" />
               </a>
               <button type="button" command="close" commandfor="mobile-menu" class="-m-2.5 rounded-md p-2.5 text-gray-700">
                 <span class="sr-only">Close menu</span>
@@ -59,13 +95,41 @@
             <div class="mt-6 flow-root">
               <div class="-my-6 divide-y divide-gray-500/10">
                 <div class="space-y-2 py-6">
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Product</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Features</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Marketplace</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Company</a>
+                  <a href="{{ url('/') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Home</a>
+                  <a href="#our-team" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Our Team</a>
+                  <a href="#services" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Services</a>
+                  <a href="#contact" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Contact</a>
+                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">My Order  </a>
                 </div>
-                <div class="py-6">
+                <div class="py-6">  
+                  @guest
                   <a href="/login" class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Log in</a>
+                  @endguest
+
+                  @auth
+                    <!-- Jika user sudah login -->
+                    <div class="flex items-center gap-3 px-3 py-2">
+                      <img src="{{ Auth::user()->profile->image ?? asset('default-avatar.png') }}" 
+                          alt="User Avatar" 
+                          class="h-10 w-10 rounded-full object-cover">
+                      <div>
+                        <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->profile->name }}</p>
+                        <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                      </div>
+                    </div>
+                    <div class="mt-4 space-y-1">
+                      <a href="/profile" class="-mx-3 block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50">
+                        Profile
+                      </a>
+                      <form method="POST" action="/logout">
+                        @csrf
+                        <button type="submit" class="w-full text-left -mx-3 block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50">
+                          Logout
+                        </button>
+                      </form>
+                    </div>  
+
+                  @endauth
                 </div>
               </div>
             </div>
@@ -100,36 +164,59 @@
     <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
       <div class="lg:pt-4 lg:pr-8">
         <div class="lg:max-w-lg">
-          <p class="mt-2 text-3xl font-semibold tracking-tight text-pretty text-white sm:text-5xl">Mengapa memilih PFE?</p>
+          <p class="mt-2 text-3xl font-semibold tracking-tight text-pretty text-white sm:text-5xl">Mengapa memilih konseling online di PFE?</p>
           {{-- <p class="mt-6 text-lg/8 text-gray-600">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</p> --}}
           <dl class="mt-10 max-w-xl space-y-8 text-base/7 text-gray-200 lg:max-w-none">
             <div class="relative pl-9">
               <dt class="inline font-semibold text-gray-50">
-                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="absolute top-1 left-1 size-5 text-indigo-600">
-                  <path d="M5.5 17a4.5 4.5 0 0 1-1.44-8.765 4.5 4.5 0 0 1 8.302-3.046 3.5 3.5 0 0 1 4.504 4.272A4 4 0 0 1 15 17H5.5Zm3.75-2.75a.75.75 0 0 0 1.5 0V9.66l1.95 2.1a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0l-3.25 3.5a.75.75 0 1 0 1.1 1.02l1.95-2.1v4.59Z" clip-rule="evenodd" fill-rule="evenodd" />
-                </svg>
-                Push to deploy.
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="absolute top-1 left-1 size-7 text-indigo-400">
+                <!-- Globe -->
+                <circle cx="10" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M5 12h10M10 7c2 2.2 2 7.8 0 10M10 7c-2 2.2-2 7.8 0 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                <!-- Panah ke kanan (fleksibel/akses cepat) -->
+                <path d="M14.5 12H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M17.6 9.8L20 12l-2.4 2.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+                Akses Mudah dan Fleksibel
               </dt>
-              <dd class="inline">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.</dd>
+              <dd class="inline">
+                Konseling dapat dilakukan kapan saja dan di mana saja. Anda hanya perlu koneksi internet tanpa harus datang ke klinik.
+              </dd>
             </div>
             <div class="relative pl-9">
               <dt class="inline font-semibold text-gray-50">
-                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="absolute top-1 left-1 size-5 text-indigo-400">
-                  <path d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" fill-rule="evenodd" />
-                </svg>
-                SSL certificates.
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="absolute top-1 left-1 size-7 text-indigo-400">
+                <!-- Shield -->
+                <path d="M12 3l6 2v5.5c0 4.1-2.8 7.8-6 9-3.2-1.2-6-4.9-6-9V5l6-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <!-- Lock body -->
+                <rect x="8.75" y="10.5" width="6.5" height="5" rx="1" stroke="currentColor" stroke-width="1.6"/>
+                <!-- Shackle -->
+                <path d="M10.3 10.5V9.6a1.7 1.7 0 1 1 3.4 0v0.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <!-- Keyhole -->
+                <circle cx="12" cy="13.1" r="0.6" fill="currentColor"/>
+              </svg>
+                Privasi Terjaga
               </dt>
-              <dd class="inline">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.</dd>
+              <dd class="inline">
+                Setiap sesi dilakukan secara aman dan rahasia. Anda bisa merasa nyaman untuk bercerita tanpa khawatir.
+              </dd>
             </div>
             <div class="relative pl-9">
               <dt class="inline font-semibold text-gray-50">
-                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="absolute top-1 left-1 size-5 text-indigo-400">
-                  <path d="M4.632 3.533A2 2 0 0 1 6.577 2h6.846a2 2 0 0 1 1.945 1.533l1.976 8.234A3.489 3.489 0 0 0 16 11.5H4c-.476 0-.93.095-1.344.267l1.976-8.234Z" />
-                  <path d="M4 13a2 2 0 1 0 0 4h12a2 2 0 1 0 0-4H4Zm11.24 2a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z" clip-rule="evenodd" fill-rule="evenodd" />
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="absolute top-1 left-1 size-7 text-indigo-400">
+                  <!-- Kepala -->
+                  <circle cx="10" cy="9" r="3" stroke="currentColor" stroke-width="1.8"/>
+                  <!-- Bahu/badan -->
+                  <path d="M4.5 18a5.5 5.5 0 0 1 11 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <!-- Badge centang -->
+                  <circle cx="17.5" cy="16.5" r="3.2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M16.2 16.5l1.1 1.1 2-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Database backups.
+                Psikolog Profesional
               </dt>
-              <dd class="inline">Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.</dd>
+              <dd class="inline">
+                Didampingi oleh psikolog berpengalaman dan tersertifikasi yang siap membantu Anda menemukan solusi terbaik.
+              </dd>
             </div>
           </dl>
         </div>
@@ -141,13 +228,13 @@
 
 
 {{-- Section Psikolog --}}
-<section class="bg-white dark:bg-gray-900">
+<section class="bg-white dark:bg-gray-900" id="our-team">
   <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-6">
       <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
           <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Our team</h2>
           <p class="font-light text-gray-500 sm:text-xl dark:text-gray-400">Explore the whole collection of open-source web components and elements built with the utility classes from Tailwind</p>
       </div> 
-      <div class="grid gap-8 lg:gap-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div class="grid gap-8 lg:gap-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" >
           <div class="text-center text-gray-500 dark:text-gray-400">
               <img class="mx-auto mb-4 w-36 h-36 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png" alt="Bonnie Avatar">
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -271,7 +358,7 @@
 
 {{-- Section Product --}}
 
-<section class="bg-gray-100 py-16 px-4">
+<section class="bg-gray-100 py-16 px-4" id="services">
   <div class="max-w-7xl mx-auto text-center mb-12">
     <h2 class="text-4xl font-bold text-gray-800 mb-4">Pilih Paket Konseling Anda</h2>
     <p class="text-gray-600 text-lg">Dapatkan layanan terbaik sesuai kebutuhan Anda</p>
@@ -382,7 +469,7 @@
 
 
 {{-- Section Contact --}}
-<section class=" py-20 px-4">
+<section class=" py-20 px-4" id="contact">
   <div class="max-w-4xl mx-auto text-center text-gray-600">
     <h2 class="text-4xl font-bold mb-4">Butuh Bantuan atau Ingin Konsultasi?</h2>
     <p class="text-lg mb-8">Kami siap membantu Anda. Hubungi kami untuk pertanyaan atau buat janji konsultasi sekarang juga.</p>
@@ -428,6 +515,29 @@
 
 
 <script src="//unpkg.com/alpinejs" defer></script>
+
+
+<!-- Floating WhatsApp Button -->
+<a 
+  href="https://wa.me/6281234567890" 
+  target="_blank" 
+  class="fixed bottom-5 right-5 flex items-center gap-2 bg-green-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-700 transition group"
+  aria-label="Chat WhatsApp"
+>
+  <!-- WhatsApp Icon (Image) -->
+  <img 
+    src="{{ asset('img/whatsapp.png') }}" 
+    alt="WhatsApp" 
+    class="w-6 h-6"
+  />
+
+  <!-- Text (muncul di desktop, disembunyikan di mobile) -->
+  <span class="hidden sm:inline-block text-sm font-medium">
+    Chat Kami
+  </span>
+</a>
+
+
 
 </body>
 </html>
