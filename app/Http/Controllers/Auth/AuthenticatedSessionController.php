@@ -16,6 +16,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        session(['url.intended' => url()->previous()]);
+
         return view('auth.login');
     }
 
@@ -24,9 +26,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+       
+
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // cek role
+ 
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

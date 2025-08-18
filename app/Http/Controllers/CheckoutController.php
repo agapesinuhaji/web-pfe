@@ -103,6 +103,9 @@ class CheckoutController extends Controller
                             ->where('order_uuid', $order_uuid)
                             ->firstOrFail();
 
+        if ($order->status !== 'pending') {
+            return redirect()->route('myorder.index');
+        }
 
         return view('checkout.payment', compact('order'));
     }

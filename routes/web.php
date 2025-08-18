@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ConselingMethodController;
+use App\Http\Controllers\MyOrderController;
 use App\Http\Controllers\ScheduleApiController;
 
 Route::get('/', function () {
@@ -25,12 +26,9 @@ Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTi
 
 
 // Hanya route manual
-Route::get('/checkout/payment/{order_uuid}', [CheckoutController::class, 'payment'])
-    ->name('checkout.payment');
-
+Route::get('/checkout/payment/{order_uuid}', [CheckoutController::class, 'payment'])->name('checkout.payment');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-
 
 // Endpoint AJAX untuk ambil jadwal
 Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSchedules']);
@@ -54,6 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('method', ConselingMethodController::class)->names('method');
     Route::resource('schedule', ScheduleController::class)->names('schedule');
     Route::delete('/schedules/day/{date}', [ScheduleController::class, 'destroyByDate'])->name('schedule.destroyByDate');
+
+    Route::resource('my-order', MyOrderController::class)->names('myorder');
+
 });
 
 require __DIR__.'/auth.php';
