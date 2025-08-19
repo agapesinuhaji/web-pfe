@@ -21,8 +21,11 @@
         <a href="#contact" class="text-sm/6 font-semibold text-gray-700">Contact</a>
         @auth
           @if (auth()->user()->role == 'user')
-            <a href="/my-order" class="text-sm/6 font-semibold text-gray-700">My Orders</a>
+            <a href="{{url('my-order') }}" class="text-sm/6 font-semibold text-gray-700">My Orders</a>
+          @elseif (auth()->user()->role == 'administrator')
+            <a href="{{ url('/dashboard') }}" class="text-sm/6 font-semibold text-gray-700">Dashboard</a>
           @endif
+
         @endauth
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">

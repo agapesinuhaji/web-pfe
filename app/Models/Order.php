@@ -17,6 +17,7 @@ class Order extends Model
         'unique_kode',
         'total',
         'status',
+        'image',
     ];
 
     public function getRouteKeyName()

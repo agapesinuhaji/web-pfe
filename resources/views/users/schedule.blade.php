@@ -99,10 +99,10 @@
                         <div x-data="{ open: false, selectedDate: '', schedulesForDate: [], rawDate: '' }" class="bg-white shadow rounded-lg p-6">
                             <div class="flex items-center justify-between mb-4 border-b pb-2">
                                 <h3 class="text-xl font-bold text-gray-800">📅 Jadwal Terdaftar</h3>
-                                <a  data-modal-target="scheduleModal" data-modal-toggle="scheduleModal"
+                                {{-- <a  data-modal-target="scheduleModal" data-modal-toggle="scheduleModal"
                                 class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700 shadow">
                                     ➕ Tambah Jadwal Baru
-                                </a>
+                                </a> --}}
                             </div>
 
                             @php

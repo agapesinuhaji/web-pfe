@@ -29,6 +29,8 @@ Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTi
 Route::get('/checkout/payment/{order_uuid}', [CheckoutController::class, 'payment'])->name('checkout.payment');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::put('/checkout/{order_uuid}', [CheckoutController::class, 'update'])->name('checkout.update');
+
 
 // Endpoint AJAX untuk ambil jadwal
 Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSchedules']);

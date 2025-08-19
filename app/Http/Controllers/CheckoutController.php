@@ -96,6 +96,33 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.payment', $order->order_uuid);
     }
 
+    public function update(Request $request, $uuid)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // cari berdasarkan order_uuid, bukan id
+        $order = Order::where('order_uuid', $uuid)->firstOrFail();
+
+        if ($request->hasFile('payment_proof')) {
+            $file = $request->file('payment_proof');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/payment_proofs'), $filename);
+
+            // simpan ke database
+            $order->image = 'uploads/payment_proofs/' . $filename;
+            $order->status = 'pending'; // misalnya set status pesanan
+            $order->save();
+        }
+
+        return redirect()->route('myorder.show', $uuid);
+
+
+    }
+
+
+
 
     public function payment($order_uuid)
     {
