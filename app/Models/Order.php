@@ -19,6 +19,11 @@ class Order extends Model
         'status',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'order_uuid';
+    }
+
     // Relasi ke produk yang dipesan
     public function product()
     {

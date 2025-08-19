@@ -15,8 +15,11 @@ class MyOrderController extends Controller
         return view('orders.my-order', compact('orders'));
     }
 
-    public function show(Order $order)
+    public function show($order)
     {
-        return view('orders.show-order');
+
+        $order = Order::where('order_uuid', $order)->firstOrFail();
+
+        return view('orders.show-order', compact('order'));
     }
 }
