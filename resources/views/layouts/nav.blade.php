@@ -16,14 +16,16 @@
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
         <a href="{{ url('/') }}" class="text-sm/6 font-semibold text-gray-700">Home</a>
-        <a href="#our-team" class="text-sm/6 font-semibold text-gray-700">Our Team</a>
-        <a href="#services" class="text-sm/6 font-semibold text-gray-700">Services</a>
-        <a href="#contact" class="text-sm/6 font-semibold text-gray-700">Contact</a>
+        <a href="{{ url('/#our-team') }}" class="text-sm/6 font-semibold text-gray-700">Our Team</a>
+        <a href="{{ url('/#services') }}" class="text-sm/6 font-semibold text-gray-700">Services</a>
+        <a href="{{ url('/#contact') }}" class="text-sm/6 font-semibold text-gray-700">Contact</a>
         @auth
           @if (auth()->user()->role == 'user')
             <a href="{{url('my-order') }}" class="text-sm/6 font-semibold text-gray-700">My Orders</a>
           @elseif (auth()->user()->role == 'administrator')
             <a href="{{ url('/dashboard') }}" class="text-sm/6 font-semibold text-gray-700">Dashboard</a>
+          @elseif (auth()->user()->role == 'psikolog')
+            <a href="{{ url('/my-task') }}" class="text-sm/6 font-semibold text-gray-700">My Tasks</a>
           @endif
 
         @endauth
@@ -87,14 +89,17 @@
               <div class="-my-6 divide-y divide-gray-500/10">
                 <div class="space-y-2 py-6">
                   <a href="{{ url('/') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Home</a>
-                  <a href="#our-team" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Our Team</a>
-                  <a href="#services" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Services</a>
-                  <a href="#contact" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Contact</a>
+                  <a href="{{ url('/#our-team') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Our Team</a>
+                  <a href="{{ url('/#services') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Services</a>
+                  <a href="{{ url('/#contact') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Contact</a>
                   @auth
                     @if (auth()->user()->role == 'user')
-                      <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">My Order  </a>
-                      
-                    @endif
+                      <a href="{{ url('/my-order') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">My Orders</a>
+                    @elseif (auth()->user()->role == 'administrator')
+                      <a href="{{ url('/dashboard') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Dashboard</a>
+                    @elseif (auth()->user()->role == 'psikolog')
+                    <a href="{{ url('/my-task') }}" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">My Tasks</a>
+                     @endif
                   @endauth
                 </div>
                 <div class="py-6">  

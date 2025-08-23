@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MyTaskController;
+use App\Http\Controllers\MyOrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\ConselingMethodController;
-use App\Http\Controllers\MyOrderController;
 use App\Http\Controllers\ScheduleApiController;
+use App\Http\Controllers\ConselingMethodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,6 +57,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedules/day/{date}', [ScheduleController::class, 'destroyByDate'])->name('schedule.destroyByDate');
 
     Route::resource('my-order', MyOrderController::class)->names('myorder');
+    Route::get('/my-task/all', [MyTaskController::class, 'all'])->name('mytask.all');
+    Route::get('/my-task', [MyTaskController::class, 'index'])->name('mytask.index');
+    Route::get('/my-task/{order_uuid}', [MyTaskController::class, 'show'])->name('mytask.show');
+    // Route::resource('my-task', MyTaskController::class)->names('mytask');
+
+
+    
 
 });
 

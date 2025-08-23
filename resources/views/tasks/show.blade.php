@@ -20,15 +20,23 @@
     
     <!-- Detail Konseling -->
     <div class="bg-white rounded-2xl shadow p-6 mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Detail Orderan Anda</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Detail Orderan</h2>
       <div class="grid sm:grid-cols-2 gap-4 text-gray-700">
         <div>
           <p class="text-sm text-gray-500">Order ID</p>
           <p class="font-medium">#{{ strtoupper(substr($order->order_uuid, 0, 8)) }}</p>
         </div>
         <div>
-          <p class="text-sm text-gray-500">Nama Psikolog</p>
+          <p class="text-sm text-gray-500">Nama Client</p>
           <p class="font-medium">{{ $order->user->profile->name }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Nama Panggilan</p>
+          <p class="font-medium">{{ $order->user->profile->nickname }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Tempat, Tanggal Lahir</p>
+          <p class="font-medium">{{ $order->user->profile->date_of_place }}, {{ \Carbon\Carbon::parse($order->user->profile->date_of_birth)->format('d F Y') }}</p>
         </div>
         <div>
           <p class="text-sm text-gray-500">Waktu Konselng</p>
@@ -46,11 +54,6 @@
                         Waiting Payment
                     </p>
 
-                    <div>
-                      <a href="{{ route('checkout.payment', $order->order_uuid) }}" class="mt-3 inline-flex items-center rounded-lg text-xs bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                        Lakukan/Konfirmasi Pembayaran
-                      </a>
-                    </div>
                     @break
 
                 @case('approved')
@@ -76,7 +79,7 @@
 
     <!-- Komentar Konseling -->
 <div class="bg-white rounded-2xl shadow p-6">
-  <h2 class="text-xl font-semibold mb-6 text-gray-800">Tulis keluh kesah dan jawaban kamu disini.</h2>
+  <h2 class="text-xl font-semibold mb-6 text-gray-800">Tulis Jawaban anda disini.</h2>
 
   <!-- Form Komentar -->
   <form id="commentForm" class="mb-8">
@@ -104,7 +107,7 @@
       <img src="{{ asset('img/user.png') }}" class="w-10 h-10 rounded-full" alt="User">
       <div class="flex-1">
         <div class="flex items-center gap-2">
-          <span class="font-semibold text-gray-800">Kamu</span>
+          <span class="font-semibold text-gray-800">Nama Client</span>
           <span class="text-xs text-gray-500">20 Agustus 2025, 10:02 AM</span>
         </div>
             <p class="text-gray-700 mt-2">
@@ -117,7 +120,7 @@
       <img src="{{ asset('img/user.png') }}" class="w-10 h-10 rounded-full" alt="User">
       <div class="flex-1">
         <div class="flex items-center gap-2">
-          <span class="font-semibold text-gray-800">Kamu</span>
+          <span class="font-semibold text-gray-800">Nama Client</span>
           <span class="text-xs text-gray-500">20 Agustus 2025, 10:02 AM</span>
         </div>
             <p class="text-gray-700 mt-2">
@@ -131,7 +134,7 @@
       <div class="flex-1">
         <div class="flex items-center justify-end gap-2">
           <span class="text-xs text-gray-500">20 Agustus 2025, 10:05 AM</span>
-          <span class="font-semibold text-green-700">Dr. Maria</span>
+          <span class="font-semibold text-green-700">Kamu</span>
         </div>
         <p class="text-gray-700 mt-2">
           Tenang, itu wajar sekali. Mari kita bahas lebih dalam apa pemicu kecemasanmu.

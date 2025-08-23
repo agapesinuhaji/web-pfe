@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>All My Tasks - Psychology For Everyone</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <main class="flex-grow">
+
+    <div class="bg-white-50">
+        @include('layouts.nav')
+    </div>
+
+    <section class="bg-white py-16 my-8 antialiased dark:bg-gray-900 md:py-16 md:my-8">
+        <div class="mx-auto max-w-screen-lg px-4 2xl:px-0">
+            <nav class="mb-4 flex" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                    <li class="inline-flex items-center">
+                        <a href="{{ url('/my-task') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white">
+                            Tasks Today
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <span class="mx-1 h-4 w-4 flex items-center justify-center text-gray-400">|</span>
+                            <a href="{{ route('mytask.all') }}" class="ms-1 text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white md:ms-2">All Tasks</a>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            <h2 class="mb-4 text-xl font-semibold pt-4 text-gray-900 dark:text-white sm:text-2xl md:mb-6">All My Tasks</h2>
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+                <div class="mb-6">
+                    <form method="GET" action="{{ route('mytask.all') }}" class="mb-6 flex gap-2">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Search tasks..."
+                            class="w-full md:w-1/3 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <button type="submit"
+                            class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            Search
+                        </button>
+                    </form>
+
+                </div>
+                @forelse ($orders as $order)
+                    <div class="flex flex-wrap items-center gap-y-4 border-b border-gray-200 pb-4 dark:border-gray-700 md:pb-5">
+                        <dl class="w-1/2 sm:w-48">
+                            <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Order ID:</dt>
+                            <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                                <a href="{{ route('myorder.show', $order->order_uuid) }}" class="hover:underline">#{{ strtoupper(substr($order->order_uuid, 0, 8)) }}</a>
+                            </dd>
+                        </dl>
+
+                        <dl class="w-1/2 sm:w-1/4 md:flex-1 lg:w-auto">
+                            <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Date:</dt>
+                            <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                                {{ \Carbon\Carbon::parse($order->schedule->date)->format('d F Y') }}, {{ $order->schedule->time }}
+                            </dd>
+                        </dl>
+
+                        <dl class="w-1/2 sm:w-1/5 md:flex-1 lg:w-auto">
+                            <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Price:</dt>
+                            <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">Rp {{ number_format($order->price) }}</dd>
+                        </dl>
+
+                        <dl class="w-1/2 sm:w-1/4 sm:flex-1 lg:w-auto">
+                            <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
+                            <dd class="me-2 mt-1.5 inline-flex shrink-0 items-center rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                                <svg class="me-1 h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h6l2 4m-8-4v8m0-8V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v9h2m8 0H9m4 0h2m4 0h2v-4m0 0h-5m3.5 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-10 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"></path>
+                                </svg>
+                                In transit
+                            </dd>
+                        </dl>
+
+                        <div class="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
+                                <a href="{{ route('mytask.show', $order->order_uuid) }}" class="w-full inline-flex justify-center rounded-lg  border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 lg:w-auto">View details</a>
+                            </div>
+                    </div>
+                    
+                @empty
+                    
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+  </main>
+
+  {{-- Section Footer --}}
+<footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
+  <div class="mx-auto max-w-screen-xl text-center">
+      <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl pt-4 font-semibold text-white">
+           <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8" />
+         
+          Psychologist For Everyone  
+      </a>
+    </div>
+    <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">© 2025 &nbsp; <a href="{{ url('/') }}" class="hover:underline">PFE <!--™ --></a>. All Rights Reserved.</span>
+</footer>
+
+
+<script src="//unpkg.com/alpinejs" defer></script>
+
+</body>
+</html>
