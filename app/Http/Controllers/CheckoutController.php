@@ -15,6 +15,25 @@ class CheckoutController extends Controller
 {
     public function index()
     {
+
+        // Pastikan user sudah login
+    $user = auth()->user();
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    // Hitung order aktif user
+    $activeOrders = Order::where('user_id', $user->id)
+        ->whereNotIn('status', ['selesai', 'pay fail'])
+        ->count();
+
+    if ($activeOrders >= 2) {
+        return redirect()
+            ->route('myorder.index')
+            ->with('error', 'Setiap user hanya dapat memiliki 2 Orderan aktif.');
+    }
+
+
         $conselors = User::with('profile')
             ->where('role', 'psikolog')
             ->where('is_active', 1)
@@ -34,7 +53,7 @@ class CheckoutController extends Controller
         $request->validate([
             'name'          => 'required',
             'nickname'      => 'required',
-            'date_of_place' => 'required|string',
+            'domicile' => 'required|string',
             'date_of_birth' => 'required|date',
             'gender'        => 'required|in:L,P', // L = Laki-laki, P = Perempuan
             'no_whatsapp'   => 'required|numeric|digits_between:9,15',
@@ -50,7 +69,7 @@ class CheckoutController extends Controller
         $user->profile()->update([
             'name'          => $request->name,
             'nickname'      => $request->nickname,
-            'date_of_place' => $request->date_of_place,
+            'domicile' => $request->domicile,
             'date_of_birth' => $request->date_of_birth,
             'gender'        => $request->gender,
             'no_whatsapp'   => $request->no_whatsapp,

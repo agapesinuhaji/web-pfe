@@ -58,8 +58,8 @@
             </div>
 
             <div>
-              <label for="date_of_place" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Tempat Lahir </label>
-              <input type="text" id="date_of_place" name="date_of_place" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('date_of_place', auth()->user()->profile?->date_of_place) ?? '' }}" required />
+              <label for="domocile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Domisili </label>
+              <input type="text" id="domocile" name="domocile" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('domicile', auth()->user()->profile?->domicile) ?? '' }}" required />
             </div>
 
             <div>
@@ -80,27 +80,39 @@
 
 
             <div>
-              <label for="phone-input-3" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                Nomor WhatsApp
-              </label>
-              <div class="flex items-center">
-                <!-- Tombol Negara (Indonesia Saja) -->
-                <button class="z-10 inline-flex shrink-0 items-center rounded-s-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white" type="button" disabled>
-                  <svg fill="none" aria-hidden="true" class="me-2 h-4 w-4" viewBox="0 0 20 15">
-                    <!-- Bagian merah -->
-                    <rect width="20" height="7.5" fill="#FF0000" />
-                    <!-- Bagian putih -->
-                    <rect y="7.5" width="20" height="7.5" fill="#FFFFFF" />
-                  </svg>
-                  +62
-                </button>
+  <label for="no_whatsapp" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+    Nomor WhatsApp
+  </label>
+  <div class="flex items-center">
+    <div class="relative w-full">
+      <input 
+        type="text" 
+        id="no_whatsapp" 
+        name="no_whatsapp" 
+        class="z-20 block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 
+              focus:border-primary-500 focus:ring-primary-500 
+              dark:border-gray-600 dark:bg-gray-700 dark:text-white 
+              dark:placeholder:text-gray-400 dark:focus:border-primary-500" 
+        value="{{ old('no_whatsapp', auth()->user()->profile?->no_whatsapp) ?? '' }}" 
+        placeholder="+6281234567890"
+        required
+        inputmode="numeric"
+      />
+    </div>
+  </div>
+</div>
 
-                <!-- Input Nomor -->
-                <div class="relative w-full">
-                  <input type="text" id="no_whatsapp" name="no_whatsapp" class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:border-s-gray-700 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500" value="{{ old('no_whatsapp', auth()->user()->profile?->no_whatsapp) ?? '' }}" required />
-                </div>
-              </div>
-            </div>
+<script>
+document.getElementById('no_whatsapp').addEventListener('input', function (e) {
+  // hanya izinkan angka dan tanda +
+  this.value = this.value.replace(/[^0-9+]/g, '');
+  // hanya izinkan + di paling depan
+  if (this.value.includes('+')) {
+    this.value = this.value.replace(/\+(?!^)/g, '');
+  }
+});
+</script>
+
           </div>
         </div>
 
@@ -134,14 +146,14 @@
 </div>
         </div>
 
-        <div class="pt-4">
-                <label for="conseling_method" class="block mb-2 font-semibold">Konseling Via</label>
-                <Select id="method" name="method" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                    @foreach ($methods as $method)
-                        <option value="{{ $method->id }}">{{ $method->name }}</option>
-                    @endforeach
-                </Select>
-            </div>
+        {{-- <div class="pt-4">
+          <label for="conseling_method" class="block mb-2 font-semibold">Konseling Via</label>
+              <Select id="method" name="method" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                  @foreach ($methods as $method)
+                      <option value="{{ $method->id }}">{{ $method->name }}</option>
+                  @endforeach
+              </Select>
+        </div> --}}
 
 
         
@@ -180,6 +192,22 @@
                 </div>
             </div>
 
+
+            <!-- Konseling Via -->
+              <!-- Konseling Via -->
+              <div x-show="methods.length > 0" x-transition>
+                  <label class="block mb-2 font-semibold">Konseling Via</label>
+                  <select name="method_id" x-model="selectedMethod" class="w-full border rounded p-2">
+                      <option value="">-- pilih metode --</option>
+                      <template x-for="m in methods" :key="m.id">
+                          <option :value="m.id" x-text="m.name"></option>
+                      </template>
+                  </select>
+              </div>
+
+
+
+
             <!-- Pilih Tanggal -->
             <div x-show="selectedConselor" x-transition>
                 <label class="block mb-2 font-semibold">Pilih Tanggal</label>
@@ -215,6 +243,20 @@
                   </template>
               </div>
           </div>
+            <!-- Persetujuan -->
+            <div class="flex items-start pt-4">
+              <input 
+                  id="agreement" 
+                  type="checkbox" 
+                  name="agreement" 
+                  value="1"
+                  required
+                  class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              >
+              <label for="agreement" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                  Saya menyetujui bahwa data saya direkam dan digunakan untuk keperluan layanan konseling.
+              </label>
+            </div>
 
 
             <div class="pt-8">
@@ -256,13 +298,15 @@ function checkoutApp() {
         selectedConselor: '',
         selectedDate: '',
         selectedTime: '',
+        selectedMethod: '',
         times: [],
+        methods: [],   // 🔹 tambahan untuk Konseling Via
         flatpickrInstance: null,
 
         init() {
             this.flatpickrInstance = flatpickr("#datePicker", {
                 dateFormat: "Y-m-d",
-                disable: [], // nanti diisi dari DB
+                disable: [],
                 onChange: (selectedDates, dateStr) => {
                     this.selectedDate = dateStr;
                     this.fetchSchedules();
@@ -274,12 +318,18 @@ function checkoutApp() {
             this.selectedConselor = id;
             this.resetSelection();
 
-            // Ambil tanggal ready untuk konselor ini
+            // 🔹 Ambil metode konseling untuk konselor ini
+            try {
+                let res = await fetch(`/conselors/${id}/methods`);
+                this.methods = await res.json();
+            } catch (error) {
+                console.error('Gagal ambil metode konseling', error);
+            }
+
+            // 🔹 Ambil tanggal ready
             try {
                 let res = await fetch(`/available-dates/${id}`);
                 let availableDates = await res.json();
-
-                // Enable hanya tanggal yang tersedia
                 this.flatpickrInstance.set("enable", availableDates);
             } catch (error) {
                 console.error('Gagal ambil tanggal ready', error);
@@ -289,13 +339,14 @@ function checkoutApp() {
         resetSelection() {
             this.selectedDate = '';
             this.selectedTime = '';
+            this.selectedMethod = '';
+            this.methods = [];
             this.times = [];
             this.flatpickrInstance.clear();
         },
 
         async fetchSchedules() {
             if (!this.selectedConselor || !this.selectedDate) return;
-
             try {
                 let url = `/schedules/${this.selectedConselor}/${this.selectedDate}`;
                 let res = await fetch(url);
@@ -308,6 +359,7 @@ function checkoutApp() {
     }
 }
 </script>
+
 
 <script src="//unpkg.com/alpinejs" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

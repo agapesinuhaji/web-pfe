@@ -21,7 +21,7 @@ Route::get('/test', function () {
 });
 
 
-
+Route::get('/conselors/{conselor}/methods', [ScheduleApiController::class, 'getMethods']);
 Route::get('/available-dates/{id}', [ScheduleApiController::class, 'availableDates']);
 Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTimes']);
 

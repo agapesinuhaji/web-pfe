@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Schedule;
 
 class ScheduleApiController extends Controller
@@ -22,4 +23,10 @@ class ScheduleApiController extends Controller
             ->where('status', 'ready')
             ->pluck('time');
     }
+
+    public function getMethods(User $conselor)
+    {
+        return $conselor->methods()->where('status', 1)->get();
+    }
+
 }
