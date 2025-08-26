@@ -112,7 +112,7 @@ class CheckoutController extends Controller
 
             // simpan ke database
             $order->image = 'uploads/payment_proofs/' . $filename;
-            $order->status = 'pending'; // misalnya set status pesanan
+            $order->status = 'payed'; // misalnya set status pesanan
             $order->save();
         }
 

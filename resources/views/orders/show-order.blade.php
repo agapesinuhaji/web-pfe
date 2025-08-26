@@ -41,35 +41,35 @@
         <div>
           <p class="text-sm text-gray-500">Status</p>
             @switch($order->status)
-                @case('pending')
-                    <p class="me-2 mt-1.5 inline-flex items-center rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
-                        Waiting Payment
-                    </p>
+              @case('pending')
+                  <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                      Waiting Payment
+                  </dd>
+                  @break
 
-                    <div>
-                      <a href="{{ route('checkout.payment', $order->order_uuid) }}" class="mt-3 inline-flex items-center rounded-lg text-xs bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                        Lakukan/Konfirmasi Pembayaran
-                      </a>
-                    </div>
-                    @break
+              @case('payed')
+                  <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                      Payment Checked
+                  </dd>
+                  @break
 
-                @case('approved')
-                    <p class="me-2 mt-1.5 inline-flex items-center rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                        Payment Success
-                    </p>
-                    @break
+              @case('approved')
+                  <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                      Payment Success
+                  </dd>
+                  @break
 
-                @case('pay fail')
-                    <p class="me-2 mt-1.5 inline-flex items-center rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300">
-                        Payment Failed
-                    </p>
-                    @break
+              @case('pay fail')
+                  <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300">
+                      Payment Failed
+                  </dd>
+                  @break
 
-                @default
-                    <p class="me-2 mt-1.5 inline-flex items-center rounded bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">
-                        Done
-                    </p>
-            @endswitch
+              @default
+                  <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">
+                      Done
+                  </dd>
+          @endswitch
         </div>
       </div>
     </div>
@@ -145,8 +145,8 @@
 
 
 
-
   </div>
+
 </main>
 
 

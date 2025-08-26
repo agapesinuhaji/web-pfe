@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('nickname')->nullable();
             $table->date('date_of_birth')->nullable();
-            $table->string('date_of_place')->nullable();
+            $table->string('domicile')->nullable();
             $table->enum('gender', ['L', 'P'])->nullable();
             $table->string('no_whatsapp')->nullable();
             $table->string('image')->default('profile/noimage.jpg');

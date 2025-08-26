@@ -1,178 +1,142 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Kelola Jadwal Psikolog') }}
+            {{ __('Kelola Jadwal Psikolog ') }}<br>Periode : 26 Juni 2025 - 25 Juli 2025
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {{-- Form Jadwal --}}
-                <div class="bg-white overflow-hidden shadow sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4">Buat Jadwal Baru</h3>
-                    <form action="{{ route('schedule.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-6">
-                            <label for="user_id" class="block text-sm font-medium text-gray-700 mb-1">
-                                Pilih Psikolog
-                            </label>
-                            <div class="relative">
-                                <select name="user_id" id="user_id"
-                                    class="block w-full appearance-none border border-gray-300 rounded-lg bg-white px-4 py-2 pr-10 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700">
-                                    @foreach ($psychologists as $psych)
-                                        <option value="{{ $psych->id }}">{{ $psych->profile->name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
+            <form action="" method="POST">
+            @csrf
 
-                        <div class="mb-6">
-                            <label for="date" class="block text-sm font-medium text-gray-700 mb-1">
-                                Tanggal Konseling
-                            </label>
-                            <input type="date" name="date" id="date" required class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700">
-                        </div>
+            <!-- Pilih Konselor -->
+            <div class="mt-4">
+                <label class="block text-sm font-medium mb-2">Pilih Konselor</label>
+                <input type="hidden" name="counselor_id" id="counselor_id" />
 
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Jam Konseling</label>
-                            <div class="grid grid-cols-3 gap-3">
-                                @foreach (['07:00', '09:00', '11:00', '13:00', '15:00', '17:00'] as $time)
-                                    <label class="flex items-center">
-                                        <input 
-                                            type="checkbox" 
-                                            name="times[]" 
-                                            value="{{ $time }}" 
-                                            class="peer hidden"
-                                        >
-                                        <div class="w-full text-center cursor-pointer rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 
-                                                    peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
-                                                    hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600">
-                                            {{ $time }}
-                                        </div>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-
-
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-                    </form>
-                </div>
-
-                {{-- Table --}}
-                <div x-data="{ open: false, selectedDate: '', schedulesForDate: [], rawDate: '' }" class="bg-white shadow rounded-lg p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">📅 Jadwal Terdaftar</h3>
-
-                    @php
-                        $grouped = $schedules->groupBy('date');
-                    @endphp
-
-                    @if($grouped->count())
-                        <table class="w-full text-sm text-left text-gray-700">
-                            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                                <tr>
-                                    <th class="px-4 py-3">Tanggal</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach($grouped as $date => $items)
-                                    <tr>
-                                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($date)->format('d M Y') }}</td>
-                                        <td class="px-4 py-2">
-                                            <button
-                                                @click="
-                                                    open = true;
-                                                    selectedDate = '{{ \Carbon\Carbon::parse($date)->format('d M Y') }}';
-                                                    rawDate = '{{ $date }}';
-                                                    schedulesForDate = {{ $items->map(fn($item) => [
-                                                        'id' => $item->id,
-                                                        'time' => $item->time,
-                                                        'name' => $item->user->profile->name
-                                                    ])->toJson() }};
-                                                "
-                                                class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1.5 rounded shadow"
-                                            >
-                                                Lihat Jam
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <p class="text-gray-500 italic">Belum ada jadwal.</p>
-                    @endif
-
-                    <!-- Modal -->
-                    <div x-show="open" x-cloak class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-                        <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative" @click.away="open = false">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">🕒 Jadwal: <span x-text="selectedDate"></span></h3>
-
-                            <ul class="space-y-3 max-h-60 overflow-y-auto pr-2">
-                                <template x-for="(item, index) in schedulesForDate" :key="item.id">
-                                    <li class="flex justify-between items-center border-b pb-2 text-sm">
-                                        <span class="text-gray-700">
-                                            <span x-text="item.time" class="font-medium"></span> - 
-                                            <span x-text="item.name" class="text-gray-500"></span>
-                                        </span>
-                                        <form method="POST" :action="'/schedule/' + item.id" @submit.prevent="$event.target.submit()">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="text-red-600 hover:underline text-xs">Hapus</button>
-                                        </form>
-                                    </li>
-                                </template>
-                            </ul>
-
-                            <div class="mt-6 flex justify-between items-center">
-                                <form :action="'/schedules/day/' + rawDate" method="POST" class="inline-block">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="text-red-700 hover:text-red-900 text-sm font-semibold">
-                                        ❌ Hapus Semua
-                                    </button>
-                                </form>
-                                <button @click="open = false" class="text-gray-500 hover:text-gray-700 text-sm">Tutup</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach($psychologists as $c)
+                    <div class="counselor-card cursor-pointer p-4 border rounded-xl bg-white shadow hover:border-blue-500 hover:shadow-md transition" data-id="{{ $c->id }}">
+                        <div class="flex items-center gap-3">
+                            <img src="{{ $c->profile->avatar_url ?? 'https://via.placeholder.com/50' }}" class="w-12 h-12 rounded-full object-cover border" alt="{{ $c->profile->name }}">
+                            <div>
+                                <h3 class="font-semibold text-gray-700">{{ $c->profile->name }}</h3>
+                                <p class="text-sm text-gray-500">{{ $c->profile->specialization ?? 'Psikolog' }}</p>
                             </div>
                         </div>
                     </div>
+                    @endforeach
                 </div>
-
             </div>
+
+            <!-- Pilih Produk Konseling -->
+            <div class="mt-8">
+                <label class="block text-sm font-medium mb-2">Pilih Produk Konseling</label>
+                <input type="hidden" name="product_id" id="product_id" />
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="product-card cursor-pointer p-4 border rounded-xl bg-white shadow hover:border-green-500 hover:shadow-md transition" data-id="1">
+                        <h3 class="font-semibold text-gray-700">Umum</h3>
+                        <p class="text-sm text-gray-500">Konseling untuk kebutuhan umum</p>
+                    </div>
+
+                    <div class="product-card cursor-pointer p-4 border rounded-xl bg-white shadow hover:border-green-500 hover:shadow-md transition" data-id="2">
+                        <h3 class="font-semibold text-gray-700">Pelajar</h3>
+                        <p class="text-sm text-gray-500">Konseling khusus untuk pelajar</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Tanggal 26 s/d 25 bulan depan -->
+            <div class="mt-16 h-[70vh] overflow-y-auto space-y-4 pr-2">
+                <label class="block text-sm font-medium mb-2">Jadwal Konseling</label>
+                @foreach($dates as $date)
+                    <div class="p-3 border rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-gray-700">
+                            {{ $date->translatedFormat('l') }}, {{ $date->format('d M Y') }}
+                        </h3>
+                        <div class="slots space-y-2" data-date="{{ $date->toDateString() }}">
+                            <!-- Slot default -->
+                            <div class="flex gap-2">
+                                <input type="time" name="slots[{{ $date->toDateString() }}][]" class="border p-2 rounded w-1/3">
+                                <input type="time" name="slots[{{ $date->toDateString() }}][]" class="border p-2 rounded w-1/3">
+                                <button type="button" class="add-slot px-3 py-1 bg-green-500 text-white rounded">+ Tambah</button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+
+            <button type="submit" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg">
+                Simpan Jadwal
+            </button>
+            </form>
         </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const input = document.getElementById('date');
 
-            // Hari ini
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = today.getMonth(); // 0-indexed
+{{-- Pilihan Conselor --}}
+<script>
+  document.querySelectorAll(".counselor-card").forEach(card => {
+    card.addEventListener("click", function() {
+      // reset semua card
+      document.querySelectorAll(".counselor-card").forEach(c => {
+        c.classList.remove("ring-2", "ring-blue-500", "bg-blue-50");
+      });
 
-            // Akhir bulan depan
-            const endOfNextMonth = new Date(yyyy, mm + 2, 0); // 0 = hari terakhir bulan sebelumnya
+      // tandai yang dipilih
+      this.classList.add("ring-2", "ring-blue-500", "bg-blue-50");
 
-            // Format ke YYYY-MM-DD
-            const formatDate = (date) => {
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${date.getFullYear()}-${month}-${day}`;
-            };
+      // set value ke hidden input
+      document.getElementById("counselor_id").value = this.dataset.id;
+    });
+  });
+</script>
 
-            input.min = formatDate(today);
-            input.max = formatDate(endOfNextMonth);
-        });
-    </script>
+{{-- Pilihan Product --}}
+<script>
+  document.querySelectorAll(".product-card").forEach(card => {
+    card.addEventListener("click", function() {
+      // reset semua card
+      document.querySelectorAll(".product-card").forEach(c => {
+        c.classList.remove("ring-2", "ring-green-500", "bg-green-50");
+      });
+
+      // tandai yang dipilih
+      this.classList.add("ring-2", "ring-green-500", "bg-green-50");
+
+      // set value ke hidden input
+      document.getElementById("product_id").value = this.dataset.id;
+    });
+  });
+</script>
+
+
+{{-- Tambah Jam pada tanggal dan hapus --}}
+<script>
+  document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("add-slot")) {
+      let container = e.target.closest(".slots");
+      let date = container.getAttribute("data-date");
+      let div = document.createElement("div");
+      div.classList.add("flex","gap-2","mt-2");
+      div.innerHTML = `
+        <input type="time" name="slots[${date}][]" class="border p-2 rounded w-1/3">
+        <input type="time" name="slots[${date}][]" class="border p-2 rounded w-1/3">
+        <button type="button" class="remove-slot px-3 py-1 bg-red-500 text-white rounded">Hapus</button>
+      `;
+      container.appendChild(div);
+    }
+
+    if (e.target.classList.contains("remove-slot")) {
+      e.target.parentElement.remove();
+    }
+  });
+</script>
+
+
+        
+  
 </x-app-layout>

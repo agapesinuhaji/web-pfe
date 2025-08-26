@@ -58,7 +58,7 @@
             </div>
 
             <div>
-              <label for="date_of_place" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Tempat Latihr </label>
+              <label for="date_of_place" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Tempat Lahir </label>
               <input type="text" id="date_of_place" name="date_of_place" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('date_of_place', auth()->user()->profile?->date_of_place) ?? '' }}" required />
             </div>
 

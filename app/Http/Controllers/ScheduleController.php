@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Schedule;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
@@ -25,10 +27,25 @@ class ScheduleController extends Controller
 
     public function index()
     {
+
+        // mulai dari tanggal 26 bulan ini
+        $startDate = Carbon::now()->day(26);
+        if (Carbon::now()->day > 25) {
+            // kalau sudah lewat 25, loncat ke bulan depan
+            $startDate = $startDate->addMonth();
+        }
+
+        // sampai tanggal 25 bulan depan
+        $endDate = $startDate->copy()->addMonth()->day(25);
+
+        // buat periode tanggal
+        $dates = CarbonPeriod::create($startDate, $endDate);
+        
+        
         $psychologists = User::where('role', 'psikolog')->get(); // sesuaikan dengan strukturmu
         $schedules = Schedule::with('user')->latest()->get();
 
-        return view('schedules.index', compact('psychologists', 'schedules'));
+        return view('schedules.index', compact('psychologists', 'schedules', 'dates'));
     }
 
     /**

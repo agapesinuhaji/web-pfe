@@ -38,6 +38,7 @@
                                                 <th scope="col" class="px-4 py-3">Jadwal</th>
                                                 <th scope="col" class="px-4 py-3">Conselor</th>
                                                 <th scope="col" class="px-4 py-3">total</th>
+                                                <th scope="col" class="px-4 py-3">Bukti Bayar</th>
                                                 <th scope="col" class="px-4 py-3">Status</th>
                                                 <th scope="col" class="px-4 py-3">
                                                     <span class="sr-only">Actions</span>
@@ -57,8 +58,33 @@
                                                     <td class="px-4 py-3 ">{{ $order->conselor->profile->name }}</td>
                                                     <td class="px-4 py-3 ">{{ 'Rp ' . number_format($order->total, 0, ',', '.') }}</td>
                                                     <td class="px-4 py-3">
-                                                        <span class="bg-red-500 p-2 text-white rounded-2xl">{{ $order->status }}</span>
+                                                        @if ($order->image) 
+                                                            <img src="{{ asset($order->image) }}" 
+                                                                alt="Bukti Bayar" 
+                                                                class="w-24 h-24 object-cover rounded-lg border" />
+                                                        @else
+                                                            <span class="text-gray-400">Belum ada</span>
+                                                        @endif
                                                     </td>
+
+                                                    <td class="px-4 py-3">
+                                                        @php
+                                                            $statusClasses = [
+                                                                'pending' => 'bg-yellow-500',
+                                                                'payed' => 'bg-yellow-500',
+                                                                'approved' => 'bg-blue-500',
+                                                                'progress' => 'bg-gray-500',
+                                                                'selesai' => 'bg-green-500',
+                                                                'pay fail' => 'bg-red-500',
+                                                            ];
+                                                            $color = $statusClasses[$order->status] ?? 'bg-gray-300';
+                                                        @endphp
+
+                                                        <span class="{{ $color }} p-2 text-white rounded-2xl">
+                                                            {{ ucfirst($order->status) }}
+                                                        </span>
+                                                    </td>
+
                                                     <td class="px-4 py-3 flex items-center justify-end">
                                                         <button id="user-1-dropdown-button" data-dropdown-toggle="user-1-dropdown" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                                                             <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

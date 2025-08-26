@@ -9,61 +9,85 @@
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col" x-data="{ openModal: false }">
 
 <div class="bg-white-50">
   @include('layouts.nav')
 </div>
 
   <main class="flex-grow">
-    
-    <section class=" pt-16 pb-8 mt-14 px-4" id="services">
-        <div class="max-w-7xl mx-auto text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Pilih Paket Konseling Anda</h2>
-            <p class="text-gray-600 text-lg">Dapatkan layanan terbaik sesuai kebutuhan Anda</p>
+
+
+    <!-- Modal -->
+    <div x-show="openModal" x-transition.opacity class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-4xl mx-4 md:mx-6 rounded-2xl shadow-lg relative overflow-hidden" @click.away="openModal = false">
+        <div class="max-h-[90vh] overflow-y-auto p-6">
+        <button
+            @click="openModal = false"
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 dark:hover:text-white"
+        >
+            ✖
+        </button>
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-2">
+            Pilih Paket Konseling Anda
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 text-base md:text-lg">
+            Dapatkan layanan terbaik sesuai kebutuhan Anda
+            </p>
         </div>
 
-        <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-            <!-- Pricing Card 1 -->
-            <div class="w-full max-w-sm p-6 bg-white rounded-xl shadow-lg">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Paket Pelajar</h3>
-            <p class="text-gray-600 mb-6">Untuk sesi konseling personal</p>
-            <div class="text-4xl font-bold text-gray-900 mb-4">Rp45.000</div>
-            <ul class="text-gray-600 mb-6 space-y-2 text-left">
+        <!-- Konten Paket Konseling -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Card Paket Pelajar -->
+            <div class="p-6 bg-white dark:bg-gray-700 rounded-xl shadow-md border border-gray-200 dark:border-gray-600">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-3">Paket Pelajar</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Untuk sesi konseling personal</p>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Rp45.000</div>
+            <ul class="text-gray-600 dark:text-gray-300 mb-6 space-y-2 text-sm">
                 <li>✔️ 1x sesi (60 menit)</li>
-                <li>✔️ Rahasia aman dan tidak akan bocor</li>
+                <li>✔️ Rahasia aman</li>
                 <li>✔️ Psikolog tersertifikasi</li>
             </ul>
             <a href="/checkout"
-                class="block w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-medium py-2 rounded-lg transition duration-300">
+                class="block w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-medium py-2 rounded-lg transition">
                 Pesan Sekarang
             </a>
             </div>
 
-            <!-- Pricing Card 2 -->
-            <div class="w-full max-w-sm p-6 bg-white rounded-xl shadow-lg border-2 border-blue-600">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Paket Umum</h3>
-            <p class="text-gray-600 mb-6">Untuk sesi konseling personal</p>
-            <div class="text-4xl font-bold text-gray-900 mb-4">85.000</div>
-            <ul class="text-gray-600 mb-6 space-y-2 text-left">
+            <!-- Card Paket Umum -->
+            <div class="p-6 bg-white dark:bg-gray-700 rounded-xl shadow-md border-2 border-blue-600">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-3">Paket Umum</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Untuk sesi konseling personal</p>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Rp85.000</div>
+            <ul class="text-gray-600 dark:text-gray-300 mb-6 space-y-2 text-sm">
                 <li>✔️ 1x sesi (60 menit)</li>
-                <li>✔️ Rahasia aman dan tidak akan bocor</li>
+                <li>✔️ Rahasia aman</li>
                 <li>✔️ Psikolog tersertifikasi</li>
             </ul>
             <a href="/checkout"
-                class="block w-full bg-blue-600 text-center hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-300">
+                class="block w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-medium py-2 rounded-lg transition">
                 Pesan Sekarang
             </a>
             </div>
-        </div>
-    </section>
 
-    <section class="bg-white py-8 pb-16 mb-16 antialiased dark:bg-gray-900 md:py-16">
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+    <section class="bg-white py-8 pb-16 mb-16 antialiased dark:bg-gray-900 md:py-25">
         <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
             <div class="mx-auto max-w-5xl">
                 <div class="gap-4 sm:flex sm:items-center sm:justify-between">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My orders</h2>
-                    <div class="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0">
+                    <button @click="openModal = true" class="mt-4 sm:mt-0 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition flex items-center gap-2">
+                        <span class="text-lg font-bold">+</span> Konseling Baru
+                    </button>
                 </div>
             </div>
 
@@ -99,6 +123,12 @@
                                         </dd>
                                         @break
 
+                                    @case('payed')
+                                        <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                                            Payment Checked
+                                        </dd>
+                                        @break
+
                                     @case('approved')
                                         <dd class="me-2 mt-1.5 inline-flex items-center rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                                             Payment Success
@@ -130,10 +160,12 @@
 
                 </div>
             </div>
+               
 
-            </div>
+ 
         </div>
-        </section>
+        </div>
+    </section>
 
   </main>
 

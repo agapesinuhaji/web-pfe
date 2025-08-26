@@ -98,6 +98,7 @@
 
                         @if ($user->role == 'psikolog')
                             
+                        
                         <div class="relative rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
                             <button class="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800" data-modal-target="addMethodModal" data-modal-toggle="addMethodModal">
                                 Add Method
@@ -128,7 +129,6 @@
                                             <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="actionsMenuDropdown10">
                                                 <li>
                                                     @if ($method->status)
-                                                        {{-- Tombol DISABLE jika status == true --}}
                                                         <button type="button"
                                                             data-modal-target="disabledModal-{{ $method->id }}"
                                                             data-modal-toggle="disabledModal-{{ $method->id }}"
@@ -141,7 +141,6 @@
                                                             Disable
                                                         </button>
                                                     @else
-                                                        {{-- Tombol ENABLE jika status == false --}}
                                                         <button type="button"
                                                             data-modal-target="disabledModal-{{ $method->id }}"
                                                             data-modal-toggle="disabledModal-{{ $method->id }}"
@@ -159,7 +158,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- Modal Change Status --}}
                                 <div id="disabledModal-{{ $method->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                                     <div class="relative p-4 w-full max-w-md max-h-full">
                                         <!-- Modal content -->
@@ -190,6 +188,7 @@
                             @endforelse
                             
                         </div>
+                        
                         @endif
                     </div>
 
