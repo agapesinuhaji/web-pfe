@@ -11,6 +11,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleApiController;
 use App\Http\Controllers\ConselingMethodController;
+use App\Http\Controllers\PaymentMethodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,7 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-task/all', [MyTaskController::class, 'all'])->name('mytask.all');
     Route::get('/my-task', [MyTaskController::class, 'index'])->name('mytask.index');
     Route::get('/my-task/{order_uuid}', [MyTaskController::class, 'show'])->name('mytask.show');
-    // Route::resource('my-task', MyTaskController::class)->names('mytask');
+
+
+    Route::patch('payment-method/{id}/toggle-status', [PaymentMethodController::class, 'toggleStatus'])->name('paymentMethod.toggleStatus');
+    Route::resource('payment-method', PaymentMethodController::class)->names('paymentMethod');
 
 
     
