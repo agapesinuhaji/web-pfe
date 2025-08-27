@@ -19,10 +19,10 @@
                     @foreach($psychologists as $c)
                     <div class="counselor-card cursor-pointer p-4 border rounded-xl bg-white shadow hover:border-blue-500 hover:shadow-md transition" data-id="{{ $c->id }}">
                         <div class="flex items-center gap-3">
-                            <img src="{{ $c->profile->avatar_url ?? 'https://via.placeholder.com/50' }}" class="w-12 h-12 rounded-full object-cover border" alt="{{ $c->profile->name }}">
+                            <img src="{{ $c->profile->image }}" class="w-12 h-12 rounded-full object-cover border" alt="{{ $c->profile->name }}">
                             <div>
                                 <h3 class="font-semibold text-gray-700">{{ $c->profile->name }}</h3>
-                                <p class="text-sm text-gray-500">{{ $c->profile->specialization ?? 'Psikolog' }}</p>
+                                <p class="text-sm text-gray-500">Psikolog</p>
                             </div>
                         </div>
                     </div>

@@ -32,6 +32,14 @@
                         {{ __('Order') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
+                        {{ __('Periode') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
+                        {{ __('Payment Method') }}
+                    </x-nav-link>
+
 
                 </div>
             </div>
