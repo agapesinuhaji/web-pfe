@@ -31,12 +31,16 @@ class PeriodeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'status' => 'required|in:active,nonactive,done',
         ]);
 
         Periode::create([
             'name' => $request->name,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
 
@@ -67,6 +71,8 @@ class PeriodeController extends Controller
         // Validasi data
         $request->validate([
             'name' => 'required|string|max:255',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'status' => 'required|in:active,nonactive,done',
         ]);
 
@@ -76,6 +82,8 @@ class PeriodeController extends Controller
         // Update data
         $periode->update([
             'name' => $request->name,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
 

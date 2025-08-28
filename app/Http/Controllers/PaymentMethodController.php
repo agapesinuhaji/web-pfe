@@ -19,17 +19,6 @@ class PaymentMethodController extends Controller
         return view('payment.index', compact('paymentMethods'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
          // Validasi input
@@ -37,7 +26,7 @@ class PaymentMethodController extends Controller
             'name' => 'required|string|max:255',
             'atas_nama' => 'required|string|max:255',
             'number' => 'required|digits_between:1,30', // hanya angka, panjang max 20
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'status' => 'required|in:0,1',
         ]);
 
@@ -66,25 +55,6 @@ class PaymentMethodController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PaymentMethods $paymentMethods)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PaymentMethods $paymentMethods)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         // Ambil data lama
@@ -95,7 +65,7 @@ class PaymentMethodController extends Controller
             'name' => 'required|string|max:255',
             'atas_nama' => 'required|string|max:255',
             'number' => 'required|digits_between:1,30',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // nullable, karena tidak wajib
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048', // nullable, karena tidak wajib
             'status' => 'required|in:0,1',
         ]);
 

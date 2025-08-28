@@ -8,6 +8,8 @@ class Schedule extends Model
 {
     protected $fillable = [
         'conselor_id',
+        'periode_id',
+        'product_id',
         'date',
         'time',
         'status',

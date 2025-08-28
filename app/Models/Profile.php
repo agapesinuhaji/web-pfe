@@ -11,7 +11,7 @@ class Profile extends Model
         'name',
         'nickname',
         'date_of_birth',
-        'date_of_place',
+        'domicile',
         'gender',
         'no_whatsapp',
         'image',

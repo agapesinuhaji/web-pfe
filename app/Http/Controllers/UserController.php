@@ -70,7 +70,7 @@ class UserController extends Controller
         ]);
 
         // redirect to show user
-        return redirect('/user')->with(['success' => 'Your user has been updated!']);
+        return redirect('user/'. $user->id)->with(['success' => 'Your user has been updated!']);
     }
 
     /**

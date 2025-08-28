@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Periode;
+use App\Models\Product;
 use App\Models\Schedule;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -59,32 +61,113 @@ class ScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'user_id' => 'required|exists:users,id',
+    //         'date' => 'required|date|after_or_equal:today',
+    //         'times' => 'required|array|min:1',
+    //     ]);
+
+    //     foreach ($request->times as $time) {
+    //         Schedule::create([
+    //             'conselor_id' => $request->user_id,
+    //             'date' => $request->date,
+    //             'time' => $time,
+    //         ]);
+    //     }
+
+    //     return redirect()->route('user.schedule', $request->user_id)->with('success', 'Jadwal berhasil dibuat.');
+
+    // }
+
+     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'date' => 'required|date|after_or_equal:today',
-            'times' => 'required|array|min:1',
+            'periode_id' => 'required|exists:periodes,id',
+            'conselor_id' => 'required|exists:users,id',
+            'product_id' => 'required|exists:products,id',
+            'slots' => 'required|array',
         ]);
 
-        foreach ($request->times as $time) {
-            Schedule::create([
-                'conselor_id' => $request->user_id,
-                'date' => $request->date,
-                'time' => $time,
-            ]);
+        // Ambil semua schedule lama
+        $oldSchedules = Schedule::where('periode_id', $request->periode_id)
+            ->where('conselor_id', $request->conselor_id)
+            ->where('product_id', $request->product_id)
+            ->get();
+
+        // Kumpulkan semua jadwal baru dari input
+        $newSchedules = [];
+        foreach ($request->slots as $date => $times) {
+            foreach ($times as $time) {
+                if ($time) {
+                    $newSchedules[] = [
+                        'periode_id'  => $request->periode_id,
+                        'conselor_id' => $request->conselor_id,
+                        'product_id'  => $request->product_id,
+                        'date'        => $date,
+                        'time'        => $time,
+                    ];
+                }
+            }
         }
 
-        return redirect()->route('user.schedule', $request->user_id)->with('success', 'Jadwal berhasil dibuat.');
+        // Hapus jadwal lama yang tidak ada di input baru
+        foreach ($oldSchedules as $old) {
+            $exists = collect($newSchedules)->first(function ($new) use ($old) {
+                return $new['date'] == $old->date && $new['time'] == $old->time;
+            });
 
+            if (! $exists) {
+                $old->delete();
+            }
+        }
+
+        // Tambah jadwal baru yang belum ada
+        foreach ($newSchedules as $new) {
+            $exists = Schedule::where($new)->exists();
+            if (! $exists) {
+                Schedule::create($new);
+            }
+        }
+
+        return redirect()->route('schedule.show', $request->periode_id);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Schedule $schedule)
+    public function show(Request $request, $periode_id)
     {
-        //
+        // ambil periode
+        $periode = Periode::findOrFail($periode_id);
+
+        // buat range tanggal dari periode
+        $dates = CarbonPeriod::create($periode->start_date, $periode->end_date);
+
+        // data master
+        $psychologists = User::where('role', 'psikolog')->get();
+        $products = Product::where('status', 1)->get();
+
+        // ambil jadwal sesuai filter (jika ada)
+        $schedules = Schedule::query()
+            ->when($request->conselor_id, function ($q) use ($request) {
+                $q->where('conselor_id', $request->conselor_id);
+            })
+            ->when($request->product_id, function ($q) use ($request) {
+                $q->where('product_id', $request->product_id);
+            })
+            ->where('periode_id', $periode_id)
+            ->get()
+            ->groupBy('date');
+
+        return view('schedules.show', compact(
+            'periode',
+            'dates',
+            'psychologists',
+            'products',
+            'schedules'
+        ));
     }
 
     /**

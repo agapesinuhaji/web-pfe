@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->text('description')->nullable();
-            $table->string('image')->nullable();
             $table->decimal('price', 15, 2)->default(0);
             $table->boolean('status')->default(true);
             $table->softDeletes();
