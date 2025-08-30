@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ConselingMethod;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
@@ -122,6 +123,7 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'payment_method_id' => 'required|not_in:0|exists:payment_methods,id',
         ]);
 
         // cari berdasarkan order_uuid, bukan id
@@ -134,6 +136,7 @@ class CheckoutController extends Controller
 
             // simpan ke database
             $order->image = 'uploads/payment_proofs/' . $filename;
+            $order->payment_method_id = $request->payment_method_id;
             $order->status = 'payed'; // misalnya set status pesanan
             $order->save();
         }
@@ -156,6 +159,10 @@ class CheckoutController extends Controller
             return redirect()->route('myorder.index');
         }
 
-        return view('checkout.payment', compact('order'));
+        // Ambil payment method aktif
+        $paymentMethods = PaymentMethod::where('is_active', 1)->get();
+
+        return view('checkout.payment', compact('order', 'paymentMethods'));
     }
+
 }

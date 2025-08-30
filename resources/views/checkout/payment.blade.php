@@ -3,187 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Checkout</title>
-
+    <title>Checkout - Payment</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
 
-    <div class="bg-white-50">
+    <div class="bg-white">
         @include('layouts.nav')
     </div>
 
     <main class="flex-grow">
-        <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16 md:my-8 pt-20">
-            <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                <div class="mx-auto max-w-5xl">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Payment</h2>
+        <section class="py-12 pt-24">
+            <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Konfirmasi Pembayaran</h2>
 
-                    <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12">
-                        <form action="{{ route('checkout.update', $order->order_uuid) }}" method="POST" enctype="multipart/form-data" lass="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8">
-                            @csrf
-                            @method('PUT')
-                            <div class="mb-6 grid grid-cols-2 gap-4">
-                                <!-- Logo DANA -->
-                                <div class="col-span-2 flex items-center">
-                                    <img src="{{ asset('img/logo-dana.png') }}" alt="Logo DANA" class="w-60 h-auto">
-                                </div>
+                <form action="{{ route('checkout.update', $order->order_uuid) }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    @csrf
+                    @method('PUT')
 
-                                <!-- Nomor Rekening -->
-                                <div class="col-span-2">
-                                    <label for="dana-number" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                                        Nomor DANA
-                                    </label>
-                                    <div class="flex items-center gap-2">
-                                        <input type="text" id="dana-number" value="081234" readonly class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                                        <button type="button" onclick="copyDanaNumber()" class="px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
+                    {{-- LEFT: Payment Method --}}
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Pilih Metode Pembayaran</h3>
 
-                                <!-- Nama Pemilik -->
-                                <div class="col-span-2 sm:col-span-1">
-                                    <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                                        Nama Pemilik
-                                    </label>
-                                    <input type="text" value="Psikology For Everyone" readonly class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                                </div>
+                        {{-- Select --}}
+                        <div class="mb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank / E-Wallet</label>
+                            <select id="payment-method-select" name="payment_method_id" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                <option value="">-- Pilih --</option>
+                                @foreach($paymentMethods as $pm)
+                                    <option value="{{ $pm->id }}"
+                                        data-image="{{ asset('storage/' . $pm->image) }}"
+                                        data-number="{{ $pm->number }}"
+                                        data-owner="{{ $pm->atas_nama }}">
+                                        {{ $pm->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <!-- Upload Bukti Pembayaran -->
-                                <div class="col-span-2">
-                                    <label for="payment-proof" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                                        Unggah Bukti Pembayaran
-                                    </label>
-                                    <input type="file" id="payment-proof" accept="image/*" name="payment_proof" class="block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500">
-                                    @error('payment_proof')
-                                        <p class="mt-2 text-sm text-red-600 dark:text-red-500">
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
+                        {{-- Detail tampil setelah pilih --}}
+                        <div id="payment-detail" class="hidden space-y-3">
+                            <img id="pm-image" src="" alt="Logo" class="w-40 h-auto">
+                            <div>
+                                <label class="block text-sm text-gray-900 dark:text-white">Nomor Rekening</label>
+                                <div class="flex items-center gap-2">
+                                    <span id="pm-number" class="text-gray-800 dark:text-gray-200 font-medium"></span>
+                                    <button type="button" onclick="copyNumber()" class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">Copy</button>
                                 </div>
                             </div>
-                            <button type="submit" class="flex w-full items-center mt-6 justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Konfirmasi Pembayaran</button>
-                        </form>
-
-                    <div class="mt-6 grow sm:mt-8 lg:mt-0">
-                        <div class="space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800">
-                            <div class="space-y-2">
-                                <dl class="flex items-center justify-between gap-4">
-                                    <div>
-                                        <dt class="text-base font-semibold text-gray-900">{{ $order->product->name }}</dt>
-                                        <p class="text-xs text-gray-500 dark:text-gray-500">{{ $order->method->name }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-500">Bersama Psikolog {{ $order->conselor->profile->name }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-500">
-                                            {{ \Carbon\Carbon::parse($order->schedule->date)->format('d F Y') }}, {{ $order->schedule->time }}
-                                        </p>
-                                    </div>
-                                    <dd class="text-base font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->price) }}</dd>
-                                </dl>
-                            
-                                <dl class="flex items-center justify-between gap-4">
-                                    <dt class="text-base font-semibold text-gray-900">Kode Unik</dt>
-                                    <dd class="text-base font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->unique_kode) }}</dd>
-                                </dl>
+                            <div>
+                                <label class="block text-sm text-gray-900 dark:text-white">Atas Nama</label>
+                                <p id="pm-owner" class="text-gray-800 dark:text-gray-200 font-medium"></p>
                             </div>
-                            {{-- 
-                                <dl class="flex items-center justify-between gap-4">
-                                    <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
-                                    <dd class="text-base font-medium text-green-500">-$299.00</dd>
-                                </dl>
-                            --}}
+                        </div>
+
+                        {{-- Upload bukti --}}
+                        <div class="mt-6">
+                            <label for="payment-proof" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Unggah Bukti Pembayaran</label>
+                            <input type="file" id="payment-proof" accept="image/*" name="payment_proof" class="block w-full rounded-lg border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            @error('payment_proof')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="mt-6 w-full px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Konfirmasi Pembayaran</button>
+                    </div>
+
+                    {{-- RIGHT: Order Summary --}}
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Ringkasan Order</h3>
+                        <div class="space-y-4">
+                            <dl class="flex items-center justify-between gap-4">
+                                <div>
+                                    <dt class="text-base font-semibold text-gray-900 dark:text-white">{{ $order->product->name }}</dt>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $order->method->name }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Bersama Psikolog {{ $order->conselor->profile->name }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ \Carbon\Carbon::parse($order->schedule->date)->format('d F Y') }}, {{ $order->schedule->time }}
+                                    </p>
+                                </div>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->price) }}</dd>
+                            </dl>
+
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-semibold text-gray-900 dark:text-white">Kode Unik</dt>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">Rp {{ number_format($order->unique_kode) }}</dd>
+                            </dl>
 
                             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                 <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
                                 <dd class="flex items-center gap-2">
                                     <span id="total-amount" class="text-base font-bold text-gray-900 dark:text-white">Rp {{ number_format($order->total) }}</span>
-                                    <button onclick="copyTotal()" id="copy-total-btn" class="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
-                                        Copy
-                                    </button>
+                                    <button type="button" onclick="copyTotal()" id="copy-total-btn" class="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Copy</button>
                                 </dd>
                             </dl>
-
-                            <p id="copy-total-msg" class="text-sm text-green-600 mt-1 hidden">Total transaksi berhasil disalin!</p>
+                            <p id="copy-total-msg" class="text-sm text-green-600 mt-1 hidden">Total berhasil disalin!</p>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </section>
     </main>
 
-
-    {{-- Section Footer --}}
-    <footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
-        <div class="mx-auto max-w-screen-xl text-center">
-            <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl pt-4 font-semibold text-white">
-                <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8" />
-                Psychologist For Everyone  
-            </a>
-        </div>
-        <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">
-            © 2025 &nbsp; <a href="{{ url('/') }}" class="hover:underline">PFE <!--™ --></a>. All Rights Reserved.
-        </span>
+    <footer class="p-4 bg-gray-900 text-center text-white">
+        <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl font-semibold">
+            <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8">
+            Psychologist For Everyone
+        </a>
+        <span class="text-sm block mt-2">© 2025 PFE. All Rights Reserved.</span>
     </footer>
 
+    <script>
+        const select = document.getElementById('payment-method-select');
+        const detail = document.getElementById('payment-detail');
+        const img = document.getElementById('pm-image');
+        const number = document.getElementById('pm-number');
+        const owner = document.getElementById('pm-owner');
+        let currentNumber = "";
 
+        select.addEventListener('change', function () {
+            const option = this.options[this.selectedIndex];
+            if(option.value) {
+                detail.classList.remove('hidden');
+                img.src = option.getAttribute('data-image');
+                number.innerText = option.getAttribute('data-number');
+                owner.innerText = option.getAttribute('data-owner');
+                currentNumber = option.getAttribute('data-number');
+            } else {
+                detail.classList.add('hidden');
+            }
+        });
 
+        function copyNumber() {
+            if(currentNumber) {
+                navigator.clipboard.writeText(currentNumber);
+                alert("Nomor berhasil disalin: " + currentNumber);
+            }
+        }
 
-{{--  No Rekening --}}
-<script>
-    function copyDanaNumber() {
-        const danaInput = document.getElementById('dana-number');
-        const copyMsg = document.getElementById('copy-msg');
-        const copyBtn = document.getElementById('copy-btn');
+        function copyTotal() {
+            const totalText = document.getElementById('total-amount').innerText;
+            const copyMsg = document.getElementById('copy-total-msg');
+            const copyBtn = document.getElementById('copy-total-btn');
 
-        danaInput.select();
-        danaInput.setSelectionRange(0, 99999); // untuk mobile
-        document.execCommand('copy');
+            const tempInput = document.createElement('input');
+            tempInput.value = totalText.replace(/[^\d]/g, '');
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
 
-        // Tampilkan pesan tanpa alert
-        copyMsg.classList.remove('hidden');
-
-        // Ubah teks tombol sementara
-        const originalText = copyBtn.innerText;
-        copyBtn.innerText = "Copied!";
-        setTimeout(() => {
-            copyBtn.innerText = originalText;
-            copyMsg.classList.add('hidden');
-        }, 2000);
-    }
-</script>
-
-
-
-{{-- total --}}
-<script>
-    function copyTotal() {
-        const totalText = document.getElementById('total-amount').innerText;
-        const copyMsg = document.getElementById('copy-total-msg');
-        const copyBtn = document.getElementById('copy-total-btn');
-
-        // Buat elemen input sementara untuk menyalin teks
-        const tempInput = document.createElement('input');
-        tempInput.value = totalText.replace(/[^\d]/g, ''); // hanya angka kalau mau
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempInput);
-
-        // Feedback UI
-        copyMsg.classList.remove('hidden');
-        const originalText = copyBtn.innerText;
-        copyBtn.innerText = "Copied!";
-        setTimeout(() => {
-            copyBtn.innerText = originalText;
-            copyMsg.classList.add('hidden');
-        }, 2000);
-    }
-</script>
-
-{{-- <script src="//unpkg.com/alpinejs" defer></script> --}}
-
+            copyMsg.classList.remove('hidden');
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "Copied!";
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyMsg.classList.add('hidden');
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
