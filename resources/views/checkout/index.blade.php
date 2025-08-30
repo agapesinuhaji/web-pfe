@@ -20,6 +20,15 @@
 
 <section class="bg-white py-16 antialiased dark:bg-gray-900 md:py-40">
   <form action="{{ route('checkout.store') }}" method="POST" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     @csrf
     <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
       <div class="min-w-0 flex-1 space-y-8">
@@ -58,8 +67,8 @@
             </div>
 
             <div>
-              <label for="domocile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Domisili </label>
-              <input type="text" id="domocile" name="domocile" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('domicile', auth()->user()->profile?->domicile) ?? '' }}" required />
+              <label for="domicile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Domisili </label>
+              <input type="text" id="domicile" name="domicile" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('domicile', auth()->user()->profile?->domicile) ?? '' }}" required />
             </div>
 
             <div>
@@ -291,7 +300,6 @@ document.getElementById('no_whatsapp').addEventListener('input', function (e) {
 
 
 
-
 <script>
 function checkoutApp() {
     return {
@@ -299,11 +307,35 @@ function checkoutApp() {
         selectedDate: '',
         selectedTime: '',
         selectedMethod: '',
+        selectedProduct: document.querySelector('input[name="paket"]:checked')?.value || '',
         times: [],
-        methods: [],   // 🔹 tambahan untuk Konseling Via
+        methods: [],
         flatpickrInstance: null,
 
         init() {
+            // Update selectedProduct kalau user ganti paket
+            document.querySelectorAll('input[name="paket"]').forEach(radio => {
+              radio.addEventListener('change', (e) => {
+                  // simpan paket baru
+                  this.selectedProduct = e.target.value;
+
+                  // uncheck semua konselor
+                  document.querySelectorAll('input[name="konselor"]').forEach(k => {
+                      k.checked = false;
+                  });
+
+                  // reset pilihan lama
+                  this.selectedConselor = '';
+                  this.resetSelection();
+
+                  // opsional: scroll ke area konselor biar user sadar
+                  const firstCons = document.querySelector('input[name="konselor"]');
+                  if (firstCons) {
+                      firstCons.closest('label')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+              });
+          });
+
             this.flatpickrInstance = flatpickr("#datePicker", {
                 dateFormat: "Y-m-d",
                 disable: [],
@@ -326,9 +358,10 @@ function checkoutApp() {
                 console.error('Gagal ambil metode konseling', error);
             }
 
-            // 🔹 Ambil tanggal ready
+            // 🔹 Ambil tanggal ready dengan filter product_id
             try {
-                let res = await fetch(`/available-dates/${id}`);
+                let url = `/available-dates/${id}?product_id=${this.selectedProduct}`;
+                let res = await fetch(url);
                 let availableDates = await res.json();
                 this.flatpickrInstance.set("enable", availableDates);
             } catch (error) {
@@ -342,13 +375,16 @@ function checkoutApp() {
             this.selectedMethod = '';
             this.methods = [];
             this.times = [];
-            this.flatpickrInstance.clear();
+            if (this.flatpickrInstance) {
+                this.flatpickrInstance.clear();
+                this.flatpickrInstance.set("enable", []); // disable semua sebelum reload
+            }
         },
 
         async fetchSchedules() {
             if (!this.selectedConselor || !this.selectedDate) return;
             try {
-                let url = `/schedules/${this.selectedConselor}/${this.selectedDate}`;
+                let url = `/schedules/${this.selectedConselor}/${this.selectedDate}?product_id=${this.selectedProduct}`;
                 let res = await fetch(url);
                 this.times = await res.json();
                 this.selectedTime = '';
@@ -359,6 +395,7 @@ function checkoutApp() {
     }
 }
 </script>
+
 
 
 <script src="//unpkg.com/alpinejs" defer></script>

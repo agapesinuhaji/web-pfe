@@ -22,10 +22,10 @@ Route::get('/test', function () {
     return view('test');
 });
 
-
+// API untuk frontend (AJAX)
 Route::get('/conselors/{conselor}/methods', [ScheduleApiController::class, 'getMethods']);
-Route::get('/available-dates/{id}', [ScheduleApiController::class, 'availableDates']);
-Route::get('/schedules/{id}/{date}', [ScheduleApiController::class, 'availableTimes']);
+Route::get('/available-dates/{conselor}', [ScheduleApiController::class, 'availableDates']);
+Route::get('/schedules/{conselor}/{date}', [ScheduleApiController::class, 'availableTimes']);
 
 
 // Hanya route manual

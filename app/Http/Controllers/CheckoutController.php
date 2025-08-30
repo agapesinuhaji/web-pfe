@@ -53,23 +53,26 @@ class CheckoutController extends Controller
         $request->validate([
             'name'          => 'required',
             'nickname'      => 'required',
-            'domicile' => 'required|string',
+            'domicile'      => 'required',
             'date_of_birth' => 'required|date',
             'gender'        => 'required|in:L,P', // L = Laki-laki, P = Perempuan
             'no_whatsapp'   => 'required|numeric|digits_between:9,15',
             'paket'         => 'required|exists:products,id',
-            'method'        => 'required|exists:conseling_methods,id',
+            'method_id'        => 'required|exists:conseling_methods,id',
             'konselor'      => 'required|exists:users,id',
             'date'          => 'required',
             'selectedTime'  => 'required',
         ]);
+
+
+        
 
         // Simpan ke database
         //Profile
         $user->profile()->update([
             'name'          => $request->name,
             'nickname'      => $request->nickname,
-            'domicile' => $request->domicile,
+            'domicile'      => $request->domicile,
             'date_of_birth' => $request->date_of_birth,
             'gender'        => $request->gender,
             'no_whatsapp'   => $request->no_whatsapp,
@@ -97,7 +100,7 @@ class CheckoutController extends Controller
             'product_id' => $request->paket,
             'conselor_id'=> $request->konselor,
             'schedule_id'=> $schedule->id, // Ambil dari hasil query
-            'method_id'  => $request->method,
+            'method_id'  => $request->method_id,
             'price'      => $product->price,
             'unique_kode'=> $uniqueCode,
             'total'      => $total,

@@ -13,27 +13,31 @@ use Illuminate\Http\Request;
 class ScheduleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Ambil daftar jam untuk konselor + tanggal + optional produk
      */
-
-    public function getSchedules($conselorId, $date)
+    public function getSchedules(Request $request, $conselorId, $date)
     {
-        $schedules = Schedule::where('conselor_id', $conselorId)
+        $query = Schedule::where('conselor_id', $conselorId)
             ->where('date', $date)
-            ->where('status', 'ready')
-            ->orderBy('time')
-            ->pluck('time');
+            ->where('status', 'ready');
+
+        if ($request->has('product_id')) {
+            $query->where('product_id', $request->product_id);
+        }
+
+        $schedules = $query->orderBy('time')->pluck('time');
 
         return response()->json($schedules);
     }
 
+    /**
+     * Halaman daftar jadwal semua psikolog
+     */
     public function index()
     {
-
         // mulai dari tanggal 26 bulan ini
         $startDate = Carbon::now()->day(26);
         if (Carbon::now()->day > 25) {
-            // kalau sudah lewat 25, loncat ke bulan depan
             $startDate = $startDate->addMonth();
         }
 
@@ -42,46 +46,19 @@ class ScheduleController extends Controller
 
         // buat periode tanggal
         $dates = CarbonPeriod::create($startDate, $endDate);
-        
-        
-        $psychologists = User::where('role', 'psikolog')->get(); // sesuaikan dengan strukturmu
+
+        $psychologists = User::where('role', 'psikolog')->get();
         $schedules = Schedule::with('user')->latest()->get();
 
         return view('schedules.index', compact('psychologists', 'schedules', 'dates'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        
-    }
+    public function create() {}
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan jadwal baru untuk konselor
      */
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'user_id' => 'required|exists:users,id',
-    //         'date' => 'required|date|after_or_equal:today',
-    //         'times' => 'required|array|min:1',
-    //     ]);
-
-    //     foreach ($request->times as $time) {
-    //         Schedule::create([
-    //             'conselor_id' => $request->user_id,
-    //             'date' => $request->date,
-    //             'time' => $time,
-    //         ]);
-    //     }
-
-    //     return redirect()->route('user.schedule', $request->user_id)->with('success', 'Jadwal berhasil dibuat.');
-
-    // }
-
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'periode_id' => 'required|exists:periodes,id',
@@ -90,13 +67,11 @@ class ScheduleController extends Controller
             'slots' => 'required|array',
         ]);
 
-        // Ambil semua schedule lama
         $oldSchedules = Schedule::where('periode_id', $request->periode_id)
             ->where('conselor_id', $request->conselor_id)
             ->where('product_id', $request->product_id)
             ->get();
 
-        // Kumpulkan semua jadwal baru dari input
         $newSchedules = [];
         foreach ($request->slots as $date => $times) {
             foreach ($times as $time) {
@@ -112,18 +87,15 @@ class ScheduleController extends Controller
             }
         }
 
-        // Hapus jadwal lama yang tidak ada di input baru
+        // hapus jadwal lama yang tidak ada di input baru
         foreach ($oldSchedules as $old) {
-            $exists = collect($newSchedules)->first(function ($new) use ($old) {
-                return $new['date'] == $old->date && $new['time'] == $old->time;
-            });
-
+            $exists = collect($newSchedules)->first(fn($new) => $new['date'] == $old->date && $new['time'] == $old->time);
             if (! $exists) {
                 $old->delete();
             }
         }
 
-        // Tambah jadwal baru yang belum ada
+        // tambah jadwal baru yang belum ada
         foreach ($newSchedules as $new) {
             $exists = Schedule::where($new)->exists();
             if (! $exists) {
@@ -135,28 +107,19 @@ class ScheduleController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Tampilkan jadwal per periode
      */
     public function show(Request $request, $periode_id)
     {
-        // ambil periode
         $periode = Periode::findOrFail($periode_id);
-
-        // buat range tanggal dari periode
         $dates = CarbonPeriod::create($periode->start_date, $periode->end_date);
 
-        // data master
         $psychologists = User::where('role', 'psikolog')->get();
         $products = Product::where('status', 1)->get();
 
-        // ambil jadwal sesuai filter (jika ada)
         $schedules = Schedule::query()
-            ->when($request->conselor_id, function ($q) use ($request) {
-                $q->where('conselor_id', $request->conselor_id);
-            })
-            ->when($request->product_id, function ($q) use ($request) {
-                $q->where('product_id', $request->product_id);
-            })
+            ->when($request->conselor_id, fn($q) => $q->where('conselor_id', $request->conselor_id))
+            ->when($request->product_id, fn($q) => $q->where('product_id', $request->product_id))
             ->where('periode_id', $periode_id)
             ->get()
             ->groupBy('date');
@@ -170,25 +133,9 @@ class ScheduleController extends Controller
         ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Schedule $schedule)
-    {
-        //
-    }
+    public function edit(Schedule $schedule) {}
+    public function update(Request $request, Schedule $schedule) {}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Schedule $schedule)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         Schedule::findOrFail($id)->delete();
