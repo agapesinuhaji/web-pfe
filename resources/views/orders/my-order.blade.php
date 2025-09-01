@@ -85,9 +85,17 @@
             <div class="mx-auto max-w-5xl">
                 <div class="gap-4 sm:flex sm:items-center sm:justify-between">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">My orders</h2>
-                    <button @click="openModal = true" class="mt-4 sm:mt-0 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition flex items-center gap-2">
-                        <span class="text-lg font-bold">+</span> Konseling Baru
-                    </button>
+                    @php
+                        $activeStatuses = ['pending', 'payed', 'approved', 'progress'];
+                        $activeOrders = $orders->whereIn('status', $activeStatuses);
+                    @endphp
+
+                    @if ($activeOrders->count() < 2)
+                        <button @click="openModal = true" 
+                            class="mt-4 sm:mt-0 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition flex items-center gap-2">
+                            <span class="text-lg font-bold">+</span> Konseling Baru
+                        </button>
+                    @endif
                 </div>
             </div>
 
@@ -99,6 +107,9 @@
                                 <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Order ID:</dt>
                                 <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
                                     <a href="{{ route('myorder.show', $order->order_uuid) }}" class="hover:underline">#{{ strtoupper(substr($order->order_uuid, 0, 8)) }}</a>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                                        {{ $order->created_at->format('d-m-Y H:i:s') }}
+                                    </div>
                                 </dd>
                             </dl>
 
