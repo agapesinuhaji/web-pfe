@@ -33,14 +33,6 @@
         "Liberation Mono", "Courier New", "monospace";
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
     *,
     ::after,
@@ -49,4 +41,36 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentcolor);
     }
+}
+
+/* =========================
+   Quill + Tailwind Prose Fix
+   ========================= */
+
+/* Bullet list */
+ol[data-list="bullet"],
+ul[data-list="bullet"],
+.prose ol[data-list="bullet"],
+.prose ul[data-list="bullet"] {
+    list-style-type: disc; /* bullet */
+    padding-left: 1.5rem; /* spasi kiri */
+    margin: 0.5rem 0; /* jarak atas-bawah */
+}
+
+/* Ordered list */
+ol[data-list="ordered"],
+ul[data-list="ordered"],
+.prose ol[data-list="ordered"],
+.prose ul[data-list="ordered"] {
+    list-style-type: decimal; /* angka */
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+/* Agar <li> tampil rapi */
+ol[data-list] > li,
+ul[data-list] > li,
+.prose ol[data-list] > li,
+.prose ul[data-list] > li {
+    display: list-item;
 }

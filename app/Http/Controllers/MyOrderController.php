@@ -20,6 +20,10 @@ class MyOrderController extends Controller
 
         $order = Order::where('order_uuid', $order)->firstOrFail();
 
-        return view('orders.show-order', compact('order'));
+         // ambil communications khusus berdasarkan order_id
+        $communications = $order->communications()->with('user')->get();
+        
+
+        return view('orders.show-order', compact('order', 'communications'));
     }
 }

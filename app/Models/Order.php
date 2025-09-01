@@ -54,4 +54,10 @@ class Order extends Model
     {
         return $this->belongsTo(ConselingMethod::class, 'method_id');
     }
+
+    // relasi ke Communication
+    public function communications()
+    {
+        return $this->hasMany(Communication::class);
+    }
 }

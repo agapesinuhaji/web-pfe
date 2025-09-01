@@ -99,6 +99,25 @@
                 </div>
             </div>
 
+            @php
+                $pendingOrders = $orders->where('status', 'pending');
+            @endphp
+
+            @if ($pendingOrders->isNotEmpty())
+                <div class="mt-4 mb-6 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-300">
+                    <p class="font-semibold mb-2">⚠️ Anda memiliki order yang belum dibayar. Silakan lakukan pembayaran:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach ($pendingOrders as $order)
+                            <li>
+                                <a href="{{ route('myorder.show', $order->order_uuid) }}" class="hover:underline font-medium">
+                                    #{{ strtoupper(substr($order->order_uuid, 0, 8)) }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="mt-6 flow-root sm:mt-8">
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse ($orders as $order)

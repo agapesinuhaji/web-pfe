@@ -5,14 +5,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MyTaskController;
 use App\Http\Controllers\MyOrderController;
+use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleApiController;
-use App\Http\Controllers\ConselingMethodController;
+use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\ConselingMethodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -69,7 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('periode', PeriodeController::class)->names('periode');
 
 
-    
+    Route::post('/communications', [CommunicationController::class, 'store'])->name('communications.store');
 
 });
 

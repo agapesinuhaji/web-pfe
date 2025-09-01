@@ -8,6 +8,7 @@
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -17,14 +18,41 @@
 
   <main class="flex-grow bg-gray-50 py-16 my-8 ">
   <div class="max-w-4xl mx-auto px-4">
+    {{-- Alert jika order pending --}}
+    @if ($order->status === 'pending')
+      <div class="mb-6 p-4 rounded-lg bg-yellow-50 border border-yellow-300">
+        <div class="flex items-center gap-2 text-yellow-800">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="font-medium">Silahkan lakukan pembayaran untuk order ini.</span>
+        </div>
+        <div class="mt-2">
+          <a href="{{ url('checkout/payment/' . $order->order_uuid) }}" 
+            class="inline-block text-sm text-blue-600 hover:underline font-medium">
+            Lanjutkan Pembayaran →
+          </a>
+        </div>
+      </div>
+    @endif
     
     <!-- Detail Konseling -->
     <div class="bg-white rounded-2xl shadow p-6 mb-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold text-gray-800">Detail Orderan Anda</h2>
-        {{-- <a data-modal-target="rescheduleModal" data-modal-toggle="rescheduleModal" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg shadow hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 cursor-pointer">
-          Reschedule
-        </a> --}}
+        @php
+          use Carbon\Carbon;
+          $daysDiff = Carbon::now()->diffInDays(Carbon::parse($order->schedule->date), false);
+        @endphp
+
+        @if ($daysDiff >= 2)
+            <a data-modal-target="rescheduleModal" data-modal-toggle="rescheduleModal"
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg shadow hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 cursor-pointer">
+                Reschedule
+            </a>
+        @endif
+
       </div>
       <div class="grid sm:grid-cols-2 gap-4 text-gray-700">
         <div>
@@ -93,18 +121,14 @@
   <h2 class="text-xl font-semibold mb-6 text-gray-800">Tulis keluh kesah dan jawaban kamu disini.</h2>
 
   <!-- Form Komentar -->
-  <form id="commentForm" class="mb-8">
-    <textarea 
-      name="message" 
-      rows="3" 
-      placeholder="Tulis keluh kesah dan jawaban kamu disini" 
-      class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-    ></textarea>
+  <form action="{{ route('communications.store') }}" method="POST" class="mb-8" id="post-form">
+    @csrf
+    <input type="hidden" name="order_id" value="{{ $order->id }}">
+    <textarea id="body" name="message" class="hidden"></textarea>
+    <!-- Create the editor container -->
+    <div id="editor"></div>
     <div class="mt-3 flex justify-end">
-      <button 
-        type="submit" 
-        class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg"
-      >
+      <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg">
         Kirim
       </button>
     </div>
@@ -112,48 +136,38 @@
 
   <!-- Daftar Komentar -->
   <div id="commentBox" class="space-y-6">
-    
-    <!-- Komentar User -->
-    <div class="flex gap-3">
-      <img src="{{ asset('img/user.png') }}" class="w-10 h-10 rounded-full" alt="User">
-      <div class="flex-1">
-        <div class="flex items-center gap-2">
-          <span class="font-semibold text-gray-800">Kamu</span>
-          <span class="text-xs text-gray-500">20 Agustus 2025, 10:02 AM</span>
+    @foreach ($communications as $communication)
+      @if ($communication->user->role == "user")
+        <!-- Komentar User -->
+        <div class="flex gap-3">
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="User">
+          <div class="flex-1 prose">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-gray-800">{{ $communication->user->profile->name }}</span>
+              <span class="text-xs text-gray-500">{{ $communication->created_at->diffForHumans() }}</span>
+            </div>
+            <div class="text-gray-700 mt-2 prose">
+                {!! $communication->message !!}
+            </div>
+          </div>
         </div>
-            <p class="text-gray-700 mt-2">
-            Akhir-akhir ini saya sering merasa tidak bersemangat untuk melakukan apapun. Bahkan aktivitas sederhana seperti bangun pagi dan menyiapkan sarapan terasa sangat berat. Pikiran saya sering kacau, ada rasa takut gagal yang terus menghantui. Saya jadi sering menunda pekerjaan, lalu merasa bersalah setelahnya. Kadang saya iri melihat teman-teman yang terlihat bahagia dan lancar dengan hidup mereka, sementara saya merasa jalan di tempat. Saya bingung harus mulai dari mana untuk memperbaiki keadaan ini.
-            </p>
-      </div>
-    </div>
-    
-    <div class="flex gap-3">
-      <img src="{{ asset('img/user.png') }}" class="w-10 h-10 rounded-full" alt="User">
-      <div class="flex-1">
-        <div class="flex items-center gap-2">
-          <span class="font-semibold text-gray-800">Kamu</span>
-          <span class="text-xs text-gray-500">20 Agustus 2025, 10:02 AM</span>
-        </div>
-            <p class="text-gray-700 mt-2">
-            Akhir-akhir ini saya sering merasa tidak bersemangat untuk melakukan apapun. Bahkan aktivitas sederhana seperti bangun pagi dan menyiapkan sarapan terasa sangat berat. Pikiran saya sering kacau, ada rasa takut gagal yang terus menghantui. Saya jadi sering menunda pekerjaan, lalu merasa bersalah setelahnya. Kadang saya iri melihat teman-teman yang terlihat bahagia dan lancar dengan hidup mereka, sementara saya merasa jalan di tempat. Saya bingung harus mulai dari mana untuk memperbaiki keadaan ini.
-            </p>
-      </div>
-    </div>
 
-    <!-- Komentar Dokter (posisi kanan) -->
-    <div class="flex gap-3 justify-end text-right">
-      <div class="flex-1">
-        <div class="flex items-center justify-end gap-2">
-          <span class="text-xs text-gray-500">20 Agustus 2025, 10:05 AM</span>
-          <span class="font-semibold text-green-700">Dr. Maria</span>
+      @else
+        <!-- Komentar Psikolog & Admin -->
+        <div class="flex gap-3 justify-end text-right">
+          <div class="flex-1">
+            <div class="flex items-center justify-end gap-2">
+              <span class="text-xs text-gray-500">20 Agustus 2025, 10:05 AM</span>
+              <span class="font-semibold text-green-700">Dr. Maria</span>
+            </div>
+            <p class="text-gray-700 mt-2">
+              Tenang, itu wajar sekali. Mari kita bahas lebih dalam apa pemicu kecemasanmu.
+            </p>
+          </div>
+          <img src="{{ asset('img/psikolog.png') }}" class="w-10 h-10 rounded-full" alt="Psikolog">
         </div>
-        <p class="text-gray-700 mt-2">
-          Tenang, itu wajar sekali. Mari kita bahas lebih dalam apa pemicu kecemasanmu.
-        </p>
-      </div>
-      <img src="{{ asset('img/psikolog.png') }}" class="w-10 h-10 rounded-full" alt="Psikolog">
-    </div>
-
+      @endif
+    @endforeach
   </div>
 </div>
 
@@ -309,5 +323,29 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+<!-- Include the Quill library -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+<!-- Initialize Quill editor -->
+<script>
+  const quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: 'Tulis keluh kesah kamu disini'
+  });
+
+  const postForm = document.querySelector('#post-form');
+  const postBody = document.querySelector('#body');
+  const quillEditor = document.querySelector('#editor');
+
+  postForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const content = quillEditor.children[0].innerHTML;
+    // console.log(content);
+    postBody.value = content;
+    postForm.submit();
+
+  });
+</script>
 </body>
 </html>
