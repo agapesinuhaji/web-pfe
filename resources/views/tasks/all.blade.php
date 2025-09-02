@@ -35,7 +35,93 @@
                     </li>
                 </ol>
             </nav>
-            <h2 class="mb-4 text-xl font-semibold pt-4 text-gray-900 dark:text-white sm:text-2xl md:mb-6">All My Tasks</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold pt-4 text-gray-900 dark:text-white sm:text-2xl md:mb-6">All My Tasks</h2>
+                
+                {{-- Dropdown Periode --}}
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" 
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        Filter Periode
+                        <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 z-10">
+                        <ul class="p-2" x-data="{ selected: '{{ request('periode') ?? 'all' }}' }">
+                            {{-- All --}}
+                            <li class="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                @click="window.location.href='{{ route('mytask.all') }}'">
+                                <input type="radio" id="all" name="periode" 
+                                    class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                                    value="all"
+                                    x-model="selected"
+                                    :checked="selected === 'all'">
+                                <label for="all" class="text-gray-700 dark:text-gray-200 text-sm">All</label>
+                            </li>
+
+                            {{-- Periode lainnya --}}
+                            @foreach($periodes as $periode)
+                                <li class="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                    @click="window.location.href='{{ route('mytask.all', ['periode' => $periode->id]) }}'">
+                                    <input type="radio" id="periode-{{ $periode->id }}" name="periode"
+                                        class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                                        value="{{ $periode->id }}"
+                                        x-model="selected"
+                                        :checked="selected == '{{ $periode->id }}'">
+                                    <label for="periode-{{ $periode->id }}" class="text-gray-700 dark:text-gray-200 text-sm">
+                                        {{ $periode->name }}
+                                    </label>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 border-b border-t border-gray-200 py-4 dark:border-gray-700 md:py-8 lg:grid-cols-3 xl:gap-16">
+                <div>
+                    <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="5" width="18" height="16" rx="2" ry="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                        <line x1="7" y1="13" x2="17" y2="13"/>
+                        <line x1="7" y1="16" x2="17" y2="16"/>
+                        <line x1="7" y1="19" x2="17" y2="19"/>
+                    </svg>
+
+                    <h3 class="mb-2 text-gray-500 dark:text-gray-400">Tasks Today</h3>
+                    <span class="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ $todayTasks }}
+                    </span>
+                </div>
+                <div>
+                    <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M9 2h6a2 2 0 0 1 2 2v2H7V4a2 2 0 0 1 2-2z"/>
+                        <rect x="5" y="6" width="14" height="16" rx="2" ry="2"/>
+                        <path d="M9 14h6"/>
+                        <path d="M9 18h6"/>
+                    </svg>
+
+                    <h3 class="mb-2 text-gray-500 dark:text-gray-400">Tasks Active</h3>
+                    <span class="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ $activeTasks }}
+                    </span>
+                </div>
+                <div>
+                    <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+
+                    <h3 class="mb-2 text-gray-500 dark:text-gray-400">Tasks Done</h3>
+                    <span class="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ $doneTasks }}
+                    </span>
+                </div>
+            </div>
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
                 <div class="mb-6">
                     <form method="GET" action="{{ route('mytask.all') }}" class="mb-6 flex gap-2">

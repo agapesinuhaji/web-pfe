@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Order;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,22 +18,16 @@ class MyTaskController extends Controller
         
                     
         // tasks hari ini
-    $todayTasks = Order::where('conselor_id', Auth::id())
-        ->whereHas('schedule', function ($query) {
-            $query->whereDate('date', Carbon::today());
-        })
-        ->count();
+        $todayTasks = Order::where('conselor_id', Auth::id())
+            ->whereHas('schedule', function ($query) {
+                $query->whereDate('date', Carbon::today());
+            })
+            ->count();
 
-    // tasks besok
-    $tomorrowTasks = Order::where('conselor_id', Auth::id())
-        ->whereHas('schedule', function ($query) {
-            $query->whereDate('date', Carbon::tomorrow());
-        })
-        ->count();
 
         // tasks aktif (status = active, sesuaikan dengan kolom status di tabel order)
         $activeTasks = Order::where('conselor_id', Auth::id())
-            ->whereIn('status', ['pending', 'approved', 'progress'])
+            ->whereIn('status', ['pending', 'payed', 'approved', 'progress'])
             ->count();
 
         // tasks selesai (status = done)
@@ -40,7 +35,7 @@ class MyTaskController extends Controller
             ->where('status', 'selesai')
             ->count();
         
-        return view('tasks.index', compact('orders', 'todayTasks', 'tomorrowTasks', 'activeTasks', 'doneTasks'));
+        return view('tasks.index', compact('orders', 'todayTasks',  'activeTasks', 'doneTasks'));
     }
 
     public function show($order)
@@ -48,17 +43,27 @@ class MyTaskController extends Controller
 
         $order = Order::where('order_uuid', $order)->firstOrFail();
 
-        return view('tasks.show', compact('order'));
+        // ambil communications khusus berdasarkan order_id
+        $communications = $order->communications()->with('user')->get();
+
+        return view('tasks.show', compact('order', 'communications'));
     }
 
     public function all(Request $request)
     {
-        $query = Order::where('conselor_id', Auth::id());
+        $query = Order::where('conselor_id', Auth::id())->with('schedule');
 
-        // cek kalau ada parameter search
+        // Filter periode jika ada
+        if ($request->has('periode') && $request->periode != 'all') {
+            $periodeId = $request->periode;
+            $query->whereHas('schedule', function ($q) use ($periodeId) {
+                $q->where('periode_id', $periodeId);
+            });
+        }
+
+        // Filter search jika ada
         if ($request->filled('search')) {
             $search = $request->search;
-
             $query->where(function ($q) use ($search) {
                 $q->where('order_uuid', 'like', "%{$search}%")
                 ->orWhere('status', 'like', "%{$search}%")
@@ -69,9 +74,28 @@ class MyTaskController extends Controller
             });
         }
 
-        $orders = $query->latest()->paginate(10)->withQueryString();
+        // Clone query untuk statistik
+        $baseQuery = clone $query;
 
-        return view('tasks.all', compact('orders'));
+        $todayTasks = (clone $baseQuery)
+            ->whereHas('schedule', function ($q) {
+                $q->whereDate('date', Carbon::today());
+            })->count();
+
+        $activeTasks = (clone $baseQuery)
+            ->whereIn('status', ['pending', 'payed', 'approved', 'progress'])
+            ->count();
+
+        $doneTasks = (clone $baseQuery)
+            ->where('status', 'selesai')
+            ->count();
+
+        $orders = $query->latest()->paginate(15)->withQueryString();
+
+        $periodes = Periode::orderBy('start_date', 'desc')->get();
+
+        return view('tasks.all', compact('orders', 'todayTasks', 'activeTasks', 'doneTasks', 'periodes'));
     }
+
 
 }

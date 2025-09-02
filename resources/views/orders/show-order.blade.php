@@ -42,16 +42,20 @@
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold text-gray-800">Detail Orderan Anda</h2>
         @php
-          use Carbon\Carbon;
-          $daysDiff = Carbon::now()->diffInDays(Carbon::parse($order->schedule->date), false);
+            use Carbon\Carbon;
+            use App\Models\Reschedule;
+
+            $daysDiff = Carbon::now()->diffInDays(Carbon::parse($order->schedule->date), false);
+            $hasReschedule = Reschedule::where('order_id', $order->id)->exists();
         @endphp
 
-        @if ($daysDiff >= 2)
+        @if ($daysDiff >= 2 && !$hasReschedule)
             <a data-modal-target="rescheduleModal" data-modal-toggle="rescheduleModal"
               class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg shadow hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 cursor-pointer">
                 Reschedule
             </a>
         @endif
+
 
       </div>
       <div class="grid sm:grid-cols-2 gap-4 text-gray-700">
@@ -140,7 +144,7 @@
       @if ($communication->user->role == "user")
         <!-- Komentar User -->
         <div class="flex gap-3">
-          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="User">
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
           <div class="flex-1 prose">
             <div class="flex items-center gap-2">
               <span class="font-semibold text-gray-800">{{ $communication->user->profile->name }}</span>
@@ -151,20 +155,34 @@
             </div>
           </div>
         </div>
-
-      @else
-        <!-- Komentar Psikolog & Admin -->
+      
+      @elseif ($communication->user->role == "administrator")
+        <!-- Komentar Admin -->
         <div class="flex gap-3 justify-end text-right">
           <div class="flex-1">
             <div class="flex items-center justify-end gap-2">
-              <span class="text-xs text-gray-500">20 Agustus 2025, 10:05 AM</span>
-              <span class="font-semibold text-green-700">Dr. Maria</span>
+              <span class="text-xs text-gray-500">{{ $communication->created_at->diffForHumans() }}</span>
+              <span class="font-semibold text-green-700">Admin</span>
             </div>
-            <p class="text-gray-700 mt-2">
-              Tenang, itu wajar sekali. Mari kita bahas lebih dalam apa pemicu kecemasanmu.
-            </p>
+            <div class="text-gray-700 mt-2 prose">
+                {!! $communication->message !!}
+            </div>
           </div>
-          <img src="{{ asset('img/psikolog.png') }}" class="w-10 h-10 rounded-full" alt="Psikolog">
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="Admin">
+        </div>
+      @else
+        <!-- Komentar Admin -->
+        <div class="flex gap-3 justify-end text-right">
+          <div class="flex-1">
+            <div class="flex items-center justify-end gap-2">
+              <span class="text-xs text-gray-500">{{ $communication->created_at->diffForHumans() }}</span>
+              <span class="font-semibold text-green-700">{{ $communication->user->profile->name }}</span>
+            </div>
+            <div class="text-gray-700 mt-2 prose">
+                {!! $communication->message !!}
+            </div>
+          </div>
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
         </div>
       @endif
     @endforeach
