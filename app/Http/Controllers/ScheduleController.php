@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Schedule;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -17,6 +18,8 @@ class ScheduleController extends Controller
      */
     public function getSchedules(Request $request, $conselorId, $date)
     {
+        
+
         $query = Schedule::where('conselor_id', $conselorId)
             ->where('date', $date)
             ->where('status', 'ready');
@@ -35,6 +38,15 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         // mulai dari tanggal 26 bulan ini
         $startDate = Carbon::now()->day(26);
         if (Carbon::now()->day > 25) {
@@ -53,11 +65,6 @@ class ScheduleController extends Controller
         return view('schedules.index', compact('psychologists', 'schedules', 'dates'));
     }
 
-    public function create() {}
-
-    /**
-     * Simpan jadwal baru untuk konselor
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -111,6 +118,14 @@ class ScheduleController extends Controller
      */
     public function show(Request $request, $periode_id)
     {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         $periode = Periode::findOrFail($periode_id);
         $dates = CarbonPeriod::create($periode->start_date, $periode->end_date);
 

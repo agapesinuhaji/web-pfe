@@ -12,6 +12,15 @@ class MyTaskController extends Controller
 {
     public function index()
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'psikolog') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        }        
+
         $orders = Order::where('conselor_id', Auth::id())->whereHas('schedule', function ($query) {
                     $query->whereDate('date', Carbon::today());
                     })->get();
@@ -41,6 +50,14 @@ class MyTaskController extends Controller
     public function show($order)
     {
 
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'psikolog') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        }  
+
         $order = Order::where('order_uuid', $order)->firstOrFail();
 
         // ambil communications khusus berdasarkan order_id
@@ -51,6 +68,15 @@ class MyTaskController extends Controller
 
     public function all(Request $request)
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'psikolog') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        }  
+
         $query = Order::where('conselor_id', Auth::id())->with('schedule');
 
         // Filter periode jika ada
@@ -77,11 +103,7 @@ class MyTaskController extends Controller
         // Clone query untuk statistik
         $baseQuery = clone $query;
 
-        $todayTasks = (clone $baseQuery)
-            ->whereHas('schedule', function ($q) {
-                $q->whereDate('date', Carbon::today());
-            })->count();
-
+       
         $activeTasks = (clone $baseQuery)
             ->whereIn('status', ['pending', 'payed', 'approved', 'progress'])
             ->count();
@@ -94,7 +116,7 @@ class MyTaskController extends Controller
 
         $periodes = Periode::orderBy('start_date', 'desc')->get();
 
-        return view('tasks.all', compact('orders', 'todayTasks', 'activeTasks', 'doneTasks', 'periodes'));
+        return view('tasks.all', compact('orders', 'activeTasks', 'doneTasks', 'periodes'));
     }
 
 

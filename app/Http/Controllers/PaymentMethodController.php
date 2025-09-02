@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentMethodController extends Controller
@@ -13,6 +14,15 @@ class PaymentMethodController extends Controller
      */
     public function index()
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         // Ambil semua data payment_method
         $paymentMethods = PaymentMethod::all();
 

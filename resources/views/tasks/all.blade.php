@@ -92,9 +92,9 @@
                         <line x1="7" y1="19" x2="17" y2="19"/>
                     </svg>
 
-                    <h3 class="mb-2 text-gray-500 dark:text-gray-400">Tasks Today</h3>
+                    <h3 class="mb-2 text-gray-500 dark:text-gray-400">Pendapatan</h3>
                     <span class="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
-                        {{ $todayTasks }}
+                        1.365.000 .-
                     </span>
                 </div>
                 <div>

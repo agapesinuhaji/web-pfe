@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Periode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PeriodeController extends Controller
 {
@@ -12,22 +13,21 @@ class PeriodeController extends Controller
      */
     public function index()
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         $periodes = Periode::all();
 
         return view('periodes.index', compact('periodes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -47,25 +47,6 @@ class PeriodeController extends Controller
         return redirect()->route('periode.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Periode $periode)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Periode $periode)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         // Validasi data
@@ -91,11 +72,4 @@ class PeriodeController extends Controller
         return redirect()->route('periode.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Periode $periode)
-    {
-        //
-    }
 }

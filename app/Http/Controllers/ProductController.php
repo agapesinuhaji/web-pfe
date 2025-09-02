@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -15,24 +16,23 @@ class ProductController extends Controller
     public function index()
     {
 
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        }  
+
         $products = Product::all();
 
         return view('products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        
         Validator::make($request->all(), [
             'name' => 'required|unique:products|max:255',
             'price' => 'required',
@@ -50,18 +50,17 @@ class ProductController extends Controller
         return redirect('/product')->with(['success' => 'Your product has been created!']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+  
     public function edit(Product $product)
     {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         return view('products.edit', compact('product'));
     }
 
@@ -91,10 +90,4 @@ class ProductController extends Controller
         return redirect('/product')->with(['success' => 'Your product has been updated!']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-    }
 }

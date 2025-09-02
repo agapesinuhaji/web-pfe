@@ -10,6 +10,14 @@ class MyOrderController extends Controller
 {
     public function index()
     {
+
+        $user = Auth::user();
+
+        if ($user->role !== 'user') {
+            Auth::logout(); // opsional: logout user jika bukan admin
+            return redirect()->route('login')->with('error', 'Permintaan terlarang.');
+        }
+
         $orders = Order::where('user_id', Auth::id())->get();
         
         return view('orders.my-order', compact('orders'));
@@ -17,6 +25,12 @@ class MyOrderController extends Controller
 
     public function show($order)
     {
+        $user = Auth::user();
+
+        if ($user->role !== 'user') {
+            Auth::logout(); // opsional: logout user jika bukan admin
+            return redirect()->route('login')->with('error', 'Permintaan terlarang.');
+        }
 
         $order = Order::where('order_uuid', $order)->firstOrFail();
 

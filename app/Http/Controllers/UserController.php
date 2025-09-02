@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ConselingMethod;
 use App\Models\User;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use App\Models\ConselingMethod;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -14,32 +15,28 @@ class UserController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         $users = User::all();
 
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(User $user)
     {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
 
         $methods = ConselingMethod::where('user_id', $user->id)->get();
 
@@ -52,12 +49,18 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         return view('users.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, User $user)
     {
         
@@ -73,9 +76,6 @@ class UserController extends Controller
         return redirect('user/'. $user->id)->with(['success' => 'Your user has been updated!']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(User $user)
     {
         $user->update([
@@ -89,6 +89,15 @@ class UserController extends Controller
 
     public function schedule(User $user)
     {
+
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        } 
+
         // Ambil jadwal berdasarkan user_id dan status 'ready'
         $schedules = Schedule::where('conselor_id', $user->id)->where('status', 'ready')->get();
         

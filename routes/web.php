@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
@@ -41,6 +42,12 @@ Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSched
 
 
 Route::get('/dashboard', function () {
+     $user = Auth::user();
+
+    if ($user->role !== 'administrator') {
+        Auth::logout(); // opsional: logout user jika bukan admin
+        return redirect()->route('login')->with('error', 'Permintaan terlarang.');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
