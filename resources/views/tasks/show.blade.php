@@ -51,6 +51,9 @@
         <div>
           <p class="text-sm text-gray-500">Metode</p>
           <p class="font-medium">{{ $order->method->name }}</p>
+          <a href="{{ $order->link }}" target="_blank" class="text-blue-600 hover:underline text-sm cursor-pointer">
+            {{ $order->link }}
+          </a>
         </div>
         <div>
           <p class="text-sm text-gray-500">Status</p>
