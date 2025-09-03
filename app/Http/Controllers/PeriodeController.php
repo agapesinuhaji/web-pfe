@@ -37,6 +37,14 @@ class PeriodeController extends Controller
             'status' => 'required|in:active,nonactive,done',
         ]);
 
+         // Cek jika status yang dimasukkan 'active', pastikan tidak ada periode aktif lain
+        if ($request->status === 'active') {
+            $activePeriod = Periode::where('status', 'active')->first();
+            if ($activePeriod) {
+                return redirect()->back()->with('error', 'Sudah ada periode yang aktif. Hanya boleh 1 periode aktif.');
+            }
+        }
+
         Periode::create([
             'name' => $request->name,
             'start_date' => $request->start_date,
@@ -56,6 +64,14 @@ class PeriodeController extends Controller
             'end_date' => 'required',
             'status' => 'required|in:active,nonactive,done',
         ]);
+
+        // Cek jika ingin menjadikan periode ini 'active'
+        if ($request->status === 'active') {
+            $activePeriod = Periode::where('status', 'active')->where('id', '!=', $id)->first();
+            if ($activePeriod) {
+                return redirect()->back()->with('error', 'Sudah ada periode yang aktif. Hanya boleh 1 periode aktif.');
+            }
+        }
 
         // Cari data periode berdasarkan ID
         $periode = Periode::findOrFail($id);

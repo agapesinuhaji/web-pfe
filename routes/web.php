@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
@@ -18,10 +17,12 @@ use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
 use App\Http\Controllers\CounselingResultController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/test', function () {
     return view('test');
@@ -44,17 +45,9 @@ Route::put('/checkout/{order_uuid}', [CheckoutController::class, 'update'])->nam
 Route::get('/schedules/{conselor}/{date}', [ScheduleController::class, 'getSchedules']);
 
 
-Route::get('/dashboard', function () {
-     $user = Auth::user();
-
-    if ($user->role !== 'administrator') {
-        Auth::logout(); // opsional: logout user jika bukan admin
-        return redirect()->route('login')->with('error', 'Permintaan terlarang.');
-    }
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
@@ -64,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('user', UserController::class)->names('user');
     Route::get('user/{user}/schedule', [UserController::class, 'schedule'])->name('user.schedule');
     Route::resource('order', OrderController::class)->names('order');
+    Route::patch('order/end/{id}', [OrderController::class, 'endSession'])->name('order.end');
     
 
     Route::resource('method', ConselingMethodController::class)->names('method');

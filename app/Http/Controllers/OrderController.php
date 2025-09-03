@@ -52,23 +52,38 @@ class OrderController extends Controller
 
 
     public function update(Request $request, Order $order)
-{
-    // Validasi
-    $request->validate([
-        'status' => 'required|string|in:pending,payed,approved,progress,selesai',
-    ]);
+    {
+        // Validasi
+        $request->validate([
+            'status' => 'required|string|in:pending,payed,approved,progress,selesai',
+        ]);
 
-    $user = Auth::user();
-    if (!in_array($user->role, ['administrator', 'psikolog'])) {
-        abort(403, 'Akses ditolak');
+        $user = Auth::user();
+        if (!in_array($user->role, ['administrator', 'psikolog'])) {
+            abort(403, 'Akses ditolak');
+        }
+
+        // Update status
+        $order->status = $request->status;
+        $order->save();
+
+        return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
     }
 
-    // Update status
-    $order->status = $request->status;
-    $order->save();
+// Akhiri sesi order
+    public function endSession($id)
+    {
+        $order = Order::findOrFail($id);
 
-    return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
-}
+        if ($order->status !== 'progress') {
+            return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
+        }
+
+        $order->status = 'selesai'; // ganti sesuai status final
+        $order->save();
+
+        return redirect()->back()->with('success', 'Sesi berhasil diakhiri.');
+    }
 
 
 

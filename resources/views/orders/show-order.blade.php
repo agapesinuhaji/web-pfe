@@ -144,8 +144,8 @@
   <!-- Daftar Komentar -->
   <div id="commentBox" class="space-y-6">
     @foreach ($communications as $communication)
-      @if ($communication->user->role == "user")
-        <!-- Komentar User -->
+      @if ($communication->user->role == "psikolog")
+        <!-- Komentar Admin & Psikolog -->
         <div class="flex gap-3">
           <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
           <div class="flex-1 prose">
@@ -160,19 +160,20 @@
         </div>
       
       @elseif ($communication->user->role == "administrator")
-        <!-- Komentar Admin -->
-        <div class="flex gap-3 justify-end text-right">
-          <div class="flex-1">
-            <div class="flex items-center justify-end gap-2">
+      <!-- Komentar Admin & Psikolog -->
+        <div class="flex gap-3">
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
+          <div class="flex-1 prose">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-gray-800">Admin</span>
               <span class="text-xs text-gray-500">{{ $communication->created_at->diffForHumans() }}</span>
-              <span class="font-semibold text-green-700">Admin</span>
             </div>
             <div class="text-gray-700 mt-2 prose">
                 {!! $communication->message !!}
             </div>
           </div>
-          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="Admin">
         </div>
+
       @else
         <!-- Komentar Admin -->
         <div class="flex gap-3 justify-end text-right">

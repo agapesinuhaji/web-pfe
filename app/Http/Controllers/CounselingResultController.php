@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Models\Communication;
 use App\Models\CounselingResult;
+use Illuminate\Support\Facades\Auth;
 
 class CounselingResultController extends Controller
 {
@@ -27,8 +30,26 @@ class CounselingResultController extends Controller
             'overtime_id'   => $validated['overtime_id'],
         ]);
 
+
+        $message = "<p><strong>Catatan Hasil Konseling</strong></p>" 
+                    . $validated['catatan'] .
+                    "<br><p><strong>Perkiraan Sementara</strong></p><p>" 
+                    . $validated['dugaan'] .
+                    "</p><br><p><strong>Rekomendasi</strong></p>"
+                    . $validated['rekomendasi'];
+
+    
+        //Insert to Communication
+        Communication::create([
+            'order_id' => $validated['order_id'],
+            'user_id'  => Auth::id(),
+            'is_user'  => Auth::user()->role === 'user',
+            'message'  => $message,
+        ]);
+
+
         // update status order
-        $order = \App\Models\Order::find($validated['order_id']);
+        $order = Order::find($validated['order_id']);
         if ($order) {
             $order->status = 'progress'; 
             $order->save();
