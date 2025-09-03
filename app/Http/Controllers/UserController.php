@@ -30,10 +30,10 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user = Auth::user();
+        $login = Auth::user();
 
         // Cek role, jika bukan psikolog logout
-        if ($user->role !== 'administrator') {
+        if ($login->role !== 'administrator') {
             Auth::logout();
             return redirect()->route('login'); // atau redirect ke halaman login
         } 

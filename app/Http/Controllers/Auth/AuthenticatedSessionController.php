@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
         // cek role
  
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect('/');
     }
 
     /**

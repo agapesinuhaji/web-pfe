@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Periode;
+use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,7 +67,12 @@ class MyTaskController extends Controller
         // ambil communications khusus berdasarkan order_id
         $communications = $order->communications()->with('user')->get();
 
-        return view('tasks.show', compact('order', 'communications'));
+        $overtimes = Overtime::all(); 
+
+        $order = Order::with('counselingResult')->findOrFail($order->id);
+
+
+        return view('tasks.show', compact('order', 'communications', 'overtimes'));
     }
 
     public function all(Request $request)

@@ -11,120 +11,107 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-<div class="bg-white-50">
-  @include('layouts.nav')
-</div>
-
-  <main class="flex-grow py-8 mt-12">
-    <div class="max-w-6xl mx-auto px-4 py-10">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {{-- Profile Section --}}
-        <div class="lg:col-span-1">
-            <div class="bg-white shadow-md rounded-2xl p-6">
-            <div class="flex flex-col items-center text-center">
-                <img 
-                src="{{ asset($user->profile->image) }}" 
-                alt="Profile Photo" 
-                class="w-32 h-32 rounded-full border-4 border-gray-200 object-cover mb-4"
-                />
-
-                <h2 class="text-xl font-semibold text-gray-900">{{ $user->profile->name }}</h2>
-                @if($user->profile->nickname)
-                <p class="text-gray-500">“{{ $user->profile->nickname }}”</p>
-                @endif
-
-                <p class="mt-2 text-sm text-gray-600">{{ $user->email }}</p>
-
-                <div class="mt-4 w-full text-left text-sm text-gray-700 space-y-2">
-                <p><span class="font-medium">Tanggal Lahir:</span> 
-                    {{ $user->profile->date_of_birth ? \Carbon\Carbon::parse($user->profile->date_of_birth)->format('d M Y') : '-' }}
-                </p>
-                <p><span class="font-medium">Jenis Kelamin:</span> 
-                    {{ $user->profile->gender == 'L' ? 'Laki-laki' : ($user->profile->gender == 'P' ? 'Perempuan' : '-') }}
-                </p>
-                <p><span class="font-medium">Domisili:</span> {{ $user->profile->domicile ?? '-' }}</p>
-                <p><span class="font-medium">No. WhatsApp:</span> 
-                    <a target="_blank" href="https://wa.me/{{ $user->profile->no_whatsapp }}" class="text-green-600 hover:underline">
-                    {{ $user->profile->no_whatsapp ?? '-' }}
-                    </a>
-                </p>
-                </div>
-
-                <div class="flex gap-4 mt-6">
-                    <a  data-modal-target="updateProfileModal"  data-modal-toggle="updateProfileModal"  class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition cursor-pointer" >
-                        Edit Profile
-                    </a>
-
-                    <a  data-modal-target="changePasswordModal"  data-modal-toggle="changePasswordModal"  class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition cursor-pointer" >
-                        Ganti Password
-                    </a>
-                </div>
-
-            </div>
-            </div>
-        </div>
-
-        {{-- Timeline Section --}}
-        <div class="lg:col-span-2">
-
-            @if(in_array(Auth::user()->role, ['psikolog', 'administrator']))
-                <div class="bg-white shadow-md rounded-2xl p-6 relative">
-                    <div class="flex justify-between items-start">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
-                        <a class="text-sm px-3 py-1 text-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
-                            Edit Deskripsi
-                        </a>
-                    </div>
-
-                    <p>
-                        {{ $user->profile->description }}
-                    </p>
-                </div>
-            @endif
-
-            <div class="bg-white shadow-md rounded-2xl p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
-
-                <div class="relative border-l border-gray-300 ml-4">
-                    {{-- Loop data riwayat --}}
-                    <div class="mb-8 ml-6">
-                        <div class="absolute w-3 h-3 bg-blue-600 rounded-full -left-1.5"></div>
-                        <time class="block mb-1 text-sm text-gray-500">02 Sep 2025</time>
-                        <h3 class="font-semibold text-gray-900">Order #12345</h3>
-                        <p class="text-gray-600">Konseling dengan Psikolog A</p>
-                    </div>
-
-                    <!-- Item -->
-                    <div class="mb-8 ml-6">
-                        <div class="absolute w-3 h-3 bg-green-600 rounded-full -left-1.5"></div>
-                        <time class="block mb-1 text-sm text-gray-500">28 Agu 2025</time>
-                        <h3 class="font-semibold text-gray-900">Top Up Saldo</h3>
-                        <p class="text-gray-600">Rp 150.000 berhasil ditambahkan</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        </div>
+    <div class="bg-white-50">
+    @include('layouts.nav')
     </div>
+
+    <main class="flex-grow py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4 py-10">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {{-- Profile Section --}}
+                <div class="lg:col-span-1">
+                    <div class="bg-white shadow-md rounded-2xl p-6">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="{{ asset($user->profile->image) }}" alt="Profile Photo" class="w-32 h-32 rounded-full border-4 border-gray-200 object-cover mb-4"/>
+                            <h2 class="text-xl font-semibold text-gray-900">{{ $user->profile->name }}</h2>
+                            @if($user->profile->nickname)
+                                <p class="text-gray-500">“{{ $user->profile->nickname }}”</p>
+                            @endif
+                            <p class="mt-2 text-sm text-gray-600">{{ $user->email }}</p>
+                            <div class="mt-4 w-full text-left text-sm text-gray-700 space-y-2">
+                                <p>
+                                    <span class="font-medium">Tanggal Lahir:</span> 
+                                    {{ $user->profile->date_of_birth ? \Carbon\Carbon::parse($user->profile->date_of_birth)->format('d M Y') : '-' }}
+                                </p>
+                                <p>
+                                    <span class="font-medium">Jenis Kelamin:</span> 
+                                    {{ $user->profile->gender == 'L' ? 'Laki-laki' : ($user->profile->gender == 'P' ? 'Perempuan' : '-') }}
+                                </p>
+                                <p><span class="font-medium">Domisili:</span> {{ $user->profile->domicile ?? '-' }}</p>
+                                <p>
+                                    <span class="font-medium">No. WhatsApp:</span> 
+                                    <a target="_blank" href="https://wa.me/{{ $user->profile->no_whatsapp }}" class="text-green-600 hover:underline">
+                                        {{ $user->profile->no_whatsapp ?? '-' }}
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div class="flex gap-4 mt-6">
+                                <a  data-modal-target="updateProfileModal"  data-modal-toggle="updateProfileModal"  class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition cursor-pointer" >
+                                    Edit Profile
+                                </a>
+
+                                <a  data-modal-target="changePasswordModal"  data-modal-toggle="changePasswordModal"  class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition cursor-pointer" >
+                                    Ganti Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Timeline Section --}}
+                <div class="lg:col-span-2">
+                    @if(in_array(Auth::user()->role, ['psikolog', 'administrator']))
+                        <div class="bg-white shadow-md rounded-2xl p-6 relative">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
+                                <a class="text-sm px-3 py-1 text-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+                                    Edit Deskripsi
+                                </a>
+                            </div>
+                            <p>{{ $user->profile->description }}</p>
+                        </div>
+                    @endif
+
+                    <div class="bg-white shadow-md rounded-2xl p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
+                        <div class="relative border-l border-gray-300 ml-4">
+                            {{-- Loop data riwayat --}}
+                            <div class="mb-8 ml-6">
+                                <div class="absolute w-3 h-3 bg-blue-600 rounded-full -left-1.5"></div>
+                                <time class="block mb-1 text-sm text-gray-500">02 Sep 2025</time>
+                                <h3 class="font-semibold text-gray-900">Order #12345</h3>
+                                <p class="text-gray-600">Konseling dengan Psikolog A</p>
+                            </div>
+
+                            <!-- Item -->
+                            <div class="mb-8 ml-6">
+                                <div class="absolute w-3 h-3 bg-green-600 rounded-full -left-1.5"></div>
+                                <time class="block mb-1 text-sm text-gray-500">28 Agu 2025</time>
+                                <h3 class="font-semibold text-gray-900">Top Up Saldo</h3>
+                                <p class="text-gray-600">Rp 150.000 berhasil ditambahkan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
 
 
-{{-- Section Footer --}}
-<footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
-  <div class="mx-auto max-w-screen-xl text-center">
-      <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl pt-4 font-semibold text-white">
-           <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8" />
-         
-          Psychologist For Everyone  
-      </a>
-    </div>
-    <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">© 2025 &nbsp; <a href="{{ url('/') }}" class="hover:underline">PFE <!--™ --></a>. All Rights Reserved.</span>
-</footer>
+    {{-- Section Footer --}}
+    <footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
+    <div class="mx-auto max-w-screen-xl text-center">
+        <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl pt-4 font-semibold text-white">
+            <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8" />
+            
+            Psychologist For Everyone  
+        </a>
+        </div>
+        <span class="text-sm flex justify-center pt-2 text-gray-100 sm:text-center dark:text-gray-400">© 2025 &nbsp; <a href="{{ url('/') }}" class="hover:underline">PFE <!--™ --></a>. All Rights Reserved.</span>
+    </footer>
 
 <!-- Update modal -->
 <div id="updateProfileModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">

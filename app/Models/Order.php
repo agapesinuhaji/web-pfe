@@ -60,4 +60,9 @@ class Order extends Model
     {
         return $this->hasMany(Communication::class);
     }
+
+    public function counselingResult()
+    {
+        return $this->hasOne(CounselingResult::class);
+    }
 }

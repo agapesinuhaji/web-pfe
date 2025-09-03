@@ -74,7 +74,7 @@
                                                                 'pending' => 'bg-yellow-500',
                                                                 'payed' => 'bg-yellow-500',
                                                                 'approved' => 'bg-blue-500',
-                                                                'progress' => 'bg-gray-500',
+                                                                'progress' => 'bg-blue-500',
                                                                 'selesai' => 'bg-green-500',
                                                                 'pay fail' => 'bg-red-500',
                                                             ];
