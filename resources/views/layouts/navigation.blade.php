@@ -36,6 +36,10 @@
                         {{ __('Payment Method') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.*')">
+                        {{ __('Overtime') }}
+                    </x-nav-link>
+
 
                 </div>
             </div>
@@ -92,6 +96,32 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
+                {{ __('Product') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
+                {{ __('User') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
+                {{ __('Order') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
+                {{ __('Periode') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
+                {{ __('Payment Method') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.*')">
+                {{ __('Overtime') }}
+            </x-responsive-nav-link>
+
+
         </div>
 
         <!-- Responsive Settings Options -->
