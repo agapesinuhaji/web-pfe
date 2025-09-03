@@ -8,7 +8,14 @@ class Overtime extends Model
 {
     protected $fillable = [
         'name',
+        'product_id',
         'biaya',
         'is_active',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
 }

@@ -42,6 +42,7 @@
                                         <tr>
                                             <th scope="col" class="px-4 py-4">#</th>
                                             <th scope="col" class="px-4 py-3">Name</th>
+                                            <th scope="col" class="px-4 py-3">Product</th>
                                             <th scope="col" class="px-4 py-3">Biaya</th>
                                             <th scope="col" class="px-4 py-3">Status</th>
                                             <th scope="col" class="px-4 py-3">
@@ -56,6 +57,7 @@
                                                     {{ $no = $loop->iteration }}
                                                 </th>
                                                 <td class="px-4 py-3">{{ $item->name }}</td>
+                                                <td class="px-4 py-3">{{ $item->product->name}}</td>
                                                 <td class="px-4 py-3">
                                                     Rp {{ number_format($item->biaya, 0, ',', '.') }}
                                                 </td>
@@ -134,6 +136,25 @@
                                                                 <div>
                                                                     <label for="biaya" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya</label>
                                                                     <input type="number" name="biaya" id="biaya" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ $item->biaya }}" required="">
+                                                                </div>
+                                                                <div>
+                                                                    <label for="product_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                                        Product
+                                                                    </label>
+                                                                    <select id="product_id" name="product_id" 
+                                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                                                                            focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 
+                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                            dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+
+                                                                        <option value="">-- Pilih Product --</option>
+                                                                        @foreach($products as $product)
+                                                                            <option value="{{ $product->id }}" 
+                                                                                {{ $item->product_id == $product->id ? 'selected' : '' }}>
+                                                                                {{ $product->name }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                                 <div>
                                                                     <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -231,6 +252,24 @@
                                     <div>
                                         <label for="biaya" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya</label>
                                         <input type="number" name="biaya" id="biaya" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"  required="">
+                                    </div>
+                                    <div>
+                                        <label for="product_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Product
+                                        </label>
+                                        <select id="product_id" name="product_id" 
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                                                focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 
+                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+
+                                            <option value="">-- Pilih Product --</option>
+                                            @foreach($products as $product)
+                                                <option value="{{ $product->id }}" >
+                                                    {{ $product->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div>
                                         <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">

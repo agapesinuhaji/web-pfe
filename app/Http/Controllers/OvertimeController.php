@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,9 @@ class OverTimeController extends Controller
         // Ambil semua data payment_method
         $overtime = Overtime::all();
 
-        return view('overtime.index', compact('overtime'));
+        $products = Product::all();
+
+        return view('overtime.index', compact('overtime', 'products'));
     }
 
 
@@ -31,7 +34,8 @@ class OverTimeController extends Controller
         // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'biaya' => 'required|numeric|max:255',
+            'biaya' => 'required|numeric|min:0',
+            'product_id' => 'required|exists:products,id',
             'status' => 'required|in:0,1',
         ]);
 
@@ -39,9 +43,10 @@ class OverTimeController extends Controller
 
         // Simpan data ke database
         Overtime::create([
+            'product_id' => $request->product_id,
             'name' => $request->name,
             'biaya' => $request->biaya,
-            'status' => $request->status,
+            'is_active' => $request->status,
         ]);
 
 
@@ -56,12 +61,14 @@ class OverTimeController extends Controller
         // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'biaya' => 'required|numeric|max:255',
+            'biaya' => 'required|numeric|min:0',
+            'product_id' => 'required|exists:products,id',
             'status' => 'required|in:0,1',
         ]);
 
 
         // Update data lain
+        $overtime->product_id = $request->product_id;
         $overtime->name = $request->name;
         $overtime->biaya = $request->biaya;
         $overtime->is_active = $request->status;
