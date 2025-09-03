@@ -19,4 +19,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(User::class, 'conselor_id');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

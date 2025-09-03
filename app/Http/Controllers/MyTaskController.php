@@ -21,22 +21,25 @@ class MyTaskController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         }        
 
-        $orders = Order::where('conselor_id', Auth::id())->whereHas('schedule', function ($query) {
-                    $query->whereDate('date', Carbon::today());
+        $orders = Order::where('conselor_id', Auth::id())
+                    ->whereIn('status', ['approved', 'progress', 'selesai'])            
+                    ->whereHas('schedule', function ($query) {
+                        $query->whereDate('date', Carbon::today());
                     })->get();
         
                     
         // tasks hari ini
         $todayTasks = Order::where('conselor_id', Auth::id())
-            ->whereHas('schedule', function ($query) {
-                $query->whereDate('date', Carbon::today());
-            })
-            ->count();
+                        ->whereIn('status', ['approved', 'progress', 'selesai']) 
+                        ->whereHas('schedule', function ($query) {
+                            $query->whereDate('date', Carbon::today());
+                        })
+                        ->count();
 
 
         // tasks aktif (status = active, sesuaikan dengan kolom status di tabel order)
         $activeTasks = Order::where('conselor_id', Auth::id())
-            ->whereIn('status', ['pending', 'payed', 'approved', 'progress'])
+            ->whereIn('status', ['approved', 'progress'])
             ->count();
 
         // tasks selesai (status = done)
@@ -77,7 +80,9 @@ class MyTaskController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         }  
 
-        $query = Order::where('conselor_id', Auth::id())->with('schedule');
+        $query = Order::where('conselor_id', Auth::id())
+                ->whereIn('status', ['approved', 'progress', 'selesai'])         
+                ->with('schedule');
 
         // Filter periode jika ada
         if ($request->has('periode') && $request->periode != 'all') {
@@ -105,7 +110,7 @@ class MyTaskController extends Controller
 
        
         $activeTasks = (clone $baseQuery)
-            ->whereIn('status', ['pending', 'payed', 'approved', 'progress'])
+            ->whereIn('status', ['approved', 'progress'])
             ->count();
 
         $doneTasks = (clone $baseQuery)

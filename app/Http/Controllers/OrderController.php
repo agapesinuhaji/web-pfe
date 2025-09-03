@@ -31,8 +31,10 @@ class OrderController extends Controller
     }
 
 
-    public function show(Order $order)
+    public function show($order)
     {
+       
+        
         $user = Auth::user();
 
         // Cek role, jika bukan psikolog logout
@@ -41,7 +43,33 @@ class OrderController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         } 
 
-        return view('orders.show');
+        $order = Order::where('order_uuid', $order)->firstOrFail();
+        // ambil communications khusus berdasarkan order_id
+        $communications = $order->communications()->with('user')->get();
+
+        return view('orders.show', compact('order', 'communications'));
     }
+
+
+    public function update(Request $request, Order $order)
+{
+    // Validasi
+    $request->validate([
+        'status' => 'required|string|in:pending,payed,approved,progress,selesai',
+    ]);
+
+    $user = Auth::user();
+    if (!in_array($user->role, ['administrator', 'psikolog'])) {
+        abort(403, 'Akses ditolak');
+    }
+
+    // Update status
+    $order->status = $request->status;
+    $order->save();
+
+    return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
+}
+
+
 
 }

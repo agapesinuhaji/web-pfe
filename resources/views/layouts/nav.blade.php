@@ -26,6 +26,7 @@
             <a href="{{ url('/dashboard') }}" class="text-sm/6 font-semibold text-gray-700">Dashboard</a>
           @elseif (auth()->user()->role == 'psikolog')
             <a href="{{ url('/my-task') }}" class="text-sm/6 font-semibold text-gray-700">My Tasks</a>
+            <a href="{{ url('/my-schedule') }}" class="text-sm/6 font-semibold text-gray-700">My Schedule</a>
           @endif
 
         @endauth

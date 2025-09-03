@@ -93,21 +93,20 @@
 
     <!-- Komentar Konseling -->
 <div class="bg-white rounded-2xl shadow p-6">
-  <h2 class="text-xl font-semibold mb-6 text-gray-800">Tulis Jawaban anda disini.</h2>
+  {{-- <h2 class="text-xl font-semibold mb-6 text-gray-800">Tulis Jawaban anda disini.</h2> --}}
 
   <!-- Form Komentar -->
-  <form action="{{ route('communications.store') }}" method="POST" class="mb-8" id="post-form">
+  {{-- <form action="{{ route('communications.store') }}" method="POST" class="mb-8" id="post-form">
     @csrf
     <input type="hidden" name="order_id" value="{{ $order->id }}">
     <textarea id="body" name="message" class="hidden"></textarea>
-    <!-- Create the editor container -->
     <div id="editor"></div>
     <div class="mt-3 flex justify-end">
       <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg">
         Kirim
       </button>
     </div>
-  </form>
+  </form> --}}
 
   
   <!-- Button Modal -->

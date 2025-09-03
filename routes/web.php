@@ -15,6 +15,8 @@ use App\Http\Controllers\ScheduleApiController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
+use App\Http\Controllers\MyScheduleController;
+use App\Http\Controllers\OvertimeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -72,6 +74,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-task', [MyTaskController::class, 'index'])->name('mytask.index');
     Route::get('/my-task/{order_uuid}', [MyTaskController::class, 'show'])->name('mytask.show');
 
+    Route::get('/my-schedule', [MyScheduleController::class, 'index'])->name('myschedule.index');
+
+    Route::patch('overtime/{id}/toggle-status', [OvertimeController::class, 'toggleStatus'])->name('overtime.toggleStatus');
+    Route::resource('/overtime', OvertimeController::class)->names('overtime');
 
     Route::patch('payment-method/{id}/toggle-status', [PaymentMethodController::class, 'toggleStatus'])->name('paymentMethod.toggleStatus');
     Route::resource('payment-method', PaymentMethodController::class)->names('paymentMethod');
