@@ -191,6 +191,9 @@
                         </div>
                     </div>
 
+                <div class="my-4 mx-4">
+                    {{ $orders->links() }}
+                </div>
 
                 @empty
                 @endforelse

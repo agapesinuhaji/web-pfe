@@ -21,7 +21,7 @@ class OverTimeController extends Controller
         } 
 
         // Ambil semua data payment_method
-        $overtime = Overtime::all();
+        $overtime = Overtime::paginate(10);
 
         $products = Product::all();
 

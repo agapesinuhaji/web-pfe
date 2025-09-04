@@ -22,7 +22,7 @@ class PeriodeController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         } 
 
-        $periodes = Periode::all();
+        $periodes = Periode::paginate(10);
 
         return view('periodes.index', compact('periodes'));
     }

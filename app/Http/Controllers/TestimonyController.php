@@ -20,7 +20,7 @@ class TestimonyController extends Controller
         }  
 
         // Ambil semua data payment_method
-        $testimonies = Testimony::all();
+        $testimonies = Testimony::paginate(10);
 
 
         return view('testimony.index', compact('testimonies'));

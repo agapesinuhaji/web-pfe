@@ -166,6 +166,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="my-4 mx-4">
+                                {{ $periodes->links() }}
+                            </div>
                         </div>
                     </div>
                 </section>

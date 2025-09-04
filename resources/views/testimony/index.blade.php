@@ -137,6 +137,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="my-4 mx-4">
+                                {{ $testimonies->links() }}
+                            </div>
                         </div>
                     </div>
                 </section>

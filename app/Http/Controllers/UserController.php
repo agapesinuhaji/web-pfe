@@ -23,7 +23,7 @@ class UserController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         } 
 
-        $users = User::all();
+        $users = User::paginate(10);
 
         return view('users.index', compact('users'));
     }

@@ -25,7 +25,7 @@ class OrderController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         } 
 
-        $orders = Order::all();
+        $orders = Order::paginate(10);
 
         return view('orders.index', compact('orders'));
     }

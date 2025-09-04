@@ -24,7 +24,7 @@ class ProductController extends Controller
             return redirect()->route('login'); // atau redirect ke halaman login
         }  
 
-        $products = Product::all();
+        $products = Product::paginate(10);
 
         return view('products.index', compact('products'));
     }

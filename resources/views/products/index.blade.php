@@ -104,7 +104,9 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                 
+                                 <div class="my-4 mx-4">
+                                    {{ $products->links() }}
+                                </div>
                             </div>
                         </div>
                     </section>
