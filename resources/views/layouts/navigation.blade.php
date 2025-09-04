@@ -40,6 +40,10 @@
                         {{ __('Overtime') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('testimony.index')" :active="request()->routeIs('testimony.*')">
+                        {{ __('Testimonies') }}
+                    </x-nav-link>
+
 
                 </div>
             </div>

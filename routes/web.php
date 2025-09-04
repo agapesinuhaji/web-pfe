@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/communications', [CommunicationController::class, 'store'])->name('communications.store');
 
+    Route::get('/testimonies', [TestimonyController::class, 'index'])->name('testimony.index');
     Route::post('/testimony', [TestimonyController::class, 'store'])->name('testimony.store');
 
     Route::post('conseling-result', [CounselingResultController::class, 'store'])->name('result.store');

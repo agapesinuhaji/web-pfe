@@ -8,10 +8,26 @@ use Illuminate\Support\Facades\Auth;
 
 class TestimonyController extends Controller
 {
+
+    public function index()
+    {
+        $user = Auth::user();
+
+        // Cek role, jika bukan psikolog logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login'); // atau redirect ke halaman login
+        }  
+
+        // Ambil semua data payment_method
+        $testimonies = Testimony::all();
+
+
+        return view('testimony.index', compact('testimonies'));
+    }
+
     public function store(Request $request)
     {
-
-
         // Validasi
         $request->validate([
             'rating'  => 'required|integer|min:1|max:5',
