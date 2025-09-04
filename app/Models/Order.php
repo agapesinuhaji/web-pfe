@@ -65,4 +65,9 @@ class Order extends Model
     {
         return $this->hasOne(CounselingResult::class);
     }
+
+    public function testimony()
+{
+    return $this->hasOne(Testimony::class);
+}
 }

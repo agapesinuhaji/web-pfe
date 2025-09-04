@@ -11,13 +11,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\ScheduleApiController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
 use App\Http\Controllers\CounselingResultController;
-use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -80,6 +81,8 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('/communications', [CommunicationController::class, 'store'])->name('communications.store');
+
+    Route::post('/testimony', [TestimonyController::class, 'store'])->name('testimony.store');
 
     Route::post('conseling-result', [CounselingResultController::class, 'store'])->name('result.store');
 
