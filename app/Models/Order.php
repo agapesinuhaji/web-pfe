@@ -18,6 +18,7 @@ class Order extends Model
         'total',
         'status',
         'image',
+        'expired_at',
     ];
 
     public function getRouteKeyName()

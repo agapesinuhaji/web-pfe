@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
     public function index()
     {
-        $user = auth()->user(); // Ambil user yang sedang login
+        $user = Auth::user(); // Ambil user yang sedang login
         return view('profile.index', compact('user')); // Kirim ke view
     }
 

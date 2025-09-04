@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Activity;
 use App\Models\Schedule;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\ConselingMethod;
 use App\Models\PaymentMethod;
+use App\Models\ConselingMethod;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
@@ -18,7 +19,7 @@ class CheckoutController extends Controller
     {
 
         // Pastikan user sudah login
-    $user = auth()->user();
+    $user = Auth::user();
     if (!$user) {
         return redirect()->route('login');
     }
@@ -79,14 +80,17 @@ class CheckoutController extends Controller
             'no_whatsapp'   => $request->no_whatsapp,
         ]);
 
-        // Ambil harga produk berdasarkan ID paket
-    $product = Product::findOrFail($request->paket);
 
-        // Cari schedule berdasarkan konselor, tanggal, dan jam
-    $schedule = Schedule::where('conselor_id', $request->konselor)
-        ->where('date', $request->date)
-        ->where('time', $request->selectedTime)
-        ->firstOrFail();
+        
+
+            // Ambil harga produk berdasarkan ID paket
+        $product = Product::findOrFail($request->paket);
+
+            // Cari schedule berdasarkan konselor, tanggal, dan jam
+        $schedule = Schedule::where('conselor_id', $request->konselor)
+            ->where('date', $request->date)
+            ->where('time', $request->selectedTime)
+            ->firstOrFail();
 
 
         // Kode unik
@@ -97,7 +101,7 @@ class CheckoutController extends Controller
 
         $order = Order::create([
             'order_uuid' => (string) Str::uuid(),
-            'user_id'    => auth()->id(),
+            'user_id'    => $user->id,
             'product_id' => $request->paket,
             'conselor_id'=> $request->konselor,
             'schedule_id'=> $schedule->id, // Ambil dari hasil query
@@ -106,11 +110,18 @@ class CheckoutController extends Controller
             'unique_kode'=> $uniqueCode,
             'total'      => $total,
             'status'     => 'pending',
+            'expired_at' => now()->addMinutes(15),
         ]);
 
 
         $schedule->update([
             'status' => 'booked',
+        ]);
+
+        Activity::create([
+            'user_id' => $user->id,
+            'title' => 'Melakukan pemesanan #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => $request->name. ' telah melakukan pemesanan paket ' . $product->name,
         ]);
 
 
@@ -121,13 +132,31 @@ class CheckoutController extends Controller
 
     public function update(Request $request, $uuid)
     {
+        $user = Auth::user();
+
         $request->validate([
             'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'payment_method_id' => 'required|not_in:0|exists:payment_methods,id',
         ]);
+        
 
         // cari berdasarkan order_uuid, bukan id
         $order = Order::where('order_uuid', $uuid)->firstOrFail();
+
+
+        if (now()->greaterThan($order->expired_at)) {
+            // sudah lewat 15 menit
+            $order->status = 'pay fail';
+            $order->save();
+
+            Activity::create([
+                'user_id' => $user->id,
+                'title' => 'Pembayaran kadaluarsa #' . strtoupper(substr($order->order_uuid, 0, 8)),
+                'description' => $user->profile->name. ' tidak melakukan pembayaran hingga waktu habis',
+            ]);
+
+            return back()->with('error', 'Pembayaran sudah kadaluarsa, silakan buat order baru.');
+        }
 
         if ($request->hasFile('payment_proof')) {
             $file = $request->file('payment_proof');
@@ -140,6 +169,18 @@ class CheckoutController extends Controller
             $order->status = 'payed'; // misalnya set status pesanan
             $order->save();
         }
+
+        $payment_method = PaymentMethod::where('id', $request->payment_method_id)->first();
+
+
+        
+        Activity::create([
+            'user_id' => $user->id,
+            'title' => 'Melakukan pembayaran #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => $user->profile->name. ' telah melakukan pembayaran melalui ' . $payment_method->name,
+        ]);
+
+        
 
         return redirect()->route('myorder.show', $uuid);
 

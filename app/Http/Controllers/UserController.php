@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Activity;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Models\ConselingMethod;
@@ -63,7 +64,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        
+        $oldRole = $user->role;
+
         $status = $request->has('status') ? 1 : 0;
 
         
@@ -71,6 +73,16 @@ class UserController extends Controller
             'role' => $request->role,
             'is_active' => $status, 
         ]);
+
+        $login = Auth::user();
+        if ($oldRole !== $request->role) {
+            // contoh: simpan ke activity log
+            Activity::create([
+                'user_id'     => $user->id,
+                'title'       => 'Izin user diubah menjadi '. $user->role,
+                'description' => "Role user {$user->profile->name} diubah dari {$oldRole} menjadi {$request->role} oleh {$login->profile->name}",
+            ]);
+        }
 
         // redirect to show user
         return redirect('user/'. $user->id)->with(['success' => 'Your user has been updated!']);
@@ -81,6 +93,7 @@ class UserController extends Controller
         $user->update([
             'is_active' => !$user->is_active,
         ]);
+        
 
         $message = $user->is_active ? 'User has been enabled!' : 'User has been disabled!';
 

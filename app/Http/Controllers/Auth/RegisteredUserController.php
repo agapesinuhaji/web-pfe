@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Models\Profile;
+use App\Models\Activity;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
@@ -46,6 +47,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'image' => 'profile/noimage.png',
         ]);
+
+        Activity::create([
+            'user_id' => $user->id,
+            'title' => 'Mendaftarkan Akun',
+            'description' => $request->name. ' User baru mendaftar dengan email ' . $user->email,
+        ]);
+
 
         event(new Registered($user));
 
