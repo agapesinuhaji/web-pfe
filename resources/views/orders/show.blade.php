@@ -9,15 +9,39 @@
         <div class=" sm:px-6 lg:px-8">
             <div class="overflow-hidden sm:rounded-lg">
                 <div class="max-w-4xl mx-auto px-4">
+
+                  {{-- Alert pengingat overtime --}}
+              @if ($order->status == 'progress' AND $order->overtime->biaya != 0)
+                <div class="mb-6 p-4 rounded-lg bg-yellow-50 border border-yellow-300">
+                  <div class="flex items-center gap-2 text-yellow-800">
+                    <svg  fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span class="font-medium">Terdapat kelebihan waktu {{ $order->overtime->name }} dengan biaya Rp {{ $order->overtime->biaya }}.</span>
+                  </div>
+                  <div class="mt-2">
+                    <a data-modal-target="endSessionModal-{{ $order->id }}" data-modal-toggle="endSessionModal-{{ $order->id }}" class="inline-block text-sm text-blue-600 hover:underline font-medium">
+                        Konfirmasi Pembayaran & Akhiri Sesi
+                    </a>
+                  </div>
+                </div>
+              @endif
       
     <!-- Detail Konseling -->
     <div class="bg-white rounded-2xl shadow p-6 mb-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold mb-4 text-gray-800">Detail Orderan</h2>
-        @if ($order->status == 'progress')
-          <a data-modal-target="endSessionModal-{{ $order->id }}" data-modal-toggle="endSessionModal-{{ $order->id }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg shadow hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 cursor-pointer">
-                  Akhiri Sesi
+        <div class="flex gap-2">
+          <a  data-modal-target="editOrderModal" data-modal-toggle="editOrderModal" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-lg shadow hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 cursor-pointer">
+              Edit Orderan
           </a>
+          @if ($order->status == 'progress' AND $order->overtime->biaya == 0)
+            <a data-modal-target="endSessionModal-{{ $order->id }}" data-modal-toggle="endSessionModal-{{ $order->id }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg shadow hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 cursor-pointer">
+                    Akhiri Sesi
+            </a>
+          @endif
+        </div>
               <!-- Modal Konfirmasi Flowbite -->
             <div id="endSessionModal-{{ $order->id }}" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
                 <div class="relative p-4 w-full max-w-md h-full md:h-auto mx-auto mt-20">
@@ -56,7 +80,7 @@
                     </div>
                 </div>
             </div>
-        @endif
+        
       </div>
       <div class="grid sm:grid-cols-2 gap-4 text-gray-700">
         <div>
@@ -167,18 +191,18 @@
           <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="Admin">
         </div>
       @else
-        <!-- Komentar Admin -->
-        <div class="flex gap-3 justify-end text-right">
-          <div class="flex-1">
-            <div class="flex items-center justify-end gap-2">
+        <!-- Komentar Psikolog -->
+          <div class="flex gap-3">
+          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
+          <div class="flex-1 prose">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-blue-700">{{ $communication->user->profile->name }}</span>
               <span class="text-xs text-gray-500">{{ $communication->created_at->diffForHumans() }}</span>
-              <span class="font-semibold text-green-700">{{ $communication->user->profile->name }}</span>
             </div>
             <div class="text-gray-700 mt-2 prose">
                 {!! $communication->message !!}
             </div>
           </div>
-          <img src="{{ asset($communication->user->profile->image) }}" class="w-10 h-10 rounded-full" alt="{{ $communication->user->profile->name }}">
         </div>
       @endif
     @endforeach
@@ -236,5 +260,57 @@
     </div>
   </div>
 
+
+    {{-- Modal Edit Order --}}
+    <div id="editOrderModal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+        <div class="relative p-4 w-full max-w-md h-full md:h-auto mx-auto mt-20">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
+                <!-- Modal header -->
+                <div class="flex justify-between items-start p-5 rounded-t border-b dark:border-gray-600">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        Edit Order
+                    </h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="editOrderModal">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>  
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="p-6 space-y-4">
+                  <form action="{{ route('order.updatestatus', $order->id) }}" method="POST">
+                      @csrf
+                      @method('PATCH')
+
+                      <!-- Input Link -->
+                      <div>
+                          <label for="link" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Link</label>
+                          <input type="url" name="link" id="link" placeholder="Masukkan link" 
+                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" value="{{ $order->link }}">
+                      </div>
+
+                      <!-- Select Status -->
+                      <div>
+                          <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                          <select name="status" id="status" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                            <option value="approved" {{ $order->status == 'approved' ? 'selected' : '' }}>Konfirmasi Pembayaran</option>
+                            <option value="progress" {{ $order->status == 'progress' ? 'selected' : '' }}>Konselor Selesai</option>
+                            <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                          </select>
+                      </div>
+
+                      <!-- Submit Button -->
+                      <button type="submit" 
+                              class="text-white mt-4 bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                          Ya, Akhiri
+                      </button>
+                  </form>
+              </div>
+
+            </div>
+        </div>
+    </div>
     
 </x-app-layout>

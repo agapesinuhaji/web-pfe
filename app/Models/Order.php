@@ -68,7 +68,19 @@ class Order extends Model
     }
 
     public function testimony()
-{
-    return $this->hasOne(Testimony::class);
-}
+    {
+        return $this->hasOne(Testimony::class);
+    }
+
+    public function overtime()
+    {
+        return $this->hasOneThrough(
+            Overtime::class,
+            CounselingResult::class,
+            'order_id',     // FK di counseling_results
+            'id',           // PK di overtimes
+            'id',           // PK di orders
+            'overtime_id'   // FK di counseling_results
+        );
+    }
 }

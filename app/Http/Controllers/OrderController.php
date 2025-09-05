@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use App\Models\ConselingMethod;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +83,28 @@ class OrderController extends Controller
         $order->status = 'selesai'; // ganti sesuai status final
         $order->save();
 
+        Activity::create([
+            'user_id' => $order->user_id,
+            'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => 'Konseling telah selesai dilakukan.',
+            'code' => '3',
+        ]);
+
+
         return redirect()->back()->with('success', 'Sesi berhasil diakhiri.');
+    }
+
+
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        $order->link = $request->link;
+        $order->status = $request->status;
+        $order->save();
+
+        return redirect()->back();
+
     }
 
 

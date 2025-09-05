@@ -52,6 +52,7 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
             'title' => 'Mendaftarkan Akun',
             'description' => $request->name. ' User baru mendaftar dengan email ' . $user->email,
+            'code' => '2',
         ]);
 
 

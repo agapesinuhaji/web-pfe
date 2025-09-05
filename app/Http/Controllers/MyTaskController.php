@@ -67,7 +67,7 @@ class MyTaskController extends Controller
         // ambil communications khusus berdasarkan order_id
         $communications = $order->communications()->with('user')->get();
 
-        $overtimes = Overtime::all(); 
+        $overtimes = Overtime::where('product_id', $order->product_id)->get(); 
 
         $order = Order::with('counselingResult')->findOrFail($order->id);
 

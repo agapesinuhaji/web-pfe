@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Communication;
 use App\Models\CounselingResult;
 use App\Models\Overtime;
+use App\Models\OvertimeData;
 use Illuminate\Support\Facades\Auth;
 
 class CounselingResultController extends Controller
@@ -53,19 +54,37 @@ class CounselingResultController extends Controller
 
         // update status order
         $order = Order::find($validated['order_id']);
-        if ($order) {
-            $order->status = 'progress'; 
-            $order->save();
-        }
+        
 
         $overtime = Overtime::where('id', $request->overtime_id)->first();
 
 
-        Activity::create([
+        if ($overtime && $overtime->biaya != 0) {
+            Activity::create([
                 'user_id'     => $order->user_id,
                 'title'       => 'Terdapat over time pada #'. strtoupper(substr($order->order_uuid, 0, 8)),
                 'description' => "Terdapat over time kurang lebih ( {$overtime->name} ) dengan biaya sebesar Rp {$overtime->biaya}",
+                'code'        => "4",
             ]);
+
+            if ($order) {
+            $order->status = 'overtime'; 
+            $order->save();
+
+            OvertimeData::create([
+                'order_id'          => $order->id,
+                'overtime_id'       => $overtime->id,
+                'image'             => "",
+                'status'            => "waiting",
+            ]);
+        }
+            
+        }
+
+        if ($order) {
+            $order->status = 'progress'; 
+            $order->save();
+        }
 
         // redirect dengan pesan sukses
         return redirect()->back()->with('success', 'Hasil konseling berhasil disimpan.');

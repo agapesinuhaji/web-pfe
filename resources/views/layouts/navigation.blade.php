@@ -36,9 +36,33 @@
                         {{ __('Payment Method') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.*')">
-                        {{ __('Overtime') }}
-                    </x-nav-link>
+                    <div class="relative group mt-5">
+                        <!-- Parent Menu -->
+                        <x-nav-link :active="request()->routeIs('overtime.*')">
+                            {{ __('Overtime') }}
+                        </x-nav-link>
+
+                        <!-- Dropdown -->
+                        <div
+                            class="absolute left-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-1 w-48 z-50"
+                        >
+                            <ul class="py-2 text-sm text-gray-700">
+                                <li>
+                                    <a href="{{ route('overtime.index') }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtime.index') ? 'font-semibold text-gray-600' : '' }}">
+                                        {{ __('Setting Overtime') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('overtimeData.index') }}"
+                                    class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtimeData.index') ? 'font-semibold text-gray-600' : '' }}">
+                                        {{ __('Data Overtime') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
 
                     <x-nav-link :href="route('testimony.index')" :active="request()->routeIs('testimony.*')">
                         {{ __('Testimonies') }}
@@ -56,7 +80,7 @@
                             <div>{{ Auth::user()->profile->name }}</div>
 
                             <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <svg class="fill-current h-4 w-4"  viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </div>
@@ -121,8 +145,38 @@
                 {{ __('Payment Method') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.*')">
-                {{ __('Overtime') }}
+            <!-- Parent Menu Responsive -->
+            <div x-data="{ open: false }" class="w-full">
+                <!-- Trigger -->
+                <button @click="open = ! open"
+                    class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                    <span class="{{ request()->routeIs('overtime.*') ? 'text-blue-600 font-semibold' : '' }}">
+                        {{ __('Overtime') }}
+                    </span>
+                    <!-- Panah -->
+                    <svg class="h-4 w-4 ml-2 transform transition-transform duration-200"
+                        :class="{ 'rotate-180': open }"
+                         fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Content -->
+                <div x-show="open" class="mt-2 space-y-1 pl-4" x-cloak>
+                    <x-responsive-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.index')">
+                        {{ __('Setting Overtime') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('overtimeData.index')" :active="request()->routeIs('overtimeData.index')">
+                        {{ __('Data Overtime') }}
+                    </x-responsive-nav-link>
+                </div>
+            </div>
+
+
+            <x-responsive-nav-link :href="route('testimony.index')" :active="request()->routeIs('testimony.*')">
+                {{ __('Testimonies') }}
             </x-responsive-nav-link>
 
 

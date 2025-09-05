@@ -10,5 +10,6 @@ class Activity extends Model
         'user_id',
         'title',
         'description',
+        'code',
     ];
 }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('unique_kode')->nullable(); // 3 digit
             $table->decimal('total', 10, 2);
             $table->foreignId('payment_method_id')->nullable();
-            $table->enum('status', ['pending', 'payed', 'approved', 'progress' ,'selesai', 'pay fail']);
+            $table->enum('status', ['pending', 'payed', 'approved', 'progress' ,'selesai', 'overtime', 'pay fail']);
             $table->string('image')->nullable();
             $table->timestamps();
         });

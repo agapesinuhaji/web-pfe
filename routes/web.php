@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\MyScheduleController;
 use App\Http\Controllers\ScheduleApiController;
+use App\Http\Controllers\OvertimeDataController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
@@ -59,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('user/{user}/schedule', [UserController::class, 'schedule'])->name('user.schedule');
     Route::resource('order', OrderController::class)->names('order');
     Route::patch('order/end/{id}', [OrderController::class, 'endSession'])->name('order.end');
+    Route::patch('order/updatestatus/{id}', [OrderController::class, 'updateStatus'])->name('order.updatestatus');
     
 
     Route::resource('method', ConselingMethodController::class)->names('method');
@@ -86,6 +88,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/testimony', [TestimonyController::class, 'store'])->name('testimony.store');
 
     Route::post('conseling-result', [CounselingResultController::class, 'store'])->name('result.store');
+
+    Route::get('/overtime-data', [OvertimeDataController::class, 'index'])->name('overtimeData.index');
+    Route::put('/overtime-data/{overtimeData}', [OvertimeDataController::class, 'update'])->name('overtimeData.update');
 
 });
 

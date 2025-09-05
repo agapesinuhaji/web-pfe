@@ -122,6 +122,7 @@ class CheckoutController extends Controller
             'user_id' => $user->id,
             'title' => 'Melakukan pemesanan #' . strtoupper(substr($order->order_uuid, 0, 8)),
             'description' => $request->name. ' telah melakukan pemesanan paket ' . $product->name,
+            'code' => '1',
         ]);
 
 
@@ -153,6 +154,7 @@ class CheckoutController extends Controller
                 'user_id' => $user->id,
                 'title' => 'Pembayaran kadaluarsa #' . strtoupper(substr($order->order_uuid, 0, 8)),
                 'description' => $user->profile->name. ' tidak melakukan pembayaran hingga waktu habis',
+                'code' => '5',
             ]);
 
             return back()->with('error', 'Pembayaran sudah kadaluarsa, silakan buat order baru.');
@@ -178,6 +180,7 @@ class CheckoutController extends Controller
             'user_id' => $user->id,
             'title' => 'Melakukan pembayaran #' . strtoupper(substr($order->order_uuid, 0, 8)),
             'description' => $user->profile->name. ' telah melakukan pembayaran melalui ' . $payment_method->name,
+            'code' => '3',
         ]);
 
         
