@@ -104,12 +104,16 @@ class MyTaskController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('order_uuid', 'like', "%{$search}%")
                 ->orWhere('status', 'like', "%{$search}%")
+                ->orWhereHas('user.profile', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
                 ->orWhereHas('schedule', function ($q2) use ($search) {
                     $q2->where('date', 'like', "%{$search}%")
                         ->orWhere('time', 'like', "%{$search}%");
                 });
             });
         }
+
 
         // Clone query untuk statistik
         $baseQuery = clone $query;

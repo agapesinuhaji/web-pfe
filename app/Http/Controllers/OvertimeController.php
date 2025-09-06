@@ -10,23 +10,38 @@ use Illuminate\Support\Facades\Auth;
 class OverTimeController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
-        } 
+            return redirect()->route('login');
+        }
 
-        // Ambil semua data payment_method
-        $overtime = Overtime::paginate(10);
+        // Query dasar
+        $query = Overtime::with('product'); // biar eager load product
+
+        // Filter search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhereHas('product', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        }
+
+        // Urutkan dari terbaru
+        $overtime = $query->orderBy('created_at', 'desc')
+                        ->paginate(20)
+                        ->withQueryString();
 
         $products = Product::all();
 
         return view('overtime.index', compact('overtime', 'products'));
     }
+
 
 
     public function store(Request $request)

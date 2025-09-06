@@ -11,21 +11,32 @@ class PeriodeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
-        } 
+            return redirect()->route('login');
+        }
 
-        $periodes = Periode::paginate(10);
+        $query = Periode::query();
+
+        // Search berdasarkan name
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+
+        $periodes = $query->orderBy('created_at', 'desc')
+                  ->paginate(10)
+                  ->withQueryString();
 
         return view('periodes.index', compact('periodes'));
     }
+
 
 
     public function store(Request $request)

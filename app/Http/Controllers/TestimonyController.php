@@ -9,22 +9,37 @@ use Illuminate\Support\Facades\Auth;
 class TestimonyController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
-        }  
+            return redirect()->route('login');
+        }
 
-        // Ambil semua data payment_method
-        $testimonies = Testimony::paginate(10);
+        // Query dasar
+        $query = Testimony::with(['order.user.profile']);
 
+        // Jika ada search
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('order', function ($q) use ($search) {
+                $q->where('order_uuid', 'like', "%{$search}%")
+                ->orWhereHas('user.profile', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Urutkan terbaru & pagination
+        $testimonies = $query->latest()->paginate(10)->withQueryString();
 
         return view('testimony.index', compact('testimonies'));
     }
+
 
     public function store(Request $request)
     {

@@ -124,9 +124,9 @@
             </div>
             <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
                 <div class="mb-6">
-                    <form method="GET" action="{{ route('mytask.all') }}" class="mb-6 flex gap-2">
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search tasks..."
+                    <form method="GET" action="" class="mb-6 flex gap-2">
+                        <input type="text" name="search" value=""
+                            placeholder="Search tasks by order id or name..."
                             class="w-full md:w-1/3 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
                         <button type="submit"
                             class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
@@ -141,7 +141,7 @@
                         <dl class="w-full sm:w-1/4 md:w-1/5">
                             <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Order ID:</dt>
                             <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
-                                <a href="{{ route('myorder.show', $order->order_uuid) }}" class="hover:underline">#{{ strtoupper(substr($order->order_uuid, 0, 8)) }}</a>
+                                <a href="{{ route('mytask.show', $order->order_uuid) }}" class="hover:underline">#{{ strtoupper(substr($order->order_uuid, 0, 8)) }}</a>
                             </dd>
                             <dd class="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
                                 {{ \Carbon\Carbon::parse($order->schedule->date)->format('d-m-Y') }}, {{ \Carbon\Carbon::parse($order->schedule->time)->format('H:i') }}
@@ -191,12 +191,11 @@
                         </div>
                     </div>
 
+                @empty
+                @endforelse
                 <div class="my-4 mx-4">
                     {{ $orders->links() }}
                 </div>
-
-                @empty
-                @endforelse
 
             </div>
         </div>

@@ -6,14 +6,40 @@ use App\Models\Order;
 use App\Models\Overtime;
 use App\Models\OvertimeData;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OvertimeDataController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $overtimeData = OvertimeData::with(['order', 'overtime'])->latest()->paginate(10);
+        $user = Auth::user();
+
+        // Cek role, jika bukan administrator logout
+        if ($user->role !== 'administrator') {
+            Auth::logout();
+            return redirect()->route('login');
+        }
+
+        // Query dasar dengan relasi
+        $query = OvertimeData::with(['order', 'overtime']);
+
+        // Jika ada search
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('order', function ($q) use ($search) {
+                $q->where('order_uuid', 'like', "%{$search}%");
+            })->orWhereHas('overtime', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        // Urutkan dari terbaru
+        $overtimeData = $query->latest()->paginate(10)->withQueryString();
+
         return view('overtime.overtime-data', compact('overtimeData'));
     }
+
 
     public function update(Request $request, OvertimeData $overtimeData)
     {

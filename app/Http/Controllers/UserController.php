@@ -14,20 +14,36 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
+            return redirect()->route('login');
         } 
 
-        $users = User::paginate(10);
+        $query = User::query()->with('profile');
+
+        // Filter search jika ada
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('email', 'like', "%{$search}%")
+                ->orWhere('role', 'like', "%{$search}%")
+                ->orWhereHas('profile', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Pakai $query yang sudah difilter
+        $users = $query->paginate(10)->withQueryString();
 
         return view('users.index', compact('users'));
     }
+
 
     public function show(User $user)
     {

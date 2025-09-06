@@ -15,21 +15,47 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
+            return redirect()->route('login');
         } 
 
-        $orders = Order::paginate(10);
+        $query = Order::with(['user.profile', 'conselor.profile', 'schedule']);
+
+        // Filter search jika ada
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                // Cari berdasarkan user pemesan (order->user->profile->name)
+                $q->whereHas('user.profile', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
+                // Atau cari berdasarkan nama psikolog (order->conselor->profile->name)
+                ->orWhereHas('conselor.profile', function ($q3) use ($search) {
+                    $q3->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+         // Sort
+        if ($request->filled('sort')) {
+            $direction = $request->get('direction', 'asc');
+            if ($request->sort === 'bukti-bayar') {
+                $query->orderByRaw("CASE WHEN image IS NULL OR image = '' THEN 1 ELSE 0 END {$direction}");
+            }
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
 
         return view('orders.index', compact('orders'));
     }
+
 
 
     public function show($order)
