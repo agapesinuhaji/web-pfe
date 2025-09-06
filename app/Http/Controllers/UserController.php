@@ -101,7 +101,8 @@ class UserController extends Controller
         }
 
         // redirect to show user
-        return redirect('user/'. $user->id)->with(['success' => 'Your user has been updated!']);
+        return redirect()->route('users.show', $user->id)
+                     ->with('success', 'User berhasil diperbarui!');
     }
 
     public function destroy(User $user)
@@ -113,7 +114,7 @@ class UserController extends Controller
 
         $message = $user->is_active ? 'User has been enabled!' : 'User has been disabled!';
 
-        return redirect('/user')->with(['success' => $message]);
+        return redirect()->route('users.index')->with('success', $message);
     }
 
     public function schedule(User $user)

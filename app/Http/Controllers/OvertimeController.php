@@ -65,7 +65,7 @@ class OverTimeController extends Controller
         ]);
 
 
-        return redirect()->back();
+        return redirect()->route('overtime.index')->with('success', 'Overtime berhasil ditambahkan!');
     }
 
     public function update(Request $request, $id)
@@ -90,7 +90,7 @@ class OverTimeController extends Controller
 
         $overtime->save();
 
-        return redirect()->route('overtime.index');
+        return redirect()->route('overtime.index')->with('warning', 'Overtime berhasil diperbarui!');
     }
 
     public function toggleStatus($id)
@@ -99,7 +99,7 @@ class OverTimeController extends Controller
         $overtime->is_active = !$overtime->is_active; // balikkan status
         $overtime->save();
 
-        return redirect()->back();
+        return redirect()->route('overtime.index')->with('success', 'Status overtime berhasil diubah!');
     }
 
 }

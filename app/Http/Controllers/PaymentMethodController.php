@@ -61,7 +61,8 @@ class PaymentMethodController extends Controller
         ]);
 
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Payment Method berhasil ditambahkan!');
+
 
     }
 
@@ -102,7 +103,8 @@ class PaymentMethodController extends Controller
 
         $paymentMethod->save();
 
-        return redirect()->route('paymentMethod.index');
+        return redirect()->route('paymentMethod.index')->with('warning', 'Payment Method berhasil diperbarui!');
+
     }
 
 
@@ -112,7 +114,8 @@ class PaymentMethodController extends Controller
         $paymentMethod->is_active = !$paymentMethod->is_active; // balikkan status
         $paymentMethod->save();
 
-        return redirect()->back()->with('success', 'Payment Method status updated.');
+        return redirect()->back()->with('warning', 'Status Payment Method berhasil diubah!');
+
     }
 
 }

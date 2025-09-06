@@ -63,7 +63,7 @@ class PeriodeController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('periode.index');
+        return redirect()->route('periode.index')->with('success', 'Periode berhasil dibuat!');
     }
 
     public function update(Request $request, $id)
@@ -96,7 +96,7 @@ class PeriodeController extends Controller
         ]);
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('periode.index');
+        return redirect()->route('periode.index')->with('success', 'Periode berhasil diperbarui!');
     }
 
 }

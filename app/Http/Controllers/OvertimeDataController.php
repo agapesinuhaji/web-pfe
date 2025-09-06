@@ -54,7 +54,9 @@ class OvertimeDataController extends Controller
 
         $overtimeData->update($validated);
 
-        return redirect()->route('overtimeData.index')->with('success', 'Overtime data updated successfully.');
+        return redirect()
+        ->route('overtimeData.index')
+        ->with('success', 'Overtime data updated successfully.');
     }
 
     

@@ -8,6 +8,43 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow sm:rounded-lg p-6">
+
+                <div 
+                    x-data="{ show: true }" 
+                    x-show="show" 
+                    x-transition 
+                    x-init="setTimeout(() => show = false, 4000)" 
+                    class="mb-4"
+                >
+                    @if(session('success'))
+                        <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9V7h2v2h-2zm0 2h2v4h-2v-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-medium">{{ session('success') }}</span>
+                        </div>
+                    @endif
+
+                    @if(session('warning'))
+                        <div class="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 dark:border-yellow-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9V7h2v2h-2zm0 2h2v4h-2v-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-medium">{{ session('warning') }}</span>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zM9 8h2v5H9V8zm0 6h2v2H9v-2z"></path>
+                            </svg>
+                            <span class="font-medium">{{ session('error') }}</span>
+                        </div>
+                    @endif
+                </div>
+
+
                 <!-- Start block -->
                 <section class=" dark:bg-gray-900 p-3 sm:p-5 antialiased">
                     <div class=" px-4 lg:px-4">

@@ -15,13 +15,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
+        // Cek role, jika bukan administrator logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
+            return redirect()->route('login');
         }  
 
         $products = Product::paginate(10);
@@ -29,65 +28,82 @@ class ProductController extends Controller
         return view('products.index', compact('products'));
     }
 
-
+    /**
+     * Store a newly created product.
+     */
     public function store(Request $request)
     {
-        
-        Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|unique:products|max:255',
-            'price' => 'required',
-        ])->validate();
+            'price' => 'required|numeric',
+        ]);
 
-        // create product
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         Product::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
             'price' => $request->price,
+            'status' => $request->has('status') ? 1 : 0,
         ]);
 
-        // redirect to product
-        return redirect('/product')->with(['success' => 'Your product has been created!']);
+        return redirect()->route('product.index')->with('success', 'Product berhasil dibuat!');
     }
 
-  
+    /**
+     * Show the form for editing the specified product.
+     */
     public function edit(Product $product)
     {
         $user = Auth::user();
 
-        // Cek role, jika bukan psikolog logout
         if ($user->role !== 'administrator') {
             Auth::logout();
-            return redirect()->route('login'); // atau redirect ke halaman login
+            return redirect()->route('login');
         } 
 
         return view('products.edit', compact('product'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified product in storage.
      */
     public function update(Request $request, Product $product)
     {
-        $data = Validator::make($request->all(), [
-            'name' => 'required|max:255|unique:products,name' . $product->id,
-            'price' => 'required',
-        ])->validate();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255|unique:products,name,' . $product->id,
+            'price' => 'required|numeric',
+        ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        $status = $request->has('status') ? 1 : 0;
-
-        
         $product->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
             'price' => $request->price,
-            'status' => $status, 
+            'status' => $request->has('status') ? 1 : 0,
         ]);
 
-        // redirect to show product
-        return redirect('/product')->with(['success' => 'Your product has been updated!']);
+        return redirect()->route('product.index')->with('success', 'Product berhasil diperbarui!');
     }
 
+    /**
+     * Toggle product status (optional)
+     */
+    public function destroy(Product $product)
+    {
+        $product->update([
+            'status' => !$product->status,
+        ]);
+
+        $message = $product->status ? 'Product diaktifkan!' : 'Product dinonaktifkan!';
+
+        return redirect()->route('product.index')->with('success', $message);
+    }
 }
