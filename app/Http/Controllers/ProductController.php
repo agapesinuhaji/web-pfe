@@ -47,7 +47,7 @@ class ProductController extends Controller
             'slug' => Str::slug($request->name),
             'description' => $request->description,
             'price' => $request->price,
-            'status' => $request->has('status') ? 1 : 0,
+            'status' => 1,
         ]);
 
         return redirect()->route('product.index')->with('success', 'Product berhasil dibuat!');

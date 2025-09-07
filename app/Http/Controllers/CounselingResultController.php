@@ -77,6 +77,18 @@ class CounselingResultController extends Controller
                 'image'             => "",
                 'status'            => "waiting",
             ]);
+
+            $message = "Terdapat kelebihan waktu konseling selama {$overtime->name} dan dikenakan biaya sebesar Rp {$overtime->biaya}";
+
+            $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+
+            //Insert to Communication
+            Communication::create([
+                'order_id' => $validated['order_id'],
+                'user_id'  => $adminId,
+                'is_user'  => Auth::user()->role === 'user',
+                'message'  => $message,
+            ]);
         }
             
         }

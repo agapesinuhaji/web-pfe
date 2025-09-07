@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Activity;
 
 class ProfileController extends Controller
 {
@@ -19,7 +20,13 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user(); // Ambil user yang sedang login
-        return view('profile.index', compact('user')); // Kirim ke view
+
+        $activities = Activity::where('user_id', $user->id)
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+
+        return view('profile.index', compact('user', 'activities')); // Kirim ke view
     }
 
   

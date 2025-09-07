@@ -1,3 +1,4 @@
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -10,7 +11,7 @@
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <main class="flex-grow">
                     <div class="max-w-6xl mx-auto px-4 py-10">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Profile User</h1>
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             {{-- Profile Section --}}
                             <div class="lg:col-span-1">
@@ -125,128 +126,138 @@
                                 </div>
                             </div>
 
-                            {{-- Timeline Section --}}
                             <div class="lg:col-span-2">
-                                @if(in_array(Auth::user()->role, ['psikolog', 'administrator']))
-                                    <div class="bg-white shadow-md rounded-2xl p-6 relative">
-                                        <div class="flex justify-between items-start">
-                                            <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
-                                            <a class="text-sm px-3 py-1 text-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
-                                                Edit Deskripsi
-                                            </a>
-                                        </div>
-                                        <p>{{ $user->profile->description }}</p>
+                                @if(in_array($user->role, ['psikolog', 'administrator']))
+                                <div class="bg-white shadow-md rounded-2xl p-6 relative">
+                                    <div class="flex justify-between items-start">
+                                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
+                                        <a data-modal-target="userModal" data-modal-toggle="userModal" class="text-sm px-3 py-1 text-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+                                            Edit Deskripsi
+                                        </a>
                                     </div>
+                                    <p>{{ $user->profile->description }}</p>
+                                </div>
                                 @endif
-
+                                
+                                {{-- Timeline Section --}}
                                 <div class="bg-white shadow-md rounded-2xl p-6">
                                     <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
                                     <div class="relative border-l border-gray-300 ml-4">
                                         {{-- Loop data riwayat --}}
-                                        <div class="mb-8 ml-6">
-                                            <div class="absolute w-3 h-3 bg-blue-600 rounded-full -left-1.5"></div>
-                                            <time class="block mb-1 text-sm text-gray-500">02 Sep 2025</time>
-                                            <h3 class="font-semibold text-gray-900">Order #12345</h3>
-                                            <p class="text-gray-600">Konseling dengan Psikolog A</p>
-                                        </div>
+                                        @foreach ($activities as $activity)
+                                            @php
+                                                $colors = [
+                                                    1 => 'bg-blue-600',     // primary
+                                                    2 => 'bg-gray-500',    // secondary
+                                                    3 => 'bg-green-600',   // success
+                                                    4 => 'bg-yellow-500',  // warning
+                                                    5 => 'bg-red-600',     // danger
+                                                ];
+                                                $color = $colors[$activity->code] ?? 'bg-gray-400';
+                                            @endphp
 
-                                        <!-- Item -->
-                                        <div class="mb-8 ml-6">
-                                            <div class="absolute w-3 h-3 bg-green-600 rounded-full -left-1.5"></div>
-                                            <time class="block mb-1 text-sm text-gray-500">28 Agu 2025</time>
-                                            <h3 class="font-semibold text-gray-900">Top Up Saldo</h3>
-                                            <p class="text-gray-600">Rp 150.000 berhasil ditambahkan</p>
-                                        </div>
+                                            <div class="mb-8 ml-6">
+                                                <div class="absolute w-3 h-3 {{ $color }} rounded-full -left-1.5"></div>
+                                                <time class="block mb-1 text-sm text-gray-500">
+                                                    {{ $activity->created_at->diffForHumans() }}
+                                                </time>
+                                                <h3 class="font-semibold text-gray-900">{{ $activity->title }}</h3>
+                                                <p class="text-gray-600">{{ $activity->description }}</p>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
-                    {{-- Conseling Metode --}}
-                     <div class="relative rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
-                        <button class="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800" data-modal-target="addMethodModal" data-modal-toggle="addMethodModal">
-                            Add Method
-                        </button>
-                        <h3 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Conseling Method</h3>
-                        @forelse ($methods as $method)
-                            <div class="flex flex-wrap items-center gap-y-4 border-b border-gray-200 pb-4 dark:border-gray-700 md:pb-5">
-                                <dl class="sm:w-128 md:w-86">
-                                    <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Method</dt>
-                                    <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
-                                        {{ $method->name }}
-                                    </dd>
-                                </dl>
-                                <dl class="w-1/2 sm:w-1/4 sm:flex-1 lg:w-auto">
-                                    <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
-                                    <dd class="me-2 mt-1.5 inline-flex shrink-0 items-center rounded  {{ $method->status == 1 ? 'bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300' }}">
-                                        {{ $method->status == 1 ? 'Active' : 'Nonactive' }}
-                                    </dd>
-                                </dl>
-                                <div class="w-full sm:flex sm:w-32 sm:items-center sm:justify-end sm:gap-4">
-                                    <button id="actionsMenuDropdownModal10" data-dropdown-toggle="dropdownOrderModal{{ $method->id }}" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 md:w-auto">
-                                        Actions
-                                        <svg class="-me-0.5 ms-1.5 h-4 w-4" aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-                                    <div id="dropdownOrderModal{{ $method->id }}" class="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700" data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="bottom">
-                                        <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="actionsMenuDropdown10">
-                                            <li>
-                                                @if ($method->status)
-                                                    <button type="button" data-modal-target="disabledModal-{{ $method->id }}" data-modal-toggle="disabledModal-{{ $method->id }}" class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400">
-                                                        <svg class="w-4 h-4 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd"
-                                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        Disable
-                                                    </button>
-                                                @else
-                                                    <button type="button" data-modal-target="disabledModal-{{ $method->id }}" data-modal-toggle="disabledModal-{{ $method->id }}" class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-green-600 dark:hover:text-green-400">
-                                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        Enable
-                                                    </button>
-                                                @endif
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="disabledModal-{{ $method->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                                <div class="relative p-4 w-full max-w-md max-h-full">
-                                    <!-- Modal content -->
-                                    <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                                        <button type="button" class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="disabledModal-{{ $method->id }}">
-                                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    @if(in_array($user->role, ['psikolog', 'administrator']))
+                        {{-- Conseling Metode --}}
+                        <div class="relative rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+                            <button class="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800" data-modal-target="addMethodModal" data-modal-toggle="addMethodModal">
+                                Add Method
+                            </button>
+                            <h3 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Conseling Method</h3>
+                            @forelse ($methods as $method)
+                                <div class="flex flex-wrap items-center gap-y-4 border-b border-gray-200 pb-4 dark:border-gray-700 md:pb-5">
+                                    <dl class="sm:w-128 md:w-86">
+                                        <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Method</dt>
+                                        <dd class="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                                            {{ $method->name }}
+                                        </dd>
+                                    </dl>
+                                    <dl class="w-1/2 sm:w-1/4 sm:flex-1 lg:w-auto">
+                                        <dt class="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
+                                        <dd class="me-2 mt-1.5 inline-flex shrink-0 items-center rounded  {{ $method->status == 1 ? 'bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300' }}">
+                                            {{ $method->status == 1 ? 'Active' : 'Nonactive' }}
+                                        </dd>
+                                    </dl>
+                                    <div class="w-full sm:flex sm:w-32 sm:items-center sm:justify-end sm:gap-4">
+                                        <button id="actionsMenuDropdownModal10" data-dropdown-toggle="dropdownOrderModal{{ $method->id }}" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 md:w-auto">
+                                            Actions
+                                            <svg class="-me-0.5 ms-1.5 h-4 w-4" aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"></path>
                                             </svg>
-                                            <span class="sr-only">Close modal</span>
                                         </button>
-                                        <svg class="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                        </svg>
-                                        <p class="mb-4 text-gray-500 dark:text-gray-300">
-                                            Are you sure you want to change status 
-                                            <span class="underline">{{ $method->name }}</span> 
-                                            ?
-                                        </p>
-                                        <div class="flex justify-center items-center space-x-4">
-                                            <button data-modal-toggle="disabledModal-{{ $method->id }}" type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
-                                            <form action="/method/{{ $method->id }}" method="POST">
-                                                @method('DELETE')
-                                                @csrf
-                                                <button type="submit" class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">Yes, I'm sure</button>
-                                            </form>
+                                        <div id="dropdownOrderModal{{ $method->id }}" class="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700" data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="bottom">
+                                            <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="actionsMenuDropdown10">
+                                                <li>
+                                                    @if ($method->status)
+                                                        <button type="button" data-modal-target="disabledModal-{{ $method->id }}" data-modal-toggle="disabledModal-{{ $method->id }}" class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400">
+                                                            <svg class="w-4 h-4 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Disable
+                                                        </button>
+                                                    @else
+                                                        <button type="button" data-modal-target="disabledModal-{{ $method->id }}" data-modal-toggle="disabledModal-{{ $method->id }}" class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-green-600 dark:hover:text-green-400">
+                                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            Enable
+                                                        </button>
+                                                    @endif
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @empty
-                            NULL
-                        @endforelse
-                    </div>
+                                <div id="disabledModal-{{ $method->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                    <div class="relative p-4 w-full max-w-md max-h-full">
+                                        <!-- Modal content -->
+                                        <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+                                            <button type="button" class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="disabledModal-{{ $method->id }}">
+                                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                                <span class="sr-only">Close modal</span>
+                                            </button>
+                                            <svg class="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                            </svg>
+                                            <p class="mb-4 text-gray-500 dark:text-gray-300">
+                                                Are you sure you want to change status 
+                                                <span class="underline">{{ $method->name }}</span> 
+                                                ?
+                                            </p>
+                                            <div class="flex justify-center items-center space-x-4">
+                                                <button data-modal-toggle="disabledModal-{{ $method->id }}" type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
+                                                <form action="/method/{{ $method->id }}" method="POST">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <button type="submit" class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">Yes, I'm sure</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                NULL
+                            @endforelse
+                        </div>
+                    @endif
                         {{-- Add Method Modal --}}
                     <div id="addMethodModal" tabindex="-1" aria-hidden="true" class="max-h-auto fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden antialiased md:inset-0">
                         <div class="max-h-auto relative max-h-full w-full max-w-lg p-4">
@@ -284,4 +295,70 @@
             </div>
         </div>
     </div>
+
+
+
+    <div id="userModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="relative w-full max-w-5xl p-4">
+        <div class="bg-white rounded-lg shadow dark:bg-gray-800">
+            <!-- Header -->
+            <div class="flex justify-between items-center border-b px-4 py-2">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Deskripsi Psikolog
+                </h3>
+                <button type="button" class="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                    data-modal-hide="userModal">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Body -->
+            <form action="" method="POST" class="p-4 space-y-4" id="post-form">
+          @csrf
+          <input type="hidden" name="profile_id" value="{{ $user->profile->id }}">
+
+          <div>
+            <label for="catatan" class="block text-sm font-medium text-gray-700">Catatan Hasil</label>
+            <textarea id="catatan" name="catatan" class="hidden"></textarea>
+            <div id="editor"></div>
+          </div>
+                    
+          <!-- Footer -->
+          <div class="flex justify-end gap-3 pt-4">
+            <button type="submit"
+              class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+              Selesai
+            </button>
+          </div>
+        </form>
+            
+        </div>
+    </div>
+  </div>
 </x-app-layout>
+
+<!-- Include the Quill library -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+<!-- Initialize Quill editor -->
+<script>
+  const quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: 'Tulis keluh kesah kamu disini'
+  });
+
+  const postForm = document.querySelector('#post-form');
+  const postBody = document.querySelector('#body');
+  const quillEditor = document.querySelector('#editor');
+
+  postForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const content = quillEditor.children[0].innerHTML;
+    // console.log(content);
+    postBody.value = content;
+    postForm.submit();
+
+  });
+</script>

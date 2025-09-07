@@ -60,7 +60,6 @@
                     </div>
                 </div>
 
-                {{-- Timeline Section --}}
                 <div class="lg:col-span-2">
                     @if(in_array(Auth::user()->role, ['psikolog', 'administrator']))
                         <div class="bg-white shadow-md rounded-2xl p-6 relative">
@@ -74,24 +73,32 @@
                         </div>
                     @endif
 
+                    {{-- Timeline Section --}}
                     <div class="bg-white shadow-md rounded-2xl p-6">
                         <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
                         <div class="relative border-l border-gray-300 ml-4">
                             {{-- Loop data riwayat --}}
-                            <div class="mb-8 ml-6">
-                                <div class="absolute w-3 h-3 bg-blue-600 rounded-full -left-1.5"></div>
-                                <time class="block mb-1 text-sm text-gray-500">02 Sep 2025</time>
-                                <h3 class="font-semibold text-gray-900">Order #12345</h3>
-                                <p class="text-gray-600">Konseling dengan Psikolog A</p>
-                            </div>
+                            @foreach ($activities as $activity)
+                                @php
+                                    $colors = [
+                                        1 => 'bg-blue-600',     // primary
+                                        2 => 'bg-gray-500',    // secondary
+                                        3 => 'bg-green-600',   // success
+                                        4 => 'bg-yellow-500',  // warning
+                                        5 => 'bg-red-600',     // danger
+                                    ];
+                                    $color = $colors[$activity->code] ?? 'bg-gray-400';
+                                @endphp
 
-                            <!-- Item -->
-                            <div class="mb-8 ml-6">
-                                <div class="absolute w-3 h-3 bg-green-600 rounded-full -left-1.5"></div>
-                                <time class="block mb-1 text-sm text-gray-500">28 Agu 2025</time>
-                                <h3 class="font-semibold text-gray-900">Top Up Saldo</h3>
-                                <p class="text-gray-600">Rp 150.000 berhasil ditambahkan</p>
-                            </div>
+                                <div class="mb-8 ml-6">
+                                    <div class="absolute w-3 h-3 {{ $color }} rounded-full -left-1.5"></div>
+                                    <time class="block mb-1 text-sm text-gray-500">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                    </time>
+                                    <h3 class="font-semibold text-gray-900">{{ $activity->title }}</h3>
+                                    <p class="text-gray-600">{{ $activity->description }}</p>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

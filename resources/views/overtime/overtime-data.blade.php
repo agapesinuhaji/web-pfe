@@ -88,13 +88,13 @@
                                         @forelse ($overtimeData as $item)
                                             <tr class="border-b dark:border-gray-700">
                                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    #{{ strtoupper(substr($order->order_uuid, 0, 8)) }}
+                                                    #{{ strtoupper(substr($item->order->order_uuid, 0, 8)) }}
                                                 </th>
                                                 <td class="px-4 py-3">{{ $item->overtime->name }}</td>
                                                 <td class="px-4 py-3">
                                                     Rp {{ number_format($item->overtime->biaya, 0, ',', '.') }}
                                                 </td>
-                                                <td class="px-4 py-3">{{ $item->image}}</td>
+                                                <td class="px-4 py-3"><img src="{{ $item->image}}" alt="Bukti Bayar" class="h-32 object-cover rounded-lg shadow"></td>
                                                 <td class="px-4 py-3">
                                                      @if($item->status == 'payed')
                                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">

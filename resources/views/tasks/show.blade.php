@@ -30,7 +30,12 @@
         </div>
         <div>
           <p class="text-sm text-gray-500">Nama Client</p>
-          <p class="font-medium">{{ $order->user->profile->name }}</p>
+          <p class="font-medium">
+            <a data-modal-target="userModal" data-modal-toggle="userModal" class=" font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+              {{ $order->user->profile->name }}
+            </a>
+              
+          </p>
         </div>
         <div>
           <p class="text-sm text-gray-500">Nama Panggilan</p>
@@ -169,6 +174,61 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <div id="userModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-5xl p-4">
+      <div class="bg-white rounded-lg shadow dark:bg-gray-800">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b px-4 py-2">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Riwayat User
+          </h3>
+          <button type="button" class="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+            data-modal-hide="userModal">
+            ✕
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-4 space-y-4">
+          {{-- Timeline Section --}}
+            <div class="bg-white shadow-md rounded-2xl p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
+                <div class="relative border-l border-gray-300 ml-4">
+                    {{-- Loop data riwayat --}}
+                    @foreach ($activities as $activity)
+                        @php
+                            $colors = [
+                                1 => 'bg-blue-600',     // primary
+                                2 => 'bg-gray-500',    // secondary
+                                3 => 'bg-green-600',   // success
+                                4 => 'bg-yellow-500',  // warning
+                                5 => 'bg-red-600',     // danger
+                            ];
+                            $color = $colors[$activity->code] ?? 'bg-gray-400';
+                        @endphp
+
+                        <div class="mb-8 ml-6">
+                            <div class="absolute w-3 h-3 {{ $color }} rounded-full -left-1.5"></div>
+                            <time class="block mb-1 text-sm text-gray-500">
+                                {{ $activity->created_at->diffForHumans() }}
+                            </time>
+                            <h3 class="font-semibold text-gray-900">{{ $activity->title }}</h3>
+                            <p class="text-gray-600">{{ $activity->description }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        
       </div>
     </div>
   </div>

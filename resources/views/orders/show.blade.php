@@ -21,7 +21,7 @@
                     <span class="font-medium">Terdapat kelebihan waktu {{ $order->overtime->name }} dengan biaya Rp {{ $order->overtime->biaya }}.</span>
                   </div>
                   <div class="mt-2">
-                    <a data-modal-target="endSessionModal-{{ $order->id }}" data-modal-toggle="endSessionModal-{{ $order->id }}" class="inline-block text-sm text-blue-600 hover:underline font-medium">
+                    <a data-modal-target="endSessionModal-{{ $order->id }}" data-modal-toggle="endSessionModal-{{ $order->id }}" class="inline-block text-sm text-blue-600 hover:underline font-medium cursor-pointer">
                         Konfirmasi Pembayaran & Akhiri Sesi
                     </a>
                   </div>
@@ -59,24 +59,54 @@
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <div class="p-6 space-y-6">
-                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                Apakah Anda yakin ingin mengakhiri sesi ini?
-                            </p>
-                        </div>
                         <!-- Modal footer -->
+                        
                         <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                            <button data-modal-hide="endSessionModal-{{ $order->id }}" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-600 dark:hover:text-white">
-                                Batal
-                            </button>
-                            <form action="{{ route('order.end', $order->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                                    Ya, Akhiri
-                                </button>
-                            </form>
+                            <form action="{{ route('order.end', $order->id) }}" method="POST" enctype="multipart/form-data">
+                              @csrf
+                              @method('PATCH')
+
+                              <!-- Input Jumlah Pembayaran -->
+                              <div class="mb-4">
+                                  <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                      Jumlah Pembayaran
+                                  </label>
+                                  <input type="number" name="amount" id="amount" 
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                                                focus:ring-green-500 focus:border-green-500 block w-full p-2.5 
+                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
+                                        required>
+                              </div>
+
+                              <!-- Upload Bukti Bayar -->
+                              <div class="mb-4">
+                                  <label for="proof" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                      Upload Bukti Bayar
+                                  </label>
+                                  <input type="file" name="proof" id="proof" accept="image/*"
+                                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer 
+                                                bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 
+                                                dark:border-gray-600 dark:placeholder-gray-400"
+                                        required>
+                              </div>
+                              <div class="p-6 space-y-6">
+                                  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                      Apakah Anda yakin ingin mengakhiri sesi ini?
+                                  </p>
+                              </div>
+
+                              <!-- Tombol Submit -->
+                              <button type="submit" 
+                                      class="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none 
+                                            focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+                                            dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                  Ya, Akhiri
+                              </button>
+                          </form>
+
                         </div>
+                        
                     </div>
                 </div>
             </div>

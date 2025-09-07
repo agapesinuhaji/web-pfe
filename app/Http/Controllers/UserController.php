@@ -57,8 +57,12 @@ class UserController extends Controller
 
         $methods = ConselingMethod::where('user_id', $user->id)->get();
 
+        $activities = Activity::where('user_id', $user->id)
+                    ->orderBy('created_at', 'asc')
+                    ->get();
 
-        return view('users.show', compact('user', 'methods'));
+
+        return view('users.show', compact('user', 'methods', 'activities'));
     }
 
     /**

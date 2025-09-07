@@ -48,7 +48,7 @@
               Terimakasih sudah mempercayakan konseling anda bersama kami. 
               Kritik dan saran anda sangat berarti bagi kami.
             </p>
-            <a data-modal-target="testimoniModal" data-modal-toggle="testimoniModal" class="inline-block px-4 py-2 text-sm font-medium text-green-700  border border-green-600 rounded-lg bg-green-100   hover:bg-green-600 hover:text-white transition">
+            <a data-modal-target="testimoniModal" data-modal-toggle="testimoniModal" class="inline-block px-4 py-2 text-sm font-medium text-green-700  border border-green-600 rounded-lg bg-green-100   hover:bg-green-600 hover:text-white transition cursor-pointer">
               Berikan Kritik & Saran
             </a>
           </div>

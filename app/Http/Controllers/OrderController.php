@@ -6,7 +6,10 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Activity;
+use App\Models\Overtime;
+use App\Models\OvertimeData;
 use Illuminate\Http\Request;
+use App\Models\Communication;
 use App\Models\ConselingMethod;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,9 +101,28 @@ class OrderController extends Controller
     }
 
 // Akhiri sesi order
-    public function endSession($id)
+    public function endSession(Request $request, $id)
     {
+        $request->validate([
+            'amount' => 'required|numeric',
+            'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Simpan file ke folder upload/payment_proofs
+        $proofPath = $request->file('proof')->store('upload/payment_proofs', 'public');
+
         $order = Order::findOrFail($id);
+
+        $overtimeData = OvertimeData::where('order_id', $order->id)->first();
+
+
+        // Update ke overtime_data
+       $overtimeData->update([
+            'order_id' => $order->id,   // opsional, kalau memang perlu diubah
+            // 'amount'   => $request->amount,
+            'image'    => $proofPath,
+        ]);
+
 
         if ($order->status !== 'progress') {
             return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
@@ -108,6 +130,28 @@ class OrderController extends Controller
 
         $order->status = 'selesai'; // ganti sesuai status final
         $order->save();
+
+        
+        $message = "Pembayaran kelebihan waktu telah di terima sebesar {$request->amount} ";
+
+        $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+
+        //Insert to Communication
+            Communication::create([
+                'order_id' => $order->id,
+                'user_id'  => $adminId,
+                'is_user'  => Auth::user()->role === 'user',
+                'message'  => $message,
+            ]);
+        
+            
+         Activity::create([
+            'user_id' => $order->user_id,
+            'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => 'Pembayaran overtime telah diterima sebesar {$request->amount} .',
+            'code' => '3',
+        ]);
+
 
         Activity::create([
             'user_id' => $order->user_id,

@@ -19,43 +19,55 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
 
-         // buat admin
-        // $admin = User::create([
-        //     'email' => 'admin@example.com',
-        //     'password' => Hash::make('12345678'), 
-        //     'role' => 'administrator',
-        // ]);
+        //  buat admin
+        $admin = User::create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('12345678'), 
+            'role' => 'administrator',
+        ]);
 
-        // Profile::create([
-        //     'user_id' => $admin->id,
-        //     'name' => 'Administrator',
-        //     'image' => 'profile/noimage.png',
-        // ]);
+        Profile::create([
+            'user_id' => $admin->id,
+            'name' => 'Administrator',
+            'image' => 'profile/noimage.png',
+        ]);
 
-        // // buat psikolog
-        // $psychologist = User::create([
-        //     'email' => 'psikolog@example.com',
-        //     'password' => Hash::make('12345678'),
-        //     'role' => 'psikolog',
-        // ]);
+        // buat psikolog
+        $psychologist = User::create([
+            'email' => 'psikolog@example.com',
+            'password' => Hash::make('12345678'),
+            'role' => 'psikolog',
+        ]);
 
-        // Profile::create([
-        //     'user_id' => $psychologist->id,
-        //     'name' => 'Psikolog',
-        //     'image' => 'profile/noimage.png',
-        // ]);
+        Profile::create([
+            'user_id' => $psychologist->id,
+            'name' => 'Psikolog',
+            'image' => 'profile/noimage.png',
+        ]);
 
-        // $psychologist = User::create([
-        //     'email' => 'psikolog2@example.com',
-        //     'password' => Hash::make('12345678'),
-        //     'role' => 'psikolog',
-        // ]);
+        $psychologist = User::create([
+            'email' => 'psikolog2@example.com',
+            'password' => Hash::make('12345678'),
+            'role' => 'psikolog',
+        ]);
 
-        // Profile::create([
-        //     'user_id' => $psychologist->id,
-        //     'name' => 'Psikolog Dua',
-        //     'image' => 'profile/noimage.png',
-        // ]);
+        Profile::create([
+            'user_id' => $psychologist->id,
+            'name' => 'Psikolog Dua',
+            'image' => 'profile/noimage.png',
+        ]);
+
+        $user = User::create([
+            'email' => 'user@example.com',
+            'password' => Hash::make('12345678'),
+            'role' => 'user',
+        ]);
+
+        Profile::create([
+            'user_id' => $user->id,
+            'name'    => 'User',
+            'image'   => 'profile/noimage.png',
+        ]);
 
 
         //  Order::create([
