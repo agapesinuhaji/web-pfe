@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
+use App\Models\Profile;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Activity;
 
 class ProfileController extends Controller
 {
@@ -87,6 +87,30 @@ class ProfileController extends Controller
 
         return redirect()->back();
     }
+
+
+    public function updateDeskripsi(Request $request)
+    {
+        
+        
+
+        $request->validate([
+            'description' => 'required|string',
+        ]);
+        
+        
+        
+        $profile =  Profile::where('id', $request->profile_id)->firstOrFail();
+        
+        
+        $profile->update([
+            'description' => $request->description,
+        ]);
+        
+
+        return redirect()->back()->with('success', 'Deskripsi berhasil diperbarui!');
+    }
+
 
 
  

@@ -126,8 +126,11 @@
                                 </div>
                             </div>
 
+
+
+
                             <div class="lg:col-span-2">
-                                @if(in_array($user->role, ['psikolog', 'administrator']))
+                                @if(in_array($user->role, ['psikolog']))
                                 <div class="bg-white shadow-md rounded-2xl p-6 relative">
                                     <div class="flex justify-between items-start">
                                         <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
@@ -135,8 +138,56 @@
                                             Edit Deskripsi
                                         </a>
                                     </div>
-                                    <p>{{ $user->profile->description }}</p>
+                                    <p>{!! $user->profile->description !!}</p>
                                 </div>
+
+                                <!-- Read modal -->
+                                <div 
+                                    id="userModal" 
+                                    x-data 
+                                    tabindex="-1" 
+                                    aria-hidden="true" 
+                                    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                                >
+                                    <div class="relative w-full max-w-3xl p-4">
+                                        <div class="bg-white rounded-lg shadow dark:bg-gray-800 max-h-[80vh] overflow-y-auto">
+                                            <!-- Header -->
+                                            <div class="flex justify-between items-center border-b px-4 py-2">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                                    Deskripsi Psikolog
+                                                </h3>
+                                                <button type="button" 
+                                                    class="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                                                    data-modal-hide="userModal">
+                                                    ✕
+                                                </button>
+                                            </div>
+
+                                            <!-- Body -->
+                                            <form action="{{ route('profile.updateDeskripsi') }}" method="POST" class="p-4 space-y-4" id="post-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="profile_id" value="{{ $user->profile->id }}">
+
+                                                <div>
+                                                    <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                                                    <textarea id="body" name="description" class="hidden"></textarea>
+                                                    <div id="editor" class="border rounded" style="height: 150px; max-height: 200px; overflow-y: auto;">{!! $user->profile->description !!}</div>
+                                                </div>
+                                                        
+                                                <!-- Footer -->
+                                                <div class="flex justify-end gap-3 pt-4">
+                                                    <button type="submit" 
+                                                        class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                                                        Simpan
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 @endif
                                 
                                 {{-- Timeline Section --}}
@@ -291,6 +342,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 </main>
             </div>
         </div>
@@ -298,44 +350,7 @@
 
 
 
-    <div id="userModal" tabindex="-1" aria-hidden="true"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div class="relative w-full max-w-5xl p-4">
-        <div class="bg-white rounded-lg shadow dark:bg-gray-800">
-            <!-- Header -->
-            <div class="flex justify-between items-center border-b px-4 py-2">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Deskripsi Psikolog
-                </h3>
-                <button type="button" class="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                    data-modal-hide="userModal">
-                    ✕
-                </button>
-            </div>
-
-            <!-- Body -->
-            <form action="" method="POST" class="p-4 space-y-4" id="post-form">
-          @csrf
-          <input type="hidden" name="profile_id" value="{{ $user->profile->id }}">
-
-          <div>
-            <label for="catatan" class="block text-sm font-medium text-gray-700">Catatan Hasil</label>
-            <textarea id="catatan" name="catatan" class="hidden"></textarea>
-            <div id="editor"></div>
-          </div>
-                    
-          <!-- Footer -->
-          <div class="flex justify-end gap-3 pt-4">
-            <button type="submit"
-              class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-              Selesai
-            </button>
-          </div>
-        </form>
-            
-        </div>
-    </div>
-  </div>
+    
 </x-app-layout>
 
 <!-- Include the Quill library -->
@@ -345,7 +360,6 @@
 <script>
   const quill = new Quill('#editor', {
     theme: 'snow',
-    placeholder: 'Tulis keluh kesah kamu disini'
   });
 
   const postForm = document.querySelector('#post-form');

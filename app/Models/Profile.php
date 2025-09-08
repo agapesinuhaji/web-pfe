@@ -16,6 +16,7 @@ class Profile extends Model
         'no_whatsapp',
         'image',
         'saldo',
+        'description',
     ];
 
     public function user()

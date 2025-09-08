@@ -53,6 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::patch('/profile', [ProfileController::class, 'updateDeskripsi'])->name('profile.updateDeskripsi');
+
+
 
     
     Route::resource('product', ProductController::class)->names('product');
