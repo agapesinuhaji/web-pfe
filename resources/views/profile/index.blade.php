@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    @if(in_array(Auth::user()->role, ['psikolog', 'administrator']))
+                    @if(in_array(Auth::user()->role, ['psikolog']))
                         <div class="bg-white shadow-md rounded-2xl p-6 relative">
                             <div class="flex justify-between items-start">
                                 <h2 class="text-xl font-semibold text-gray-800 mb-6">Deskripsi</h2>
