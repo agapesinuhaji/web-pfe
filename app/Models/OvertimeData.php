@@ -11,6 +11,7 @@ class OvertimeData extends Model
         'overtime_id',
         'image',
         'status',
+        'terbayarkan',
     ];
 
     // Relasi ke Order

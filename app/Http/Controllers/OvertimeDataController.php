@@ -46,13 +46,16 @@ class OvertimeDataController extends Controller
         $validated = $request->validate([
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:payed,waiting,cancel',
+            'amount' => 'nullable',
         ]);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('overtime_images', 'public');
         }
 
-        $overtimeData->update($validated);
+        $overtimeData->image = $request->image;
+        $overtimeData->status = $request->status;
+        $overtimeData->biaya = $request->amount;
 
         return redirect()
         ->route('overtimeData.index')
