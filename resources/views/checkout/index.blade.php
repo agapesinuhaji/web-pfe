@@ -17,6 +17,36 @@
     <div class="bg-white-50">
   @include('layouts.nav')
 </div>
+@if(session('success_checkout'))
+<div id="toast-success" 
+     class="fixed top-5 right-5 z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-900 bg-green-100 rounded-lg shadow dark:text-gray-200 dark:bg-green-800" 
+     role="alert">
+    <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5 text-green-700 dark:text-green-200" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9 14.5l-4-4 1.5-1.5L9 11.5l4.5-4.5L15 8.5l-6 6Z" />
+    </svg>
+    <div class="ms-3 text-sm font-normal">
+        {{ session('success_checkout') }} <br>
+        <span id="countdown">3</span> detik lagi...
+    </div>
+</div>
+
+<script>
+    let countdown = 3;
+    const countdownEl = document.getElementById('countdown');
+    const orderUuid = "{{ session('redirect_order') }}";
+
+    const interval = setInterval(() => {
+        countdown--;
+        if (countdownEl) countdownEl.innerText = countdown;
+        if (countdown <= 0 && orderUuid) {
+            clearInterval(interval);
+            window.location.href = "/checkout/payment/" + orderUuid;
+        }
+    }, 1000);
+</script>
+@endif
+
+
 
 <section class="bg-white py-16 antialiased dark:bg-gray-900 md:py-40">
   <form action="{{ route('checkout.store') }}" method="POST" class="mx-auto max-w-screen-xl px-4 2xl:px-0">

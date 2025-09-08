@@ -128,7 +128,13 @@ class CheckoutController extends Controller
 
 
         // return redirect()->back()->with('success', 'Jadwal berhasil dipesan!');
-        return redirect()->route('checkout.payment', $order->order_uuid);
+        return redirect()
+    ->route('checkout.index')
+    ->with([
+        'success_checkout' => 'Checkout berhasil dibuat! Anda akan diarahkan ke halaman pembayaran.',
+        'redirect_order' => $order->order_uuid,
+    ]);
+
     }
 
     public function update(Request $request, $uuid)
@@ -206,7 +212,11 @@ class CheckoutController extends Controller
         // Ambil payment method aktif
         $paymentMethods = PaymentMethod::where('is_active', 1)->get();
 
-        return view('checkout.payment', compact('order', 'paymentMethods'));
+        return view('checkout.payment', compact('order', 'paymentMethods'))
+        ->with([
+            'success_payment' => 'Silakan lakukan pembayaran dalam waktu 15 menit.',
+            'redirect_order'  => $order->order_uuid,
+        ]);
     }
 
 }
