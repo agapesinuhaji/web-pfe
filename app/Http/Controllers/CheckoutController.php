@@ -19,21 +19,21 @@ class CheckoutController extends Controller
     {
 
         // Pastikan user sudah login
-    $user = Auth::user();
-    if (!$user) {
-        return redirect()->route('login');
-    }
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
-    // Hitung order aktif user
-    $activeOrders = Order::where('user_id', $user->id)
-        ->whereNotIn('status', ['selesai', 'pay fail'])
-        ->count();
+        // Hitung order aktif user
+        $activeOrders = Order::where('user_id', $user->id)
+            ->whereNotIn('status', ['selesai', 'pay fail'])
+            ->count();
 
-    if ($activeOrders >= 2) {
-        return redirect()
-            ->route('myorder.index')
-            ->with('error', 'Setiap user hanya dapat memiliki 2 Orderan aktif.');
-    }
+        if ($activeOrders >= 2) {
+            return redirect()
+                ->route('myorder.index')
+                ->with('error', 'Setiap user hanya dapat memiliki 2 Orderan aktif.');
+        }
 
 
         $conselors = User::with('profile')
@@ -212,11 +212,35 @@ class CheckoutController extends Controller
         // Ambil payment method aktif
         $paymentMethods = PaymentMethod::where('is_active', 1)->get();
 
+        // dd($order);
+
         return view('checkout.payment', compact('order', 'paymentMethods'))
         ->with([
             'success_payment' => 'Silakan lakukan pembayaran dalam waktu 15 menit.',
             'redirect_order'  => $order->order_uuid,
         ]);
     }
+
+
+    public function expire($uuid)
+    {
+        $order = Order::with('schedule')->where('order_uuid', $uuid)->firstOrFail();
+
+        $order->update(['status' => 'pay fail']);
+
+        $order->schedule->update(['status' => 'ready']);
+
+        // Simpan activity
+        Activity::create([
+            'user_id' => $order->user_id,
+            'title'   => 'Pembayaran kadaluarsa #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => $order->user->profile->name . ' tidak melakukan pembayaran hingga waktu habis',
+            'code'    => '5',
+        ]);
+        
+
+        return response()->json(['success' => true]);
+    }
+
 
 }

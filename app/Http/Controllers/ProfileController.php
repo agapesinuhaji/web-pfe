@@ -41,11 +41,14 @@ class ProfileController extends Controller
 
         $validated = $request->validated();
 
+
         // Update profile
         $profile->name = $validated['name'];
         $profile->nickname = $validated['nickname'] ?? null;
         $profile->domicile = $validated['domicile'] ?? null;
         $profile->no_whatsapp = $validated['no_whatsapp'] ?? null;
+        $profile->gender = $validated['gender'] ?? null;
+        $profile->date_of_birth = $validated['date_of_birth'] ?? null;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');

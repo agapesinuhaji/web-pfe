@@ -17,7 +17,7 @@
                             <div class="lg:col-span-1">
                                 <div class="bg-white shadow-md rounded-2xl p-6">
                                     <div class="flex flex-col items-center text-center">
-                                        <img src="{{ asset($user->profile->image) }}" alt="Profile Photo" class="w-32 h-32 rounded-full border-4 border-gray-200 object-cover mb-4"/>
+                                        <img src="{{ asset($user->profile->image) ?? asset('noimage.png') }}" alt="Profile Photo" class="w-32 h-32 rounded-full border-4 border-gray-200 object-cover mb-4"/>
                                         <h2 class="text-xl font-semibold text-gray-900">{{ $user->profile->name }}</h2>
                                             <p class="text-gray-500">“{{ $user->role }}”</p>
                                         <p class="mt-2 text-sm text-gray-600">{{ $user->email }}</p>

@@ -11,6 +11,8 @@ use App\Models\OvertimeData;
 use Illuminate\Http\Request;
 use App\Models\Communication;
 use App\Models\ConselingMethod;
+use App\Models\Periode;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -83,6 +85,8 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
+
+
         // Validasi
         $request->validate([
             'status' => 'required|string|in:pending,payed,approved,progress,selesai',
@@ -93,9 +97,22 @@ class OrderController extends Controller
             abort(403, 'Akses ditolak');
         }
 
+        $periode = Periode::where('status', 'active')->firstOrFail();
+
+
         // Update status
         $order->status = $request->status;
         $order->save();
+
+        $orderId = strtoupper(substr($order->order_uuid, 0, 8));
+
+        Transaction::create([
+            'periode_id' => $periode->id,
+            'type' => 'income',
+            'amount' => $order->total,
+            'description' => 'Pembayaran order #'.$orderId.' berhasil diterima',
+            'order_id' => $order->id,
+        ]);
 
         return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
     }
@@ -112,6 +129,9 @@ class OrderController extends Controller
         $proofPath = $request->file('proof')->store('upload/payment_proofs', 'public');
 
         $order = Order::findOrFail($id);
+
+        $periode = Periode::where('status', 'active')->firstOrFail();
+
 
         $overtimeData = OvertimeData::where('order_id', $order->id)->first();
 
@@ -150,6 +170,14 @@ class OrderController extends Controller
             'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
             'description' => 'Pembayaran overtime telah diterima sebesar {$request->amount} .',
             'code' => '3',
+        ]);
+
+        Transaction::create([
+            'periode_id' => $periode->id,
+            'type' => 'income',
+            'amount' => $request->total,
+            'description' => 'Pembayaran order #'.strtoupper(substr($order->order_uuid, 0, 8)).' berhasil diterima',
+            'order_id' => $order->id,
         ]);
 
 

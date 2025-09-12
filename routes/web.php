@@ -20,6 +20,7 @@ use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
 use App\Http\Controllers\CounselingResultController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -94,6 +95,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/overtime-data', [OvertimeDataController::class, 'index'])->name('overtimeData.index');
     Route::put('/overtime-data/{overtimeData}', [OvertimeDataController::class, 'update'])->name('overtimeData.update');
+
+    // routes/web.php
+    Route::post('/orders/{uuid}/expire', [CheckoutController::class, 'expire'])->name('orders.expire');
+
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
+
 
 });
 

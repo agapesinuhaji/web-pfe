@@ -1,320 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Checkout</title>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Checkout</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+      @vite(['resources/css/app.css', 'resources/js/app.js'])
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-</head>
-<body class="min-h-screen flex flex-col">
+  </head>
 
-  <main class="flex-grow">
-
-    <div class="bg-white-50">
-  @include('layouts.nav')
-</div>
-@if(session('success_checkout'))
-<div id="toast-success" 
-     class="fixed top-5 right-5 z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-900 bg-green-100 rounded-lg shadow dark:text-gray-200 dark:bg-green-800" 
-     role="alert">
-    <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5 text-green-700 dark:text-green-200" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9 14.5l-4-4 1.5-1.5L9 11.5l4.5-4.5L15 8.5l-6 6Z" />
-    </svg>
-    <div class="ms-3 text-sm font-normal">
-        {{ session('success_checkout') }} <br>
-        <span id="countdown">3</span> detik lagi...
-    </div>
-</div>
-
-<script>
-    let countdown = 3;
-    const countdownEl = document.getElementById('countdown');
-    const orderUuid = "{{ session('redirect_order') }}";
-
-    const interval = setInterval(() => {
-        countdown--;
-        if (countdownEl) countdownEl.innerText = countdown;
-        if (countdown <= 0 && orderUuid) {
-            clearInterval(interval);
-            window.location.href = "/checkout/payment/" + orderUuid;
-        }
-    }, 1000);
-</script>
-@endif
-
-
-
-<section class="bg-white py-16 antialiased dark:bg-gray-900 md:py-40">
-  <form action="{{ route('checkout.store') }}" method="POST" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-    @csrf
-    <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
-      <div class="min-w-0 flex-1 space-y-8">
-        @guest
-        <div class="space-y-4 border-b pb-8 border-gray-300">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Login</h2>
-          <p>Silahkan Login terlebih dahulu!</p>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div class="sm:col-span-2">
-              <a href="/login" class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
-                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
-                </svg>
-                Log In
-              </a>
-            </div>
-          </div>
-        </div>
-        @endguest
-
-
-
-        @auth
-        <div class="space-y-4">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Detail Pesanan</h2>
-
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Nama Lengkap </label>
-              <input type="text" id="name" name="name" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('name', auth()->user()->profile?->name) ?? '' }}" required />
-            </div>
-
-            <div>
-              <label for="nickname" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Nama Panggilan </label>
-              <input type="text" id="nickname" name="nickname" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('nickname', auth()->user()->profile?->nickname) ?? '' }}" required />
-            </div>
-
-            <div>
-              <label for="domicile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Domisili </label>
-              <input type="text" id="domicile" name="domicile" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('domicile', auth()->user()->profile?->domicile) ?? '' }}" required />
-            </div>
-
-            <div>
-              <label for="date_of_birth" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Tanggal Lahir </label>
-              <input type="date" id="date_of_birth" name="date_of_birth" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('date_of_birth', auth()->user()->profile?->date_of_birth) ?? '1960-01-01' }}"  required />
-            </div>
-
-            <div>
-              <div class="mb-2 flex items-center gap-2">
-                <label for="select-country-input-3" class="block text-sm font-medium text-gray-900 dark:text-white"> Jenis Kelamin </label>
-              </div>
-              <select id="select-country-input-3" name="gender" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                <option selected>--- Jenis Kelamin ---</option>
-                <option value="L" {{ auth()->user()->profile?->gender === 'L' ? 'selected' : '' }}>Laki - Laki</option>
-                <option value="P" {{ auth()->user()->profile?->gender === 'P' ? 'selected' : '' }}>Perempuan</option>
-              </select>
-            </div>
-
-
-            <div>
-  <label for="no_whatsapp" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-    Nomor WhatsApp
-  </label>
-  <div class="flex items-center">
-    <div class="relative w-full">
-      <input 
-        type="text" 
-        id="no_whatsapp" 
-        name="no_whatsapp" 
-        class="z-20 block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 
-              focus:border-primary-500 focus:ring-primary-500 
-              dark:border-gray-600 dark:bg-gray-700 dark:text-white 
-              dark:placeholder:text-gray-400 dark:focus:border-primary-500" 
-        value="{{ old('no_whatsapp', auth()->user()->profile?->no_whatsapp) ?? '' }}" 
-        placeholder="+6281234567890"
-        required
-        inputmode="numeric"
-      />
-    </div>
-  </div>
-</div>
-
-<script>
-document.getElementById('no_whatsapp').addEventListener('input', function (e) {
-  // hanya izinkan angka dan tanda +
-  this.value = this.value.replace(/[^0-9+]/g, '');
-  // hanya izinkan + di paling depan
-  if (this.value.includes('+')) {
-    this.value = this.value.replace(/\+(?!^)/g, '');
-  }
-});
-</script>
-
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white border-b-2 border-primary-500 pb-2">
-            Paket Konseling
-          </h3>
-
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-    @foreach ($products as $index => $product)
-        <label class="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm cursor-pointer hover:shadow-lg transition dark:border-gray-700 dark:bg-gray-800 group">
-            
-            <input type="radio" 
-                   name="paket" 
-                   value="{{ $product->id }}" 
-                   class="absolute opacity-0 peer"
-                   {{ $index === 0 ? 'checked' : '' }} />
-            
-            <div class="flex flex-col items-start">
-                <span class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ $product->name }}
-                </span>
-                <span class="mt-3 text-2xl font-bold text-primary-600">
-                    {{ 'Rp ' . number_format($product->price, 0, ',', '.') }}
-                </span>
-            </div>
-            
-            <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-500"></div>
-        </label>
-    @endforeach
-</div>
-        </div>
-
-        {{-- <div class="pt-4">
-          <label for="conseling_method" class="block mb-2 font-semibold">Konseling Via</label>
-              <Select id="method" name="method" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
-                  @foreach ($methods as $method)
-                      <option value="{{ $method->id }}">{{ $method->name }}</option>
-                  @endforeach
-              </Select>
-        </div> --}}
-
-
-        
-        <div x-data="checkoutApp()" x-init="init()" class="mx-auto bg-white rounded space-y-4">
-            <!-- Pilih Konselor -->
-            <div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Pilih Konselor</h3>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    @foreach ($conselors as $c)
-                    <label 
-                        class="relative cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
-                    >
-                        <input 
-                            type="radio" 
-                            name="konselor" 
-                            :value="{{ $c->id }}" 
-                            @change="selectConselor({{ $c->id }})"
-                            class="absolute opacity-0 peer"
-                        >
-                        <div class="flex flex-col items-center text-center p-2 rounded-lg">
-                            <img 
-                                src="https://randomuser.me/api/portraits/women/44.jpg" 
-                                alt="{{ $c->profile->name }}" 
-                                class="w-16 h-16 rounded-full mb-2"
-                            >
-                            <h4 class="font-medium text-gray-900 dark:text-white">
-                                {{ $c->profile->name }}
-                            </h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Psikolog Klinis
-                            </p>
-                        </div>
-                        <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-blue-500"></div>
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-
-
-            <!-- Konseling Via -->
-              <!-- Konseling Via -->
-              <div x-show="methods.length > 0" x-transition>
-                  <label class="block mb-2 font-semibold">Konseling Via</label>
-                  <select name="method_id" x-model="selectedMethod" class="w-full border rounded p-2">
-                      <option value="">-- pilih metode --</option>
-                      <template x-for="m in methods" :key="m.id">
-                          <option :value="m.id" x-text="m.name"></option>
-                      </template>
-                  </select>
-              </div>
-
-
-
-
-            <!-- Pilih Tanggal -->
-            <div x-show="selectedConselor" x-transition>
-                <label class="block mb-2 font-semibold">Pilih Tanggal</label>
-                <input 
-                    type="text" 
-                    id="datePicker" 
-                    name="date"
-                    placeholder="Pilih tanggal" 
-                    class="w-full border rounded p-2"
-                >
-            </div>
-
-            <!-- Pilih Jam -->
-            <div x-show="times.length > 0" x-transition>
-              <label class="block mb-2 font-semibold">Pilih Jam</label>
-              <div class="flex flex-wrap gap-2">
-                  <template x-for="(time, index) in times" :key="index">
-                      <label class="cursor-pointer pt-2">
-                          <input 
-                              type="radio" 
-                              name="selectedTime"
-                              class="hidden peer" 
-                              :value="time" 
-                              @change="selectedTime = time"
-                          >
-                          <span class="px-4 py-2 rounded border border-gray-300 
-                              peer-checked:bg-blue-600 peer-checked:text-white 
-                              peer-checked:border-blue-600
-                              hover:bg-blue-700 hover:text-gray-50 transition">
-                              <span x-text="time"></span>
-                          </span>
-                      </label>
-                  </template>
-              </div>
-          </div>
-            <!-- Persetujuan -->
-            <div class="flex items-start pt-4">
-              <input 
-                  id="agreement" 
-                  type="checkbox" 
-                  name="agreement" 
-                  value="1"
-                  required
-                  class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <label for="agreement" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                  Saya menyetujui bahwa data saya direkam dan digunakan untuk keperluan layanan konseling.
-              </label>
-            </div>
-
-
-            <div class="pt-8">
-              <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
-                Lanjut Ke Pembayaran  
-              </button>
-            </div>
-
-            
-            
-        </div>
-
-        @endauth
+  <body class="min-h-screen flex flex-col">
+    <main class="flex-grow">
+      <div class="bg-white-50">
+        @include('layouts.nav')
       </div>
-    </div>
-  </form>
-</section>
+      @if(session('success_checkout'))
+        <div id="toast-success" class="fixed top-5 right-5 z-50 flex items-center w-full max-w-xs p-4 mb-4 text-gray-900 bg-green-100 rounded-lg shadow dark:text-gray-200 dark:bg-green-800" role="alert">
+          <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5 text-green-700 dark:text-green-200" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9 14.5l-4-4 1.5-1.5L9 11.5l4.5-4.5L15 8.5l-6 6Z" />
+          </svg>
+          <div class="ms-3 text-sm font-normal">
+              {{ session('success_checkout') }} <br>
+              <span id="countdown">3</span> detik lagi...
+          </div>
+        </div>
 
-  </main>
+        <script>
+            let countdown = 3;
+            const countdownEl = document.getElementById('countdown');
+            const orderUuid = "{{ session('redirect_order') }}";
+
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdownEl) countdownEl.innerText = countdown;
+                if (countdown <= 0 && orderUuid) {
+                    clearInterval(interval);
+                    window.location.href = "/checkout/payment/" + orderUuid;
+                }
+            }, 1000);
+        </script>
+      @endif
+
+
+
+      <section class="bg-white py-16 antialiased dark:bg-gray-900 md:py-40">
+        <form action="{{ route('checkout.store') }}" method="POST" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+          @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+          @endif
+          @csrf
+          <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+            <div class="min-w-0 flex-1 space-y-8">
+              @guest
+                <div class="space-y-4 border-b pb-8 border-gray-300">
+                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Login</h2>
+                  <p>Silahkan Login terlebih dahulu!</p>
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div class="sm:col-span-2">
+                      <a href="/login" class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                        <svg class="h-5 w-5" aria-hidden="true" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                        </svg>
+                        Log In
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              @endguest
+
+              @auth
+                <div class="space-y-4">
+                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Detail Pesanan</h2>
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Nama Lengkap </label>
+                      <input type="text" id="name" name="name" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('name', auth()->user()->profile?->name) ?? '' }}" required />
+                    </div>
+
+                    <div>
+                      <label for="nickname" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Nama Panggilan </label>
+                      <input type="text" id="nickname" name="nickname" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('nickname', auth()->user()->profile?->nickname) ?? '' }}" required />
+                    </div>
+
+                    <div>
+                      <label for="domicile" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Domisili </label>
+                      <input type="text" id="domicile" name="domicile" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('domicile', auth()->user()->profile?->domicile) ?? '' }}" required />
+                    </div>
+
+                    <div>
+                      <label for="date_of_birth" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Tanggal Lahir </label>
+                      <input type="date" id="date_of_birth" name="date_of_birth" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" value="{{ old('date_of_birth', auth()->user()->profile?->date_of_birth) ?? '1960-01-01' }}"  required />
+                    </div>
+
+                    <div>
+                      <div class="mb-2 flex items-center gap-2">
+                        <label for="select-country-input-3" class="block text-sm font-medium text-gray-900 dark:text-white"> Jenis Kelamin </label>
+                      </div>
+                      <select id="select-country-input-3" name="gender" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                        <option selected>--- Jenis Kelamin ---</option>
+                        <option value="L" {{ auth()->user()->profile?->gender === 'L' ? 'selected' : '' }}>Laki - Laki</option>
+                        <option value="P" {{ auth()->user()->profile?->gender === 'P' ? 'selected' : '' }}>Perempuan</option>
+                      </select>
+                    </div>
+
+
+                    <div>
+                      <label for="no_whatsapp" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                        Nomor WhatsApp
+                      </label>
+                      <div class="flex items-center">
+                        <div class="relative w-full">
+                          <input  type="text"  id="no_whatsapp"  name="no_whatsapp"  class="z-20 block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900  focus:border-primary-500 focus:ring-primary-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white  dark:placeholder:text-gray-400 dark:focus:border-primary-500"  value="{{ old('no_whatsapp', auth()->user()->profile?->no_whatsapp) ?? '' }}"  placeholder="+6281234567890" required inputmode="numeric" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <script>
+                      document.getElementById('no_whatsapp').addEventListener('input', function (e) {
+                        // hanya izinkan angka dan tanda +
+                        this.value = this.value.replace(/[^0-9+]/g, '');
+                        // hanya izinkan + di paling depan
+                        if (this.value.includes('+')) {
+                          this.value = this.value.replace(/\+(?!^)/g, '');
+                        }
+                      });
+                    </script>
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white border-b-2 border-primary-500 pb-2">
+                    Paket Konseling
+                  </h3>
+                  <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    @foreach ($products as $index => $product)
+                        <label class="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm cursor-pointer hover:shadow-lg transition dark:border-gray-700 dark:bg-gray-800 group">
+                            <input type="radio" name="paket" value="{{ $product->id }}" class="absolute opacity-0 peer"{{ $index === 0 ? 'checked' : '' }} />
+                            <div class="flex flex-col items-start">
+                                <span class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ $product->name }}
+                                </span>
+                                <span class="mt-3 text-2xl font-bold text-primary-600">
+                                    {{ 'Rp ' . number_format($product->price, 0, ',', '.') }}
+                                </span>
+                            </div>
+                            <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-500"></div>
+                        </label>
+                    @endforeach
+                  </div>
+                </div>
+
+                <div x-data="checkoutApp()" x-init="init()" class="mx-auto bg-white rounded space-y-4">
+                  <!-- Pilih Konselor -->
+                  <div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Pilih Konselor</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      @foreach ($conselors as $c)
+                        <label  class="relative cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800" >
+                            <input  type="radio"  name="konselor"  :value="{{ $c->id }}"  @change="selectConselor({{ $c->id }})" class="absolute opacity-0 peer" >
+                            <div class="flex flex-col items-center text-center p-2 rounded-lg">
+                                <img  src="{{ asset($c->profile->image) }}"  alt="{{ $c->profile->name }}"  class="w-16 h-16 rounded-full mb-2" >
+                                <h4 class="font-medium text-gray-900 dark:text-white">
+                                    {{ $c->profile->name }}
+                                </h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Psikolog
+                                </p>
+                            </div>
+                            <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-blue-500"></div>
+                        </label>
+                      @endforeach
+                    </div>
+                  </div>
+
+                  <!-- Konseling Via -->
+                  <div x-show="methods.length > 0" x-transition>
+                      <label class="block mb-2 font-semibold">Konseling Via</label>
+                      <select name="method_id" x-model="selectedMethod" class="w-full border rounded p-2">
+                          <option value="">-- pilih metode --</option>
+                          <template x-for="m in methods" :key="m.id">
+                              <option :value="m.id" x-text="m.name"></option>
+                          </template>
+                      </select>
+                  </div>
+
+                  <!-- Pilih Tanggal -->
+                  <div x-show="selectedConselor" x-transition>
+                      <label class="block mb-2 font-semibold">Pilih Tanggal</label>
+                      <input type="text" id="datePicker" name="date"placeholder="Pilih tanggal" class="w-full border rounded p-2">
+                  </div>
+
+                  <!-- Pilih Jam -->
+                  <div x-show="times.length > 0" x-transition>
+                    <label class="block mb-2 font-semibold">Pilih Jam</label>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="(time, index) in times" :key="index">
+                            <label class="cursor-pointer pt-2">
+                                <input  type="radio"  name="selectedTime" class="hidden peer"  :value="time"  @change="selectedTime = time" >
+                                <span class="px-4 py-2 rounded border border-gray-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:bg-blue-700 transition">
+                                    <span x-text="time"></span>
+                                </span>
+                            </label>
+                        </template>
+                    </div>
+                  </div>
+
+                  <!-- Persetujuan -->
+                  <div class="flex items-start pt-4">
+                    <input  id="agreement"  type="checkbox"  name="agreement"  value="1" required class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" >
+                    <label for="agreement" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        Saya menyetujui bahwa data saya direkam dan digunakan untuk keperluan layanan konseling.
+                    </label>
+                  </div>
+
+                  <div class="pt-8">
+                    <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
+                      Lanjut Ke Pembayaran  
+                    </button>
+                  </div>
+                </div>
+              @endauth
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
 
   {{-- Section Footer --}}
 <footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
@@ -369,6 +287,7 @@ function checkoutApp() {
             this.flatpickrInstance = flatpickr("#datePicker", {
                 dateFormat: "Y-m-d",
                 disable: [],
+                minDate: new Date().fp_incr(1),
                 onChange: (selectedDates, dateStr) => {
                     this.selectedDate = dateStr;
                     this.fetchSchedules();

@@ -130,6 +130,11 @@
                                 </dd>
                             </dl>
                             <p id="copy-total-msg" class="text-sm text-green-600 mt-1 hidden">Total berhasil disalin!</p>
+
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-semibold text-gray-900 dark:text-white">Batas Waktu Bayar</dt>
+                                <dd class="text-base font-medium text-red-600 dark:text-red-400" id="countdown-timer"></dd>
+                            </dl>
                         </div>
                     </div>
                 </form>
@@ -194,5 +199,48 @@
             }, 2000);
         }
     </script>
+
+    <script>
+        const expiredAt = "{{ \Carbon\Carbon::parse($order->expired_at)->toIso8601String() }}";
+        const orderUuid = "{{ $order->order_uuid }}";
+        const countdownEl = document.getElementById("countdown-timer");
+
+        if (countdownEl) {
+            const expiredTime = new Date(expiredAt).getTime();
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = expiredTime - now;
+
+                if (distance <= 0) {
+                    clearInterval(timer);
+                    countdownEl.innerText = "Expired";
+                    countdownEl.classList.add("text-gray-500");
+
+                    // 🔹 Update status order ke pay_fail
+                    fetch(`/orders/${orderUuid}/expire`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Content-Type": "application/json"
+                        }
+                    }).then(() => {
+                        // 🔹 Redirect ke myorder
+                        window.location.href = "/my-order";
+                    });
+
+                    return;
+                }
+
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownEl.innerText =
+                    `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+    </script>
+
+
 </body>
 </html>

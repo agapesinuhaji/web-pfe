@@ -41,7 +41,7 @@
         <div x-data="{ open: false }" class="relative">
             <!-- Tombol dropdown -->
             <button @click="open = !open" class="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <img src="{{ asset(Auth::user()->profile->image) ?? asset('default-avatar.png') }}" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover">
+                <img src="{{ asset(Auth::user()->profile->image) ?? asset('noimage.png') }}" alt="Profile Picture" class="h-8 w-8 rounded-full object-cover">
                 <span>{{ Auth::user()->profile->name }}</span>
                 <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />

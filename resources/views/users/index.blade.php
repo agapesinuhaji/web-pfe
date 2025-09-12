@@ -55,7 +55,7 @@
                                                         {{ $loop->iteration }}
                                                     </th>
                                                     <td class="px-4 py-3">
-                                                        <img src="{{ asset( $user->profile->image) }}" alt="{{ $user->profile->name }}" class="w-10 h-10 rounded-full shadow object-cover ring-2 ring-gray-300 dark:ring-gray-500">
+                                                        <img src="{{ asset( $user->profile->image) ?? asset('noimage.png') }}" alt="{{ $user->profile->name }}" class="w-10 h-10 rounded-full shadow object-cover ring-2 ring-gray-300 dark:ring-gray-500">
                                                     </td>
                                                     <td class="px-4 py-3 max-w-[12rem] truncate">{{ $user->profile->name }}</td>
                                                     <td class="px-4 py-3 ">{{ $user->email }}</td>

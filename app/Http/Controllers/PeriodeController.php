@@ -54,14 +54,25 @@ class PeriodeController extends Controller
             if ($activePeriod) {
                 return redirect()->back()->with('error', 'Sudah ada periode yang aktif. Hanya boleh 1 periode aktif.');
             }
+
+            \App\Models\Schedule::where('status', 'ready')->update([
+                'status' => 'cancel'
+            ]);
+
         }
 
-        Periode::create([
+        $periode = Periode::create([
             'name' => $request->name,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
+
+         if ($request->status === 'active') {
+            \App\Models\Schedule::where('periode_id', $periode->id)
+                ->where('status', 'cancel')
+                ->update(['status' => 'ready']);
+        }
 
         return redirect()->route('periode.index')->with('success', 'Periode berhasil dibuat!');
     }
@@ -75,28 +86,49 @@ class PeriodeController extends Controller
             'end_date' => 'required',
             'status' => 'required|in:active,nonactive,done',
         ]);
-
+        
+        // Cari data periode berdasarkan ID
+        $periode = Periode::findOrFail($id);
+        
+        
         // Cek jika ingin menjadikan periode ini 'active'
         if ($request->status === 'active') {
             $activePeriod = Periode::where('status', 'active')->where('id', '!=', $id)->first();
             if ($activePeriod) {
                 return redirect()->back()->with('error', 'Sudah ada periode yang aktif. Hanya boleh 1 periode aktif.');
             }
-        }
+            
+            \App\Models\Schedule::where('status', 'ready')->update([
+                'status' => 'cancel'
+            ]);
 
-        // Cari data periode berdasarkan ID
-        $periode = Periode::findOrFail($id);
+             if ($periode->status !== 'active') {
+                \App\Models\Schedule::where('periode_id', $periode->id)
+                    ->where('status', 'cancel')
+                    ->update(['status' => 'ready']);
+                }
+            }
 
-        // Update data
-        $periode->update([
-            'name' => $request->name,
+            if ($request->status === 'nonactive') {
+                \App\Models\Schedule::where('periode_id', $periode->id)->update(['status' => 'cancel']);
+            }
+
+            
+            
+            
+            // Update data
+            $periode->update([
+                'name' => $request->name,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
+        
+        
+        dd($periode);   
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('periode.index')->with('success', 'Periode berhasil diperbarui!');
+        // return redirect()->route('periode.index')->with('success', 'Periode berhasil diperbarui!');
     }
 
 }

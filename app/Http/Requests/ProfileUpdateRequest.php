@@ -20,6 +20,8 @@ class ProfileUpdateRequest extends FormRequest
             'nickname' => 'nullable|string|max:255',
             'domicile' => 'nullable|string|max:255',
             'no_whatsapp' => 'nullable|string|max:25',
+            'gender' => ['nullable', 'in:L,P'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
