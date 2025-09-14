@@ -41,9 +41,7 @@
                                 <p><span class="font-medium">Domisili:</span> {{ $user->profile->domicile ?? '-' }}</p>
                                 <p>
                                     <span class="font-medium">No. WhatsApp:</span> 
-                                    <a target="_blank" href="https://wa.me/{{ $user->profile->no_whatsapp }}" class="text-green-600 hover:underline">
-                                        {{ $user->profile->no_whatsapp ?? '-' }}
-                                    </a>
+                                    {{ $user->profile->no_whatsapp ?? '-' }}
                                 </p>
                             </div>
 

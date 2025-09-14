@@ -101,11 +101,12 @@ class UserController extends Controller
                 'user_id'     => $user->id,
                 'title'       => 'Izin user diubah menjadi '. $user->role,
                 'description' => "Role user {$user->profile->name} diubah dari {$oldRole} menjadi {$request->role} oleh {$login->profile->name}",
+                'code' => '2',
             ]);
         }
 
         // redirect to show user
-        return redirect()->route('users.show', $user->id)
+        return redirect()->route('user.show', $user->id)
                      ->with('success', 'User berhasil diperbarui!');
     }
 

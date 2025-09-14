@@ -106,6 +106,7 @@ class CheckoutController extends Controller
             'conselor_id'=> $request->konselor,
             'schedule_id'=> $schedule->id, // Ambil dari hasil query
             'method_id'  => $request->method_id,
+            'periode_id' => $schedule->periode_id,
             'price'      => $product->price,
             'unique_kode'=> $uniqueCode,
             'total'      => $total,
@@ -178,16 +179,16 @@ class CheckoutController extends Controller
             $order->save();
         }
 
-        $payment_method = PaymentMethod::where('id', $request->payment_method_id)->first();
+        // $payment_method = PaymentMethod::where('id', $request->payment_method_id)->first();
 
 
         
-        Activity::create([
-            'user_id' => $user->id,
-            'title' => 'Melakukan pembayaran #' . strtoupper(substr($order->order_uuid, 0, 8)),
-            'description' => $user->profile->name. ' telah melakukan pembayaran melalui ' . $payment_method->name,
-            'code' => '3',
-        ]);
+        // Activity::create([
+        //     'user_id' => $user->id,
+        //     'title' => 'Melakukan pembayaran #' . strtoupper(substr($order->order_uuid, 0, 8)),
+        //     'description' => $user->profile->name. ' telah melakukan pembayaran melalui ' . $payment_method->name,
+        //     'code' => '3',
+        // ]);
 
         
 

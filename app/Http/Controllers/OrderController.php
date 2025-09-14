@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Periode;
 use App\Models\Product;
 use App\Models\Activity;
 use App\Models\Overtime;
+use App\Models\Transaction;
 use App\Models\OvertimeData;
 use Illuminate\Http\Request;
 use App\Models\Communication;
+use App\Models\PaymentMethod;
 use App\Models\ConselingMethod;
-use App\Models\Periode;
-use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -112,6 +113,15 @@ class OrderController extends Controller
             'amount' => $order->total,
             'description' => 'Pembayaran order #'.$orderId.' berhasil diterima',
             'order_id' => $order->id,
+        ]);
+
+        $payment_method = PaymentMethod::where('id', $order->payment_method_id)->first();
+
+         Activity::create([
+            'user_id' => $order->user->id,
+            'title' => 'Melakukan pembayaran #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => $order->user->profile->name. ' telah melakukan pembayaran melalui ' . $payment_method->name,
+            'code' => '3',
         ]);
 
         return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
