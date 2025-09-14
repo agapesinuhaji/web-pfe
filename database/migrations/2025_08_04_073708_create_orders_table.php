@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->uuid('order_uuid')->unique();
-            $table->foreignId('periode_id')->constrained('periodes')->onDelete('cascade');        // pemesan
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');        // pemesan
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('conselor_id')->constrained('users')->onDelete('cascade');
