@@ -125,10 +125,10 @@ class PeriodeController extends Controller
         ]);
         
         
-        dd($periode);   
+        // dd($periode);   
 
         // Redirect kembali dengan pesan sukses
-        // return redirect()->route('periode.index')->with('success', 'Periode berhasil diperbarui!');
+        return redirect()->route('periode.index')->with('success', 'Periode berhasil diperbarui!');
     }
 
 }

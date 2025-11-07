@@ -112,7 +112,6 @@ class OrderController extends Controller
             'type' => 'income',
             'amount' => $order->total,
             'description' => 'Pembayaran order #'.$orderId.' berhasil diterima',
-            'order_id' => $order->id,
         ]);
 
         $payment_method = PaymentMethod::where('id', $order->payment_method_id)->first();

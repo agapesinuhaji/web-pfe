@@ -13,6 +13,7 @@ class Order extends Model
         'conselor_id',
         'schedule_id',
         'method_id',
+        'periode_id',
         'price',
         'unique_kode',
         'total',

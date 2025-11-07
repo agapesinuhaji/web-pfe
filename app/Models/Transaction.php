@@ -11,7 +11,6 @@ class Transaction extends Model
         'type',
         'amount',
         'description',
-        'order_id',
     ];
 
 
