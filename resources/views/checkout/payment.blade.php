@@ -64,7 +64,7 @@
                                 <option value="">-- Pilih --</option>
                                 @foreach($paymentMethods as $pm)
                                     <option value="{{ $pm->id }}"
-                                        data-image="{{ asset('storage/' . $pm->image) }}"
+                                        data-image="{{ asset($pm->image) }}"
                                         data-number="{{ $pm->number }}"
                                         data-owner="{{ $pm->atas_nama }}">
                                         {{ $pm->name }}

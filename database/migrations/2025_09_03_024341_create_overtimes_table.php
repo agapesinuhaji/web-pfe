@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('overtimes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('biaya')->default(0);
+            $table->decimal('biaya', 12, 2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

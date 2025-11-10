@@ -178,7 +178,7 @@
                                                                 </div>
                                                                 <div>
                                                                     <p class="text-sm text-gray-500">Terbayarkan</p>
-                                                                    <p class="font-medium text-green-600 dark:text-green-400">Rp {{ number_format($item->paid ?? 0, 0, ',', '.') }}</p>
+                                                                    <p class="font-medium text-green-600 dark:text-green-400">Rp {{ number_format($item->terbayarkan ?? 0, 0, ',', '.') }}</p>
                                                                 </div>
                                                                 <div>
                                                                     <p class="text-sm text-gray-500">Status</p>

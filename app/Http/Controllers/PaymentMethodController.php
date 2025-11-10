@@ -30,41 +30,45 @@ class PaymentMethodController extends Controller
     }
 
     public function store(Request $request)
-    {
-         // Validasi input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'atas_nama' => 'required|string|max:255',
-            'number' => 'required|digits_between:1,30', // hanya angka, panjang max 20
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'status' => 'required|in:0,1',
-        ]);
+{
+    // Validasi input
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'atas_nama' => 'required|string|max:255',
+        'number' => 'required|digits_between:1,30', // hanya angka, panjang max 30
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+        'status' => 'required|in:0,1',
+    ]);
 
+    // Ambil file dari request
+    $file = $request->file('image');
 
-        // Ambil file dari request
-        $file = $request->file('image');
+    // Generate nama file unik
+    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-        // Generate nama file unik: timestamp + random string + extension
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    // Tentukan path tujuan di dalam folder public
+    $destinationPath = public_path('uploads/payment_methods');
 
-
-        // Simpan file ke folder 'upload/payment_methods' di disk 'public'
-        $imagePath = $file->storeAs('uploads/payment_methods', $filename, 'public');
-
-        // Simpan data ke database
-        PaymentMethod::create([
-            'name' => $request->name,
-            'atas_nama' => $request->atas_nama,
-            'number' => $request->number,
-            'image' => $imagePath,
-            'status' => $request->status,
-        ]);
-
-
-        return redirect()->back()->with('success', 'Payment Method berhasil ditambahkan!');
-
-
+    // Pastikan folder tujuan ada, kalau belum — buat
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0775, true);
     }
+
+    // Pindahkan file ke folder tujuan
+    $file->move($destinationPath, $filename);
+
+    // Simpan data ke database
+    PaymentMethod::create([
+        'name' => $request->name,
+        'atas_nama' => $request->atas_nama,
+        'number' => $request->number,
+        'image' => 'uploads/payment_methods/' . $filename, // path relatif agar mudah dipanggil di view
+        'status' => $request->status,
+    ]);
+
+    return redirect()->back()->with('success', 'Payment Method berhasil ditambahkan!');
+}
+
 
     public function update(Request $request, $id)
     {

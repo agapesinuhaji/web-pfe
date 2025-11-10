@@ -100,7 +100,7 @@
                                                 <td class="px-4 py-3">{{ $item->atas_nama }}</td>
                                                 <td class="px-4 py-3">{{ $item->number }}</td>
                                                 <td class="px-4 py-3">
-                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="h-12 object-cover">
+                                                    <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" class="h-12 object-cover">
                                                 </td>
                                                 <td class="px-4 py-3 flex items-center justify-end">
                                                     <button id="{{ $item->id }}-button" data-dropdown-toggle="{{ $item->id }}" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
@@ -186,7 +186,7 @@
                                                                 </div>
                                                                 <div>
                                                                     <label for="" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gambar Lama</label>
-                                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="Logo Bank" class="mb-2 h-15 object-cover">
+                                                                    <img src="{{ asset($item->image) }}" alt="Logo Bank" class="mb-2 h-15 object-cover">
                                                                 </div>
                                                             </div>
                                                             <div class="flex items-center space-x-4">

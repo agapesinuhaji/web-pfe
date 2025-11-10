@@ -80,7 +80,12 @@ class OrderController extends Controller
         // ambil communications khusus berdasarkan order_id
         $communications = $order->communications()->with('user')->get();
 
-        return view('orders.show', compact('order', 'communications'));
+
+        $activities = Activity::where('user_id', $order->user_id)
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+        return view('orders.show', compact('order', 'communications', 'activities'));
     }
 
 
@@ -128,86 +133,97 @@ class OrderController extends Controller
 
 // Akhiri sesi order
     public function endSession(Request $request, $id)
-    {
-        $request->validate([
-            'amount' => 'required|numeric',
-            'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    // 🔒 Validasi input
+    $request->validate([
+        'amount' => 'required|numeric',
+        'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        
-        
-        // Simpan file ke folder upload/payment_proofs
-        $proofPath = $request->file('proof')->store('upload/payment_proofs', 'public');
-        
-        $order = Order::findOrFail($id);
-        
-        $periode = Periode::where('status', 'active')->firstOrFail();
-        
-        
-        $overtimeData = OvertimeData::where('order_id', $order->id)->first();
-        
-        
-        // Update ke overtime_data
-        $overtimeData->update([
-            'order_id' => $order->id,   // opsional, kalau memang perlu diubah
-            'terbayarkan'   => $request->amount,
-            'image'    => $proofPath,
-            'status' => 'payed',
-        ]);
-        
-        
-        if ($order->status !== 'progress') {
-            return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
-        }
-        
+    // ✅ Ambil file dari request
+    $file = $request->file('proof');
 
-        
-        // ganti sesuai status final
-        $order->status = 'selesai'; 
-        
-        $order->save();
-        
-        
-        $message = "Pembayaran kelebihan waktu telah di terima sebesar {$request->amount} ";
+    // Buat nama file unik
+    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-        // dd($request);
-        $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+    // Tentukan folder tujuan
+    $destinationPath = public_path('uploads/payment_proofs');
 
-        //Insert to Communication
-            Communication::create([
-                'order_id' => $order->id,
-                'user_id'  => $adminId,
-                'is_user'  => Auth::user()->role === 'user',
-                'message'  => $message,
-            ]);
-        
-            
-         Activity::create([
-            'user_id' => $order->user_id,
-            'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
-            'description' => "Pembayaran overtime telah diterima sebesar {$request->amount} .",
-            'code' => '3',
-        ]);
-
-        Transaction::create([
-            'periode_id' => $periode->id,
-            'type' => 'income',
-            'amount' => $request->amount,
-            'description' => 'Pembayaran order #'.strtoupper(substr($order->order_uuid, 0, 8)).' berhasil diterima',
-            'order_id' => $order->id,
-        ]);
-
-
-        Activity::create([
-            'user_id' => $order->user_id,
-            'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
-            'description' => 'Konseling telah selesai dilakukan.',
-            'code' => '3',
-        ]);
-
-
-        return redirect()->back()->with('success', 'Sesi berhasil diakhiri.');
+    // Pastikan folder ada, kalau belum buat
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0775, true);
     }
+
+    // Pindahkan file ke folder tujuan
+    $file->move($destinationPath, $filename);
+
+    // Simpan path relatif untuk disimpan di database
+    $proofPath = 'uploads/payment_proofs/' . $filename;
+
+
+    // ✅ Ambil data order
+    $order = Order::findOrFail($id);
+    $periode = Periode::where('status', 'active')->firstOrFail();
+    $overtimeData = OvertimeData::where('order_id', $order->id)->first();
+
+
+    // ⚙️ Update data overtime
+    $overtimeData->update([
+        'order_id'     => $order->id,
+        'terbayarkan'  => $request->amount,
+        'image'        => $proofPath,
+        'status'       => 'payed',
+    ]);
+
+    // 🚫 Cegah jika sesi tidak dalam status progress
+    if ($order->status !== 'progress') {
+        return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
+    }
+
+    // ✅ Update status order menjadi selesai
+    $order->status = 'selesai';
+    $order->save();
+
+
+    // 💬 Buat pesan notifikasi
+    $message = "Pembayaran kelebihan waktu telah diterima sebesar {$request->amount}.";
+
+    $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+
+    // 💬 Simpan komunikasi
+    Communication::create([
+        'order_id' => $order->id,
+        'user_id'  => $adminId,
+        'is_user'  => Auth::user()->role === 'user',
+        'message'  => $message,
+    ]);
+
+    // 🧾 Catat aktivitas & transaksi
+    Activity::create([
+        'user_id' => $order->user_id,
+        'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
+        'description' => "Pembayaran overtime telah diterima sebesar {$request->amount}.",
+        'code' => '3',
+    ]);
+
+    Transaction::create([
+        'periode_id' => $periode->id,
+        'type' => 'income',
+        'amount' => $request->amount,
+        'description' => 'Pembayaran order #' . strtoupper(substr($order->order_uuid, 0, 8)) . ' berhasil diterima',
+        'order_id' => $order->id,
+    ]);
+
+    Activity::create([
+        'user_id' => $order->user_id,
+        'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
+        'description' => 'Konseling telah selesai dilakukan.',
+        'code' => '3',
+    ]);
+
+    return redirect()->back()->with('success', 'Sesi berhasil diakhiri.');
+}
+
 
 
     public function updateStatus(Request $request, $id)

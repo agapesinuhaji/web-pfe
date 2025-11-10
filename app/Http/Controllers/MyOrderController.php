@@ -18,7 +18,7 @@ class MyOrderController extends Controller
             return redirect()->route('login')->with('error', 'Permintaan terlarang.');
         }
 
-        $orders = Order::where('user_id', Auth::id())->get();
+        $orders = Order::where('user_id', Auth::id())->latest()->get();
         
         return view('orders.my-order', compact('orders'));
     }
