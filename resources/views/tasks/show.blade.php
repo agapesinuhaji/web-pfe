@@ -182,56 +182,103 @@
 
 
 
-  <div id="userModal" tabindex="-1" aria-hidden="true"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="relative w-full max-w-5xl p-4">
-      <div class="bg-white rounded-lg shadow dark:bg-gray-800">
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b px-4 py-2">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Riwayat User
-          </h3>
-          <button type="button" class="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-            data-modal-hide="userModal">
-            ✕
-          </button>
-        </div>
+  <!-- Modal Riwayat User -->
+<div id="userModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="relative w-full max-w-4xl p-4">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden dark:bg-gray-900 transition-all duration-300">
 
-        <!-- Body -->
-        <div class="p-4 space-y-4">
-          {{-- Timeline Section --}}
-            <div class="bg-white shadow-md rounded-2xl p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6">Riwayat Aktivitas</h2>
-                <div class="relative border-l border-gray-300 ml-4">
-                    {{-- Loop data riwayat --}}
+            <!-- Header -->
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    🕓 Riwayat Aktivitas User
+                </h3>
+                <button type="button"
+                    class="text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 rounded-full text-lg w-8 h-8 flex items-center justify-center"
+                    data-modal-hide="userModal">
+                    ✕
+                </button>
+            </div>
+
+            <div class="p-6 mb-6 pb-6 max-h-[70vh] overflow-y-auto">
+              <div class="space-y-8 relative border-l-2 border-gray-200 dark:border-gray-700 ml-4 pl-6">
+                <div class="bg-white shadow-md rounded-2xl p-6">
+                  <div class="flex flex-col items-center text-center">
+                      <img src="{{ asset($order->user->profile->image) }}" alt="Profile Photo" class="w-32 h-32 rounded-full border-4 border-gray-200 object-cover mb-4"/>
+                      <h2 class="text-xl font-semibold text-gray-900">{{ $order->user->profile->name }}</h2>
+                      @if($order->user->profile->nickname)
+                          <p class="text-gray-500">“{{ $order->user->profile->nickname }}”</p>
+                      @endif
+                      <p class="mt-2 text-sm text-gray-600">{{ $order->user->email }}</p>
+                      <div class="mt-4 w-full text-left text-sm text-gray-700 space-y-2">
+                          <p>
+                              <span class="font-medium">Tanggal Lahir:</span> 
+                              {{ \Carbon\Carbon::parse($order->user->profile->date_of_birth)->format('d F Y') }} ( {{ \Carbon\Carbon::parse($order->user->profile->date_of_birth)->age }} Tahun )
+                          </p>
+                          <p>
+                              <span class="font-medium">Jenis Kelamin:</span> 
+                              {{ $order->user->profile->gender == 'L' ? 'Laki-laki' : ($order->user->profile->gender == 'P' ? 'Perempuan' : '-') }}
+                          </p>
+                          <p><span class="font-medium">Domisili:</span> {{ $order->user->profile->domicile ?? '-' }}</p>
+                          <p>
+                              <span class="font-medium">No. WhatsApp:</span> 
+                              {{ $order->user->profile->no_whatsapp ?? '-' }}
+                          </p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          
+                {{-- Timeline Section --}}
+                <div class="space-y-8 mt-6 relative border-l-2 border-gray-200 dark:border-gray-700 ml-4 pl-6">
                     @foreach ($activities as $activity)
                         @php
                             $colors = [
                                 1 => 'bg-blue-600',     // primary
-                                2 => 'bg-gray-500',    // secondary
-                                3 => 'bg-green-600',   // success
-                                4 => 'bg-yellow-500',  // warning
-                                5 => 'bg-red-600',     // danger
+                                2 => 'bg-gray-500',     // secondary
+                                3 => 'bg-green-600',    // success
+                                4 => 'bg-yellow-500',   // warning
+                                5 => 'bg-red-600',      // danger
                             ];
                             $color = $colors[$activity->code] ?? 'bg-gray-400';
                         @endphp
 
-                        <div class="mb-8 ml-6">
-                            <div class="absolute w-3 h-3 {{ $color }} rounded-full -left-1.5"></div>
-                            <time class="block mb-1 text-sm text-gray-500">
-                                {{ $activity->created_at->diffForHumans() }}
-                            </time>
-                            <h3 class="font-semibold text-gray-900">{{ $activity->title }}</h3>
-                            <p class="text-gray-600">{{ $activity->description }}</p>
+                        <div class="relative">
+                            <!-- Dot -->
+                            <div
+                                class="absolute w-4 h-4 {{ $color }} rounded-full -left-[1.15rem] top-1.5 border-2 border-white dark:border-gray-900 shadow">
+                            </div>
+
+                            <!-- Content -->
+                            <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h4 class="font-semibold text-gray-800 dark:text-gray-100 text-base">
+                                        {{ $activity->title }}
+                                    </h4>
+                                    <time class="text-sm text-gray-500">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                    </time>
+                                </div>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                    {{ $activity->description }}
+                                </p>
+                            </div>
                         </div>
                     @endforeach
                 </div>
             </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end border-t border-gray-200 dark:border-gray-700 px-6 py-3">
+                <button data-modal-hide="userModal"
+                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+                    Tutup
+                </button>
+            </div>
         </div>
-        
-      </div>
     </div>
-  </div>
+</div>
+
 
 
 
