@@ -14,7 +14,7 @@ class TestimonyController extends Controller
         $user = Auth::user();
 
         // Cek role, jika bukan administrator logout
-        if ($user->role !== 'administrator') {
+        if (!in_array($user->role, ['administrator', 'psikolog'])) {
             Auth::logout();
             return redirect()->route('login');
         }

@@ -12,56 +12,70 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
 
-                    <x-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
-                        {{ __('Product') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
-                        {{ __('User') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
-                        {{ __('Order') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
-                        {{ __('Periode') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
-                        {{ __('Payment Method') }}
-                    </x-nav-link>
-
-                    <div class="relative group mt-5">
-                        <!-- Parent Menu -->
-                        <x-nav-link :active="request()->routeIs('overtime.*')">
-                            {{ __('Overtime') }}
+                    @if (Auth::user()->role == 'administrator')
+                        
+                    
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
                         </x-nav-link>
 
-                        <!-- Dropdown -->
-                        <div
-                            class="absolute left-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-1 w-48 z-50"
-                        >
-                            <ul class="py-2 text-sm text-gray-700">
-                                <li>
-                                    <a href="{{ route('overtime.index') }}"
-                                    class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtime.index') ? 'font-semibold text-gray-600' : '' }}">
-                                        {{ __('Setting Overtime') }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('overtimeData.index') }}"
-                                    class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtimeData.index') ? 'font-semibold text-gray-600' : '' }}">
-                                        {{ __('Data Overtime') }}
-                                    </a>
-                                </li>
-                            </ul>
+                        <x-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
+                            {{ __('Product') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
+                            {{ __('User') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
+                            {{ __('Order') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
+                            {{ __('Periode') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
+                            {{ __('Payment Method') }}
+                        </x-nav-link>
+
+                        <div class="relative group mt-5">
+                            <!-- Parent Menu -->
+                            <x-nav-link :active="request()->routeIs('overtime.*')">
+                                {{ __('Overtime') }}
+                            </x-nav-link>
+
+                            <!-- Dropdown -->
+                            <div
+                                class="absolute left-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-1 w-48 z-50"
+                            >
+                                <ul class="py-2 text-sm text-gray-700">
+                                    <li>
+                                        <a href="{{ route('overtime.index') }}"
+                                        class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtime.index') ? 'font-semibold text-gray-600' : '' }}">
+                                            {{ __('Setting Overtime') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('overtimeData.index') }}"
+                                        class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('overtimeData.index') ? 'font-semibold text-gray-600' : '' }}">
+                                            {{ __('Data Overtime') }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
+                    @if (Auth::user()->role == 'psikolog')
+                        <x-nav-link :href="route('mytask.index')">
+                            My Task
+                        </x-nav-link>
+                        <x-nav-link :href="route('myschedule.index')">
+                            My Schedule
+                        </x-nav-link>
+                    @endif
 
 
                     <x-nav-link :href="route('testimony.index')" :active="request()->routeIs('testimony.*')">
@@ -121,58 +135,61 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            
-            <x-responsive-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
-                {{ __('Product') }}
-            </x-responsive-nav-link>
+            @if (Auth::user()->role == 'administrator')
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                
+                <x-responsive-nav-link :href="route('product.index')" :active="request()->routeIs('product.*')">
+                    {{ __('Product') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
-                {{ __('User') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
+                    {{ __('User') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
-                {{ __('Order') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('order.index')" :active="request()->routeIs('order.*')">
+                    {{ __('Order') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
-                {{ __('Periode') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('periode.index')" :active="request()->routeIs('periode.*')">
+                    {{ __('Periode') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
-                {{ __('Payment Method') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('paymentMethod.index')" :active="request()->routeIs('paymentMethod.*')">
+                    {{ __('Payment Method') }}
+                </x-responsive-nav-link>
 
-            <!-- Parent Menu Responsive -->
-            <div x-data="{ open: false }" class="w-full">
-                <!-- Trigger -->
-                <button @click="open = ! open"
-                    class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
-                    <span class="{{ request()->routeIs('overtime.*') ? 'text-blue-600 font-semibold' : '' }}">
-                        {{ __('Overtime') }}
-                    </span>
-                    <!-- Panah -->
-                    <svg class="h-4 w-4 ml-2 transform transition-transform duration-200"
-                        :class="{ 'rotate-180': open }"
-                         fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
+                <!-- Parent Menu Responsive -->
+                <div x-data="{ open: false }" class="w-full">
+                    <!-- Trigger -->
+                    <button @click="open = ! open"
+                        class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                        <span class="{{ request()->routeIs('overtime.*') ? 'text-blue-600 font-semibold' : '' }}">
+                            {{ __('Overtime') }}
+                        </span>
+                        <!-- Panah -->
+                        <svg class="h-4 w-4 ml-2 transform transition-transform duration-200"
+                            :class="{ 'rotate-180': open }"
+                            fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
 
-                <!-- Dropdown Content -->
-                <div x-show="open" class="mt-2 space-y-1 pl-4" x-cloak>
-                    <x-responsive-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.index')">
-                        {{ __('Setting Overtime') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('overtimeData.index')" :active="request()->routeIs('overtimeData.index')">
-                        {{ __('Data Overtime') }}
-                    </x-responsive-nav-link>
+                    <!-- Dropdown Content -->
+                    <div x-show="open" class="mt-2 space-y-1 pl-4" x-cloak>
+                        <x-responsive-nav-link :href="route('overtime.index')" :active="request()->routeIs('overtime.index')">
+                            {{ __('Setting Overtime') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('overtimeData.index')" :active="request()->routeIs('overtimeData.index')">
+                            {{ __('Data Overtime') }}
+                        </x-responsive-nav-link>
+                    </div>
                 </div>
-            </div>
+            @endif
+
 
 
             <x-responsive-nav-link :href="route('testimony.index')" :active="request()->routeIs('testimony.*')">

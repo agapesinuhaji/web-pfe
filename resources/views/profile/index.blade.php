@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>My Profile - Psychology For Everyone</title>
+  <title>My Profile - Psychologist For Everyone</title>
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -66,7 +66,7 @@
                                     Edit Deskripsi
                                 </a>
                             </div>
-                            <p>{{ $user->profile->description }}</p>
+                            <p>{!! $user->profile->description !!}</p>
                         </div>
                     @endif
 

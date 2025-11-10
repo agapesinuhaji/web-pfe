@@ -134,35 +134,43 @@ class OrderController extends Controller
             'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        
+        
         // Simpan file ke folder upload/payment_proofs
         $proofPath = $request->file('proof')->store('upload/payment_proofs', 'public');
-
+        
         $order = Order::findOrFail($id);
-
+        
         $periode = Periode::where('status', 'active')->firstOrFail();
-
-
+        
+        
         $overtimeData = OvertimeData::where('order_id', $order->id)->first();
-
-
+        
+        
         // Update ke overtime_data
-       $overtimeData->update([
+        $overtimeData->update([
             'order_id' => $order->id,   // opsional, kalau memang perlu diubah
-            // 'amount'   => $request->amount,
+            'terbayarkan'   => $request->amount,
             'image'    => $proofPath,
+            'status' => 'payed',
         ]);
-
-
+        
+        
         if ($order->status !== 'progress') {
             return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
         }
+        
 
-        $order->status = 'selesai'; // ganti sesuai status final
+        
+        // ganti sesuai status final
+        $order->status = 'selesai'; 
+        
         $order->save();
-
+        
         
         $message = "Pembayaran kelebihan waktu telah di terima sebesar {$request->amount} ";
 
+        // dd($request);
         $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
 
         //Insert to Communication
@@ -177,14 +185,14 @@ class OrderController extends Controller
          Activity::create([
             'user_id' => $order->user_id,
             'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
-            'description' => 'Pembayaran overtime telah diterima sebesar {$request->amount} .',
+            'description' => "Pembayaran overtime telah diterima sebesar {$request->amount} .",
             'code' => '3',
         ]);
 
         Transaction::create([
             'periode_id' => $periode->id,
             'type' => 'income',
-            'amount' => $request->total,
+            'amount' => $request->amount,
             'description' => 'Pembayaran order #'.strtoupper(substr($order->order_uuid, 0, 8)).' berhasil diterima',
             'order_id' => $order->id,
         ]);

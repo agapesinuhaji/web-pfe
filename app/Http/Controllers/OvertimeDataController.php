@@ -42,7 +42,7 @@ class OvertimeDataController extends Controller
 
 
     public function update(Request $request, OvertimeData $overtimeData)
-    {
+    {   
         $validated = $request->validate([
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:payed,waiting,cancel',

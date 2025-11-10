@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Pyscologhy For Everyone</title>
+  <title>Psychologist For Everyone</title>
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -351,7 +351,7 @@
 
     <div class="flex flex-col sm:flex-row justify-center gap-4">
       
-      <a href="https://wa.me/6281234567890" target="_blank" class="bg-green-600 text-white hover:bg-green-700 font-semibold py-3 px-6 rounded-full transition duration-300">
+      <a href="https://wa.me/62882008677682" target="_blank" class="bg-green-600 text-white hover:bg-green-700 font-semibold py-3 px-6 rounded-full transition duration-300">
        
         Chat via WhatsApp
       </a>
@@ -365,7 +365,7 @@
 <footer class="p-4 bg-gray-900 md:p-8 lg:p-10 ">
   <div class="mx-auto max-w-screen-xl text-center">
       <a href="{{ url('/') }}" class="flex justify-center items-center text-2xl pt-4 font-semibold text-white">
-           <img src="{{ asset('favicon.svg') }}" alt="Logo" class="mr-2 h-8" />
+           <img src="{{ asset('favicon-darkmode.svg') }}" alt="Logo" class="mr-2 h-8" />
          
           Psychologist For Everyone  
       </a>
@@ -382,7 +382,7 @@
 
 <!-- Floating WhatsApp Button -->
 <a 
-  href="https://wa.me/6281234567890" 
+  href="https://wa.me/62882008677682" 
   target="_blank" 
   class="fixed bottom-5 right-5 flex items-center gap-2 bg-green-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-700 transition group"
   aria-label="Chat WhatsApp"

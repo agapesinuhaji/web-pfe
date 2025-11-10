@@ -37,7 +37,7 @@ class CounselingResultController extends Controller
 
         $message = "<p><strong>Catatan Hasil Konseling</strong></p>" 
                     . $validated['catatan'] .
-                    "<br><p><strong>Perkiraan Sementara</strong></p><p>" 
+                    "<br><p><strong>Dugaan Sementara</strong></p><p>" 
                     . $validated['dugaan'] .
                     "</p><br><p><strong>Rekomendasi</strong></p>"
                     . $validated['rekomendasi'];

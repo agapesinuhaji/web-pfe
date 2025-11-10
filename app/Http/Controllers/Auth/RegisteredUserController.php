@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
         $profile = Profile::create([
             'user_id' => $user->id,
             'name' => $request->name,
-            'image' => 'profile/noimage.png',
+            'image' => 'uploads/profiles/noimage.png',
         ]);
 
         Activity::create([
