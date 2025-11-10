@@ -68,7 +68,7 @@
         @endphp
 
         @if ($daysDiff >= 2 && !$hasReschedule)
-            <a data-modal-target="rescheduleModal" data-modal-toggle="rescheduleModal"
+            <a data-modal-target="#rescheduleModal" data-modal-toggle="#rescheduleModal"
               class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg shadow hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 cursor-pointer">
                 Reschedule
             </a>

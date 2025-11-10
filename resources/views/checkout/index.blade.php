@@ -335,7 +335,11 @@ function checkoutApp() {
             try {
                 let url = `/schedules/${this.selectedConselor}/${this.selectedDate}?product_id=${this.selectedProduct}`;
                 let res = await fetch(url);
-                this.times = await res.json();
+                let data = await res.json();
+
+                // Ubah format waktu agar hanya menampilkan jam dan menit
+                this.times = data.map(time => time.substring(0, 5));
+                // this.times = await res.json();
                 this.selectedTime = '';
             } catch (error) {
                 console.error('Gagal mengambil jam', error);
