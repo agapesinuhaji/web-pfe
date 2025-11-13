@@ -21,6 +21,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ConselingMethodController;
 use App\Http\Controllers\CounselingResultController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\HppController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -101,7 +102,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
 
+    Route::get('/hpp/generate/{order}', [HppController::class, 'generatePdf'])->name('hpp.generate');
 
 });
+
+
+
+
+
+
+
 
 require __DIR__.'/auth.php';

@@ -15,6 +15,8 @@ use App\Models\Communication;
 use App\Models\PaymentMethod;
 use App\Models\ConselingMethod;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Hpp;
 
 class OrderController extends Controller
 {
@@ -131,98 +133,147 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
     }
 
-// Akhiri sesi order
+    // Akhiri sesi order
+
     public function endSession(Request $request, $id)
-{
-    // 🔒 Validasi input
-    $request->validate([
-        'amount' => 'required|numeric',
-        'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    {
+        $request->validate([
+            'amount' => 'required|numeric',
+            'proof'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    // ✅ Ambil file dari request
-    $file = $request->file('proof');
+        // 🖼️ Upload bukti pembayaran
+        $file = $request->file('proof');
+        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $destinationPath = public_path('uploads/payment_proofs');
+        if (!file_exists($destinationPath)) mkdir($destinationPath, 0775, true);
+        $file->move($destinationPath, $filename);
+        $proofPath = 'uploads/payment_proofs/' . $filename;
 
-    // Buat nama file unik
-    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        // 📦 Ambil data order dan relasi
+        $order = Order::with([
+            'user.profile',
+            'conselor.profile',
+            'product',
+            'schedule',
+            'method',
+        ])->findOrFail($id);
 
-    // Tentukan folder tujuan
-    $destinationPath = public_path('uploads/payment_proofs');
+        $periode = Periode::where('status', 'active')->firstOrFail();
+        $overtimeData = OvertimeData::where('order_id', $order->id)->first();
 
-    // Pastikan folder ada, kalau belum buat
-    if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0775, true);
+        // Ambil hasil konseling dari counseling_results
+        $counselingResult = \App\Models\CounselingResult::where('order_id', $order->id)->first();
+
+        // 💰 Update data overtime
+        if ($overtimeData) {
+            $overtimeData->update([
+                'order_id'     => $order->id,
+                'terbayarkan'  => $request->amount,
+                'image'        => $proofPath,
+                'status'       => 'payed',
+            ]);
+        }
+
+        // ⛔ Jika status tidak progress
+        if ($order->status !== 'progress') {
+            return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
+        }
+
+        // 🧾 Update status order
+        $order->status = 'selesai';
+        $order->save();
+
+        // 🪶 Data untuk laporan PDF
+        $pdfData = [
+            'order' => $order,
+            'result' => $counselingResult,
+            'tanggal' => now()->format('d F Y'),
+            'jumlah_bayar' => $request->amount,
+            'keterangan' => 'Pembayaran overtime konseling telah diterima.',
+        ];
+
+        // 📄 Generate PDF dari Blade
+        $pdf = Pdf::loadView('reports.hpp', $pdfData);
+
+        $pdfDirectory = public_path('reports/hpp');
+        if (!file_exists($pdfDirectory)) mkdir($pdfDirectory, 0775, true);
+
+        $userName = preg_replace('/[^A-Za-z0-9\-]/', '_', $order->user->profile->name);
+    // 🧾 Nama file PDF dengan nama user
+        $pdfFileName = 'HPP-' . strtoupper(substr($order->order_uuid, 0, 8)) . '-' . $userName . '.pdf';
+        $pdfPath = $pdfDirectory . '/' . $pdfFileName;
+
+        // 💾 Simpan file PDF ke folder public/reports/hpp
+        $pdf->save($pdfPath);
+
+        // 🗃️ Simpan path ke database
+        Hpp::create([
+            'order_id' => $order->id,
+            'hpp_file' => 'reports/hpp/' . $pdfFileName,
+        ]);
+
+        // 💬 Buat notifikasi dan log aktivitas
+        $message = "Pembayaran kelebihan waktu telah diterima sebesar {$request->amount}.";
+        $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+
+        Communication::create([
+            'order_id' => $order->id,
+            'user_id'  => $adminId,
+            'is_user'  => Auth::user()->role === 'user',
+            'message'  => $message,
+        ]);
+
+        Activity::create([
+            'user_id' => $order->user_id,
+            'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => "Pembayaran overtime telah diterima sebesar {$request->amount}.",
+            'code' => '3',
+        ]);
+
+        Transaction::create([
+            'periode_id' => $periode->id,
+            'type' => 'income',
+            'amount' => $request->amount,
+            'description' => 'Pembayaran order #' . strtoupper(substr($order->order_uuid, 0, 8)) . ' berhasil diterima',
+            'order_id' => $order->id,
+        ]);
+
+        Activity::create([
+            'user_id' => $order->user_id,
+            'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
+            'description' => 'Konseling telah selesai dilakukan.',
+            'code' => '3',
+        ]);
+
+        Communication::create([
+            'order_id' => $order->id,
+            'user_id'  => $adminId,
+            'is_user'  => Auth::user()->role === 'user',
+            'message'  => "Berikut adalah Hasil Pemeriksaan Psikologis (HPP) anda.",
+        ]);
+
+        
+
+        Communication::create([
+            'order_id' => $order->id,
+            'user_id'  => $adminId,
+            'is_user'  => Auth::user()->role === 'user',
+            'message'  => "Berikut adalah Hasil Pemeriksaan Psikologis (HPP) anda. <br>
+                        <a href='" . asset('reports/hpp/' . $pdfFileName) . "' 
+                            target='_blank' 
+                            style='color: blue; text-decoration: underline;'>
+                            $pdfFileName
+                        </a>",
+        ]);
+
+
+
+        return redirect()->back()->with('success', 'Sesi berhasil diakhiri dan laporan HPP telah tersimpan.');
     }
 
-    // Pindahkan file ke folder tujuan
-    $file->move($destinationPath, $filename);
-
-    // Simpan path relatif untuk disimpan di database
-    $proofPath = 'uploads/payment_proofs/' . $filename;
 
 
-    // ✅ Ambil data order
-    $order = Order::findOrFail($id);
-    $periode = Periode::where('status', 'active')->firstOrFail();
-    $overtimeData = OvertimeData::where('order_id', $order->id)->first();
-
-
-    // ⚙️ Update data overtime
-    $overtimeData->update([
-        'order_id'     => $order->id,
-        'terbayarkan'  => $request->amount,
-        'image'        => $proofPath,
-        'status'       => 'payed',
-    ]);
-
-    // 🚫 Cegah jika sesi tidak dalam status progress
-    if ($order->status !== 'progress') {
-        return redirect()->back()->with('error', 'Sesi tidak bisa diakhiri.');
-    }
-
-    // ✅ Update status order menjadi selesai
-    $order->status = 'selesai';
-    $order->save();
-
-
-    // 💬 Buat pesan notifikasi
-    $message = "Pembayaran kelebihan waktu telah diterima sebesar {$request->amount}.";
-
-    $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
-
-    // 💬 Simpan komunikasi
-    Communication::create([
-        'order_id' => $order->id,
-        'user_id'  => $adminId,
-        'is_user'  => Auth::user()->role === 'user',
-        'message'  => $message,
-    ]);
-
-    // 🧾 Catat aktivitas & transaksi
-    Activity::create([
-        'user_id' => $order->user_id,
-        'title' => 'Pembayaran Overtime diterima #' . strtoupper(substr($order->order_uuid, 0, 8)),
-        'description' => "Pembayaran overtime telah diterima sebesar {$request->amount}.",
-        'code' => '3',
-    ]);
-
-    Transaction::create([
-        'periode_id' => $periode->id,
-        'type' => 'income',
-        'amount' => $request->amount,
-        'description' => 'Pembayaran order #' . strtoupper(substr($order->order_uuid, 0, 8)) . ' berhasil diterima',
-        'order_id' => $order->id,
-    ]);
-
-    Activity::create([
-        'user_id' => $order->user_id,
-        'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
-        'description' => 'Konseling telah selesai dilakukan.',
-        'code' => '3',
-    ]);
-
-    return redirect()->back()->with('success', 'Sesi berhasil diakhiri.');
-}
 
 
 
