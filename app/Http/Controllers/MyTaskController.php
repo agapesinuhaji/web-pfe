@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Periode;
 use App\Models\Activity;
+use App\Models\Hpp;
 use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,12 +73,14 @@ class MyTaskController extends Controller
 
         $order = Order::with('counselingResult')->findOrFail($order->id);
 
+        $hpps = Hpp::where('user_id', $order->user_id)->orderBy('created_at' ,'asc')->get();
+
         $activities = Activity::where('user_id', $order->user_id)
                     ->orderBy('created_at', 'asc')
                     ->get();
 
 
-        return view('tasks.show', compact('order', 'communications', 'overtimes', 'activities'));
+        return view('tasks.show', compact('order', 'communications', 'overtimes', 'activities', 'hpps'));
     }
 
     public function all(Request $request)

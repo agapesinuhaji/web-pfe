@@ -94,6 +94,12 @@ class UserController extends Controller
             'is_active' => $status, 
         ]);
 
+        $profile = $user->profile;
+
+        $user->profile->update([
+            'sipp' => $request->sipp
+        ]);
+
         $login = Auth::user();
         if ($oldRole !== $request->role) {
             // contoh: simpan ke activity log

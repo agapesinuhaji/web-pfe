@@ -228,6 +228,35 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="space-y-8 relative border-l-2 border-gray-200 dark:border-gray-700 ml-4 pl-6">
+                  <div class="bg-white shadow-md rounded-2xl p-6">
+                    <div class="flex flex-col items-center text-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Riwayat Konseling</h2>
+                        <div class="mt-4 w-full text-left text-sm text-gray-700 space-y-2">
+                          @foreach ($hpps as $hpp)
+                            <div class="flex items-center gap-2">
+
+                                <!-- Logo PDF -->
+                                <img src="{{ asset('pdf-icon.png') }}" 
+                                    alt="PDF"
+                                    class="w-5 h-5">
+
+                                <!-- Nomor + Link PDF -->
+                                <a href="{{ asset($hpp->hpp_file) }}" 
+                                  target="_blank"
+                                  class="text-blue-600 hover:underline">
+                                    {{ $loop->iteration }}. {{ basename($hpp->hpp_file) }}
+                                </a>
+
+                            </div>
+                        @endforeach
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
             
                   {{-- Timeline Section --}}
                   <div class="space-y-8 mt-6 relative border-l-2 border-gray-200 dark:border-gray-700 ml-4 pl-6">

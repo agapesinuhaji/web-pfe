@@ -27,6 +27,10 @@
                                                 {{ $user->profile->nickname  ?? '-'}}
                                             </p>
                                             <p>
+                                                <span class="font-medium">SIPP:</span> 
+                                                {{ $user->profile->sipp  ?? '-'}}
+                                            </p>
+                                            <p>
                                                 <span class="font-medium">Tanggal Lahir:</span> 
                                                 {{ $user->profile->date_of_birth ? \Carbon\Carbon::parse($user->profile->date_of_birth)->format('d M Y') : '-' }}
                                             </p>
@@ -81,6 +85,16 @@
                                                                 <option {{ $user->role == 'user' ? 'selected' : '' }} value="user">User</option>
                                                                 <option {{ $user->role == 'psikolog' ? 'selected' : '' }} value="psikolog">Psikolog</option>
                                                             </select>
+                                                        </div>
+
+                                                        <div class="col-span-2 mb-4 sm:col-span-1">
+                                                            <div class="mb-2 flex items-center gap-2">
+                                                                <label for="role" class="block text-sm font-medium text-gray-900 dark:text-white">SIPP</label>
+                                                            </div>
+                                                           <input type="text" name="sipp" id="sipp" value="{{ $user->profile->sipp }}" class="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 
+                                                                    focus:border-primary-500 focus:ring-primary-500 
+                                                                    dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 
+                                                                    dark:focus:border-primary-500 dark:focus:ring-primary-500">
                                                         </div>
 
                                                         <div>

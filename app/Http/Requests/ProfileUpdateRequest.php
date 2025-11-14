@@ -17,6 +17,7 @@ class ProfileUpdateRequest extends FormRequest
     {
          return [
             'name' => 'required|string|max:255',
+            'sipp' =>'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
             'domicile' => 'nullable|string|max:255',
             'no_whatsapp' => 'nullable|string|max:25',

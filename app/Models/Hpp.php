@@ -12,6 +12,7 @@ class Hpp extends Model
     protected $table = 'hpp';
 
     protected $fillable = [
+        'user_id',
         'order_id',
         'hpp_file',
     ];

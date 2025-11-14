@@ -30,6 +30,12 @@
                             @endif
                             <p class="mt-2 text-sm text-gray-600">{{ $user->email }}</p>
                             <div class="mt-4 w-full text-left text-sm text-gray-700 space-y-2">
+                                @if ($user->role != 'user')
+                                    <p>
+                                        <span class="font-medium">SIPP:</span> 
+                                        {{ $user->profile->sipp ?? '-' }}
+                                    </p>
+                                @endif
                                 <p>
                                     <span class="font-medium">Tanggal Lahir:</span> 
                                     {{ $user->profile->date_of_birth ? \Carbon\Carbon::parse($user->profile->date_of_birth)->format('d M Y') : '-' }}
@@ -172,6 +178,13 @@
                                 <option value="P" {{ old('gender', $user->profile->gender) == 'P' ? 'selected' : '' }}>Perempuan</option>
                             </select>
                         </div>
+
+                        @if ($user->role != 'user')
+                            <div class="sm:col-span-2">
+                                <label for="sipp" class="block mb-2 text-sm font-medium text-gray-900">SIPP</label>
+                                <input type="text" name="sipp" id="sipp" value="{{ old('sipp', $user->profile->sipp) }}" class="w-full p-2.5 border rounded-lg bg-gray-50 text-gray-900">
+                            </div>
+                        @endif
 
                         <div class="sm:col-span-2">
                             <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Foto Profil</label>

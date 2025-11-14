@@ -44,6 +44,7 @@ class ProfileController extends Controller
 
         // Update profile
         $profile->name = $validated['name'];
+        $profile->sipp = $validated['sipp'];
         $profile->nickname = $validated['nickname'] ?? null;
         $profile->domicile = $validated['domicile'] ?? null;
         $profile->no_whatsapp = $validated['no_whatsapp'] ?? null;

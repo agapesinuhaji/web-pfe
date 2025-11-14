@@ -83,11 +83,15 @@ class OrderController extends Controller
         $communications = $order->communications()->with('user')->get();
 
 
+        $hpps = Hpp::where('user_id', $order->user_id)->orderBy('created_at' ,'asc')->get();
+
+            
+
         $activities = Activity::where('user_id', $order->user_id)
                     ->orderBy('created_at', 'asc')
                     ->get();
 
-        return view('orders.show', compact('order', 'communications', 'activities'));
+        return view('orders.show', compact('order', 'communications', 'activities', 'hpps'));
     }
 
 
@@ -210,6 +214,7 @@ class OrderController extends Controller
         // 🗃️ Simpan path ke database
         Hpp::create([
             'order_id' => $order->id,
+            'user_id' => $order->user_id,
             'hpp_file' => 'reports/hpp/' . $pdfFileName,
         ]);
 
@@ -315,6 +320,7 @@ class OrderController extends Controller
             // 🗃️ Simpan path ke database
             Hpp::create([
                 'order_id' => $order->id,
+                'user_id' => $order->user_id,
                 'hpp_file' => 'reports/hpp/' . $pdfFileName,
             ]);
 
