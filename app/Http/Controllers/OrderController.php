@@ -285,6 +285,68 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
+
+
+
+        if($request->status == "selesai")
+        {
+            // dd($order);
+
+            // Ambil hasil konseling dari counseling_results
+            $counselingResult = \App\Models\CounselingResult::where('order_id', $order->id)->first();
+
+            // 🪶 Data untuk laporan PDF
+            $pdfData = [
+                'order' => $order,
+                'result' => $counselingResult,
+                'tanggal' => now()->format('d F Y'),
+                'jumlah_bayar' => $request->amount,
+                'keterangan' => 'Pembayaran overtime konseling telah diterima.',
+            ];
+
+            // 📄 Generate PDF dari Blade
+            $pdf = Pdf::loadView('reports.hpp', $pdfData);
+
+            $pdfDirectory = public_path('reports/hpp');
+            if (!file_exists($pdfDirectory)) mkdir($pdfDirectory, 0775, true);
+
+            $userName = preg_replace('/[^A-Za-z0-9\-]/', '_', $order->user->profile->name);
+        // 🧾 Nama file PDF dengan nama user
+            $pdfFileName = 'HPP-' . strtoupper(substr($order->order_uuid, 0, 8)) . '-' . $userName . '.pdf';
+            $pdfPath = $pdfDirectory . '/' . $pdfFileName;
+
+            // 💾 Simpan file PDF ke folder public/reports/hpp
+            $pdf->save($pdfPath);
+
+            // 🗃️ Simpan path ke database
+            Hpp::create([
+                'order_id' => $order->id,
+                'hpp_file' => 'reports/hpp/' . $pdfFileName,
+            ]);
+
+            $adminId = \App\Models\User::where('role', 'administrator')->first()->id;
+
+            Activity::create([
+                'user_id' => $order->user_id,
+                'title' => 'Konseling telah selesai #' . strtoupper(substr($order->order_uuid, 0, 8)),
+                'description' => 'Konseling telah selesai dilakukan.',
+                'code' => '3',
+            ]);
+            
+
+            Communication::create([
+                'order_id' => $order->id,
+                'user_id'  => $adminId,
+                'is_user'  => Auth::user()->role === 'user',
+                'message'  => "Berikut adalah Hasil Pemeriksaan Psikologis (HPP) anda. <br>
+                            <a href='" . asset('reports/hpp/' . $pdfFileName) . "' 
+                                target='_blank' 
+                                style='color: blue; text-decoration: underline;'>
+                                $pdfFileName
+                            </a>",
+            ]);
+        }
+
         return redirect()->back();
 
     }
