@@ -170,7 +170,13 @@
 
     <div class="header">
         <div class="header-left">
-            <img src="{{ public_path('logo.png') }}" alt="Logo Psychologist For Everyone">
+            <?php
+            $imagePath = public_path('logo.png');
+            $imageData = base64_encode(file_get_contents($imagePath));
+            $imgSrc = 'data:image/png;base64,' . $imageData;
+            
+            ?>
+            <img src="<?= $imgSrc; ?>" alt="Logo Psychologist For Everyone">
         </div>
         <div class="header-right">
             <div class="company-name">Psychologist For Everyone</div>

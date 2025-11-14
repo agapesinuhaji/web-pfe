@@ -246,12 +246,6 @@ class OrderController extends Controller
             'code' => '3',
         ]);
 
-        Communication::create([
-            'order_id' => $order->id,
-            'user_id'  => $adminId,
-            'is_user'  => Auth::user()->role === 'user',
-            'message'  => "Berikut adalah Hasil Pemeriksaan Psikologis (HPP) anda.",
-        ]);
 
         
 
