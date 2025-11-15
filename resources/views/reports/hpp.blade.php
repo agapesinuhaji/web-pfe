@@ -221,7 +221,7 @@
     <div class="signature-area">
         <div class="signature">
             <p>{{ $order->conselor->profile->name }}, Psikolog<br>
-            SIPP: 20210643-2023-01-2589</p>
+            SIPP: {{ $order->conselor->profile->sipp }}</p>
         </div>
     </div>
     

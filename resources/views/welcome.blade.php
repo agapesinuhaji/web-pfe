@@ -134,10 +134,10 @@
           <p class="font-light text-gray-500 sm:text-xl dark:text-gray-400">Kami hanya menghadirkan para profesional berlisensi yang berdedikasi untuk memberikan dukungan yang empatik dan berdasarkan bukti (evidence-based) dalam setiap sesi.</p>
       </div> 
       <div class="grid gap-8 lg:gap-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" >
-          <div class="text-center text-gray-500 dark:text-gray-400">
+          <div onclick="document.getElementById('psychologAnetteModal').classList.remove('hidden')" class="text-center text-gray-500 dark:text-gray-400">
               <img class="mx-auto mb-4 w-36 h-36 rounded-full" src="{{ asset('psikolog/anette.jpg') }}" alt="Anette Isabella Ginting, M.Psi., Psikolog">
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  <a href="#">Anette Isabella Ginting, M.Psi., Psikolog</a>
+                  <a  >Anette Isabella Ginting, M.Psi., Psikolog</a>
               </h3>
               <p>Domisili : Jakarta</p>
               <ul class="flex justify-center mt-4 space-x-4">
@@ -147,10 +147,10 @@
 
               </ul>
           </div>
-          <div class="text-center text-gray-500 dark:text-gray-400">
+          <div onclick="document.getElementById('psychologNidaModal').classList.remove('hidden')" class="text-center text-gray-500 dark:text-gray-400">
               <img class="mx-auto mb-4 w-36 h-36 rounded-full" src="{{ asset('psikolog/nida.jpg') }}" alt="Nida Khairunnisaa, M.Psi., Psikolog">
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  <a href="#">Nida Khairunnisaa, M.Psi., Psikolog</a>
+                  <a >Nida Khairunnisaa, M.Psi., Psikolog</a>
               </h3>
               <p>Domisili : Batam, Kepulauan Riau</p>
               <ul class="flex justify-center mt-4 space-x-4">
@@ -160,10 +160,10 @@
 
               </ul>
           </div>
-          <div class="text-center text-gray-500 dark:text-gray-400">
+          <div onclick="document.getElementById('psychologBagasModal').classList.remove('hidden')" class="text-center text-gray-500 dark:text-gray-400">
               <img class="mx-auto mb-4 w-36 h-36 rounded-full" src="{{ asset('psikolog/bagas.jpg') }}" alt="Bagas Alam, M.Psi., Psikolog">
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  <a href="#">Bagas Alam, M.Psi., Psikolog</a>
+                  <a >Bagas Alam, M.Psi., Psikolog</a>
               </h3>
               <p>Domisili : Cilacap, Jawa Tengah</p>
               <ul class="flex justify-center mt-4 space-x-4">
@@ -173,10 +173,10 @@
 
               </ul>
           </div>
-          <div class="text-center text-gray-500 dark:text-gray-400">
+          <div onclick="document.getElementById('psychologWiwinModal').classList.remove('hidden')" class="text-center text-gray-500 dark:text-gray-400">
               <img class="mx-auto mb-4 w-36 h-36 rounded-full" src="{{ asset('psikolog/wiwin.jpg') }}" alt="Wiwin Theofany Sekeon, M.Psi., Psikolog">
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  <a href="#">Wiwin Theofany Sekeon, M.Psi., Psikolog</a>
+                  <a >Wiwin Theofany Sekeon, M.Psi., Psikolog</a>
               </h3>
               <p>Domisili : Palu, Sulawesi Tengah</p>
               <ul class="flex justify-center mt-4 space-x-4">
@@ -190,6 +190,334 @@
       </div>  
   </div>
 </section>
+
+<!-- Modal Background Anette -->
+<div id="psychologAnetteModal" 
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+    <!-- Modal Card -->
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">
+                Detail Anette Isabella Ginting, M.Psi., Psikolog
+            </h2>
+            <button onclick="document.getElementById('psychologAnetteModal').classList.add('hidden')" 
+                class="text-gray-500 hover:text-gray-800 text-xl">
+                ✕
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6">
+
+            <!-- Foto + Nama + Domisili -->
+            <div class="flex gap-6 items-center">
+                <img src="{{ asset('psikolog/anette.jpg') }}" 
+                    class="w-32 h-32 rounded-xl object-cover shadow-md border" alt="Foto Psikolog">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Anette Isabella Ginting, M.Psi., Psikolog</h3>
+                    <p class="text-gray-600 mt-1">Domisili: <span class="font-medium">Jakarta</span></p>
+                </div>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Keterangan</h4>
+                <p class="text-gray-700 leading-relaxed">
+                    Menangani isu yang berkaitan dengan stress, kecemasan, trauma dan luka masa lalu. Juga terkait hubungan romantis dan juga hubungan orangtua-anak.
+                </p>
+            </div>
+
+            <!-- Pendekatan Terapi -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Pendekatan Terapi</h4>
+                <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                    <p>Client Centered Therapy, Art Therapy, Cognitive Behavior Therapy</p>
+                </ul>
+            </div>
+
+        </div>
+
+        {{-- Social Media --}}
+        <div class="p-6 space-y-2">
+            <h4 class="font-semibold text-gray-800 text-lg">Social Media</h4>
+
+            <div class="flex items-center gap-4">
+                
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/anetteisabella" 
+                    target="_blank"
+                    class="flex items-center gap-2 text-pink-600 hover:underline">
+                    <img src="{{ asset('instagram.png') }}" class="w-5 h-5" alt="">
+                    @anetteisabella
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end p-4 border-t border-gray-200">
+            <button onclick="document.getElementById('psychologAnetteModal').classList.add('hidden')"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Background Nida -->
+<div id="psychologNidaModal" 
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+    <!-- Modal Card -->
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">
+                Detail Nida Khairunnisaa, M.Psi., Psikolog
+            </h2>
+            <button onclick="document.getElementById('psychologNidaModal').classList.add('hidden')" 
+                class="text-gray-500 hover:text-gray-800 text-xl">
+                ✕
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6">
+
+            <!-- Foto + Nama + Domisili -->
+            <div class="flex gap-6 items-center">
+                <img src="{{ asset('psikolog/nida.jpg') }}" 
+                    class="w-32 h-32 rounded-xl object-cover shadow-md border" alt="Foto Psikolog">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Nida Khairunnisaa, M.Psi., Psikolog</h3>
+                    <p class="text-gray-600 mt-1">Domisili: <span class="font-medium">Batam, Kepulauan Riau</span></p>
+                </div>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Keterangan</h4>
+                <p class="text-gray-700 leading-relaxed">
+                    Menangani isu yang berkaitan dengan Pengembangan Diri, Regulasi Emosi, Quarter Life Crisis, Karir, Kecemasan & Daily Mental Health Issues lainnya
+                </p>
+            </div>
+
+            <!-- Pendekatan Terapi -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Pendekatan Terapi</h4>
+                <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                    <p>Client Centered Counseling, Solution Focused Brief Therapy, dan Cognitive Behavior Therapy</p>
+                </ul>
+            </div>
+
+        </div>
+
+
+        {{-- Social Media --}}
+        <div class="p-6 space-y-2">
+            <h4 class="font-semibold text-gray-800 text-lg">Social Media</h4>
+
+            <div class="flex items-center gap-4">
+                
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/nidakhrnns" 
+                    target="_blank"
+                    class="flex items-center gap-2 text-pink-600 hover:underline">
+                    <img src="{{ asset('instagram.png') }}" class="w-5 h-5" alt="">
+                    @nidakhrnns
+                </a>
+
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <div class="flex justify-end p-4 border-t border-gray-200">
+            <button onclick="document.getElementById('psychologNidaModal').classList.add('hidden')"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Modal Background Bagas -->
+<div id="psychologBagasModal" 
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+    <!-- Modal Card -->
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">
+                Detail Bagas Alam, M.Psi., Psikolog
+            </h2>
+            <button onclick="document.getElementById('psychologBagasModal').classList.add('hidden')" 
+                class="text-gray-500 hover:text-gray-800 text-xl">
+                ✕
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6">
+
+            <!-- Foto + Nama + Domisili -->
+            <div class="flex gap-6 items-center">
+                <img src="{{ asset('psikolog/bagas.jpg') }}" 
+                    class="w-32 h-32 rounded-xl object-cover shadow-md border" alt="Foto Psikolog">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Bagas Alam, M.Psi., Psikolog</h3>
+                    <p class="text-gray-600 mt-1">Domisili: <span class="font-medium">Cilacap, Jawa Tengah</span></p>
+                </div>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Keterangan</h4>
+                <p class="text-gray-700 leading-relaxed">
+                    Isu yang banyak ditangani berkaitan dengan krisis kehidupan, kecemasan, gangguan kepribadian dan juga konflik-konflik dalam hubungan.
+                </p>
+            </div>
+
+            <!-- Pendekatan Terapi -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Pendekatan Terapi</h4>
+                <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                    <p>-</p>
+                </ul>
+            </div>
+
+        </div>
+
+
+        {{-- Social Media --}}
+        <div class="p-6 space-y-2">
+            <h4 class="font-semibold text-gray-800 text-lg">Social Media</h4>
+
+            <div class="flex items-center gap-4">
+                
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/_gasalam" 
+                    target="_blank"
+                    class="flex items-center gap-2 text-pink-600 hover:underline">
+                    <img src="{{ asset('instagram.png') }}" class="w-5 h-5" alt="">
+                    @_gasalam
+                </a>
+
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <div class="flex justify-end p-4 border-t border-gray-200">
+            <button onclick="document.getElementById('psychologBagasModal').classList.add('hidden')"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- Modal Background Wiwin -->
+<div id="psychologWiwinModal" 
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+    <!-- Modal Card -->
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">
+                Detail Wiwin Theofany Sekeon, M.Psi., Psikolog
+            </h2>
+            <button onclick="document.getElementById('psychologWiwinModal').classList.add('hidden')" 
+                class="text-gray-500 hover:text-gray-800 text-xl">
+                ✕
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6">
+
+            <!-- Foto + Nama + Domisili -->
+            <div class="flex gap-6 items-center">
+                <img src="{{ asset('psikolog/wiwin.jpg') }}" 
+                    class="w-32 h-32 rounded-xl object-cover shadow-md border" alt="Foto Psikolog">
+
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Wiwin Theofany Sekeon, M.Psi., Psikolog</h3>
+                    <p class="text-gray-600 mt-1">Domisili: <span class="font-medium">Palu, Sulawesi Tengah</span></p>
+                </div>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Keterangan</h4>
+                <p class="text-gray-700 leading-relaxed">
+                    Rutin menangani kasus-kasus terkait Quarter Life Crisis, kecemasan, burnout dan luka masa lalu
+                </p>
+            </div>
+
+            <!-- Pendekatan Terapi -->
+            <div class="space-y-2">
+                <h4 class="font-semibold text-gray-800 text-lg">Pendekatan Terapi</h4>
+                <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                    <p>Client Centered Therapy, Solution-Focused Brief Therapy, Art Therapy</p>
+                </ul>
+            </div>
+
+        </div>
+
+
+        {{-- Social Media --}}
+        <div class="p-6 space-y-2">
+            <h4 class="font-semibold text-gray-800 text-lg">Social Media</h4>
+
+            <div class="flex items-center gap-4">
+                
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/wiwintheofany" 
+                    target="_blank"
+                    class="flex items-center gap-2 text-pink-600 hover:underline">
+                    <img src="{{ asset('instagram.png') }}" class="w-5 h-5" alt="">
+                    @wiwintheofany
+                </a>
+
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <div class="flex justify-end p-4 border-t border-gray-200">
+            <button onclick="document.getElementById('psychologWiwinModal').classList.add('hidden')"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
 
 
 {{-- Section Product --}}
